@@ -1,0 +1,133 @@
+version: '3'
+
+services:
+  frontend:
+    image: zero-pl-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '8080:80'
+    environment:
+      API_BASE_URL: http://localhost:3333
+    networks:
+      zero-pl:
+
+  backend:
+    image: zero-pl-backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - '3333:3333'
+    command: "/bin/sh -c \"prisma migrate deploy && node main.js\""
+    environment:
+      LOG_LEVELS: "log,error,warn,debug,verbose"
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/zero-protocol-labs"
+      API_KEY: somethingsecret
+      CORS_ORIGIN: "*"
+      CORS_MAX_AGE: 900
+      UPLOADED_FILE_SIZE_LIMIT: 200000
+      UI_BASE_URL: http://localhost:8080
+      API_BASE_URL: http://localhost:3333
+      ISSUER_API_BASE_URL: http://issuer-api:3333
+      FILES_BASE_URL: http://localhost:3333/api/files
+      ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - 'zero-pl-backend-tmp:/tmp'
+    networks:
+      zero-pl:
+
+  issuer-api:
+    image: zero-pl-issuer-api
+    restart: unless-stopped
+    depends_on:
+      - db-issuer
+      - ganache
+    ports:
+      - '127.0.0.1:3334:3333'
+    environment:
+      PORT: 3333
+      LOG_LEVELS: "log,error,warn,debug,verbose"
+      API_KEY: somethingsecret
+      DATABASE_URL: "postgresql://postgres:postgres@db-issuer:5432/issuer"
+      WEB3: http://ganache:8545
+      MNEMONIC: "chalk park staff buzz chair purchase wise oak receive avoid avoid home"
+      ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+    networks:
+      zero-pl:
+
+  ganache:
+    image: trufflesuite/ganache-cli
+    restart: unless-stopped
+    command: |
+      ganache-cli \
+        --db /data
+        -m "chalk park staff buzz chair purchase wise oak receive avoid avoid home" \
+        -l 8000000 \
+        -e 1000000 \
+        -a 40 \
+        -h 0.0.0.0
+    volumes:
+      - ganache-data:/data
+    networks:
+      zero-pl:
+
+  db:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+    - zero-pl-pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: zero-protocol-labs
+    networks:
+      zero-pl:
+
+  db-issuer:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:5433:5432'
+    volumes:
+    - zero-pl-pg-data-issuer:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: issuer
+    networks:
+      zero-pl:
+
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:6379:6379'
+    networks:
+      zero-pl:
+    volumes:
+      - redis-data:/data
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:1025:1025'
+      - '127.0.0.1:8025:8025'
+    networks:
+      zero-pl:
+
+volumes:
+  zero-pl-pg-data:
+  zero-pl-pg-data-issuer:
+  zero-pl-backend-tmp:
+  ganache-data:
+  redis-data:
+
+networks:
+  zero-pl:

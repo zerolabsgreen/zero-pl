@@ -1,0 +1,155 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+model File {
+  id         String    @id @default(uuid())
+  fileName   String
+  mimeType   String
+  createdAt  DateTime  @default(now())
+  content    Bytes
+  purchase   Purchase? @relation(fields: [purchaseId], references: [id])
+  purchaseId String?
+
+  @@index([createdAt])
+}
+
+model Buyer {
+  id                String         @id @default(uuid())
+  name              String?
+  blockchainAddress String?
+  purchase          Purchase[]
+  filecoinNodes     FilecoinNode[]
+
+  @@unique([blockchainAddress])
+}
+
+model Seller {
+  id                String        @id @default(uuid())
+  name              String
+  addressLine1      String
+  addressLine2      String?
+  contactPerson     String?
+  blockchainAddress String?
+  purchase          Purchase[]
+  certificates      Certificate[]
+
+  @@unique([blockchainAddress])
+}
+
+model Certificate {
+  id                            String     @id @default(uuid())
+  generatorName                 String?
+  generatorId                   String?
+  region                        String?
+  country                       String
+  energySource                  String
+  generationStart               DateTime?
+  generationStartTimezoneOffset Int?
+  generationEnd                 DateTime?
+  generationEndTimezoneOffset   Int?
+  txHash                        String?
+  purchase                      Purchase[]
+  seller                        Seller     @relation(fields: [initialSellerId], references: [id])
+  initialSellerId               String
+}
+
+model FilecoinNode {
+  id                String                     @id
+  Buyer             Buyer?                     @relation(fields: [buyerId], references: [id])
+  buyerId           String
+  blockchainAddress String?
+  purchases         FilecoinNodesOnPurchases[]
+
+  @@unique([id, buyerId])
+}
+
+model Purchase {
+  id                           String                     @id @default(uuid())
+  txHash                       String?
+  certificate                  Certificate                @relation(fields: [certificateId], references: [id])
+  certificateId                String
+  buyer                        Buyer?                     @relation(fields: [buyerId], references: [id])
+  buyerId                      String?
+  seller                       Seller?                    @relation(fields: [sellerId], references: [id])
+  sellerId                     String?
+  files                        File[]
+  recsSold                     Int
+  recsTransactions             Json
+  reportingStart               DateTime?
+  reportingStartTimezoneOffset Int?
+  reportingEnd                 DateTime?
+  reportingEndTimezoneOffset   Int?
+  filecoinNodes                FilecoinNodesOnPurchases[]
+
+  @@unique([id, buyerId])
+}
+
+model FilecoinNodesOnPurchases {
+  purchase   Purchase @relation(fields: [purchaseId, buyerId], references: [id, buyerId])
+  purchaseId String
+
+  filecoinNode   FilecoinNode @relation(fields: [filecoinNodeId, buyerId], references: [id, buyerId])
+  filecoinNodeId String
+  buyerId        String
+
+  @@id([purchaseId, filecoinNodeId, buyerId])
+  @@unique([purchaseId, filecoinNodeId])
+}
+
+model Order {
+  id                 String                       @id @default(uuid())
+  emailAddress       String
+  protocolType       ProtocolTypeEnumType
+  userType           UserTypeEnumType
+  items              OrderItem[]
+  paymentPreferences PaymentPreferencesEnumType[]
+  confirmationToken  String?                      @default(uuid())
+  confirmed          Boolean                      @default(false)
+  createdAt          DateTime                     @default(now())
+}
+
+model OrderItem {
+  id         String               @id @default(uuid())
+  minerId    String
+  country    String
+  city       String?
+  order      Order                @relation(fields: [orderId], references: [id])
+  orderId    String
+  timeFrames OrderItemTimeFrame[]
+
+  @@unique([orderId, minerId])
+}
+
+model OrderItemTimeFrame {
+  id          String     @id @default(uuid())
+  orderItem   OrderItem? @relation(fields: [orderItemId], references: [id])
+  orderItemId String?
+  start       DateTime
+  end         DateTime
+  energy      BigInt
+}
+
+enum PaymentPreferencesEnumType {
+  WIRE_TRANSFER
+  CRYPTO
+}
+
+enum ProtocolTypeEnumType {
+  FILECOIN
+  BITCOIN
+}
+
+enum UserTypeEnumType {
+  MINER
+  STORAGE_PROVIDER
+  APP_DEVELOPER
+  CRYPTO_USER
+  OTHER
+}

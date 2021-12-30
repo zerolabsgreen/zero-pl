@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    volumes:
+    - dev-pg-data-main:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: zero-protocol-labs
+    networks:
+      - dev
+
+  db-issuer-api:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    ports:
+      - '5433:5432'
+    volumes:
+      - dev-pg-data-issuer:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: issuer
+    networks:
+      - dev
+
+  ganache-cli:
+    image: trufflesuite/ganache-cli
+    command: |
+      ganache-cli \
+        --db /data
+        -m "chalk park staff buzz chair purchase wise oak receive avoid avoid home" \
+        -l 8000000 \
+        -e 1000000 \
+        -a 40 \
+        -h 0.0.0.0
+    volumes:
+      - dev-ganache-data:/data
+    networks:
+      - dev
+    ports:
+      - '127.0.0.1:8545:8545'
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:1025:1025'
+      - '127.0.0.1:8025:8025'
+    networks:
+      - dev
+
+volumes:
+  dev-pg-data-main:
+  dev-pg-data-issuer:
+  dev-ganache-data:
+
+networks:
+  dev:
