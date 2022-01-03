@@ -1,4 +1,4 @@
-import { Box, Container } from '@material-ui/core';
+import { Box, Container } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
 import { ReactComponent as Logo } from '../../assets/svg/logo.svg';

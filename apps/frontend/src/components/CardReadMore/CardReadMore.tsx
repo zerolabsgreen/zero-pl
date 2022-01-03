@@ -9,13 +9,13 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from '@material-ui/core';
+  Box
+} from '@mui/material';
 import React from 'react';
-import { Box } from '@material-ui/system';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import FilcoinLogo from '../../assets/svg/filecoinLogo.svg';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { ReactComponent as Vector } from '../../assets/svg/vector-line.svg';
 import { ReactComponent as People } from '../../assets/svg/people.svg';
 import { useStyles } from './СardReadMore.styles';

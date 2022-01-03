@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import BitcoinGlobusImg from '../../assets/svg/globus.svg';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { useStyles } from './thank-you-page.style';

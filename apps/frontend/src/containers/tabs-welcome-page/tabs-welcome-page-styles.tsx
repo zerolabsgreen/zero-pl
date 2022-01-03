@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 
 const mobResp = window.innerWidth < 630;

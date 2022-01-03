@@ -1,5 +1,5 @@
 import { variables } from '@energyweb/zero-protocol-labs-theme';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles({
   btn: {

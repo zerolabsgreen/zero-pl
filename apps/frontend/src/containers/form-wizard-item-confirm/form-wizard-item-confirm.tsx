@@ -7,7 +7,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import * as React from 'react';
 import { useAddressMappingState } from '../../context';

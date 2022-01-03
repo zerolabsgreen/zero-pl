@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/styles';
-import { Theme } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 
 export const useStyles = makeStyles<Theme, { isFilecoin: boolean }>({

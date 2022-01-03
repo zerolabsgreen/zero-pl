@@ -1,8 +1,8 @@
-import { Box, Grid, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@mui/material';
 import { AnnualTransactionsDto } from '@energyweb/zero-protocol-labs-api-client';
 import Info from '../info/info';
 import dayjs from 'dayjs';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles({
   styles: {

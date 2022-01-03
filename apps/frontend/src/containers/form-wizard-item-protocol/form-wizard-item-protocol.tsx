@@ -2,7 +2,7 @@ import {
   FormControl,
   Typography,
   SelectChangeEvent,
-} from '@material-ui/core';
+} from '@mui/material';
 import  { SelectOption, GenericSelect } from 'apps/frontend/src/components/generic-select/generic-select';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';

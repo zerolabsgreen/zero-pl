@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@mui/material';
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
 import { useNavigate } from 'react-router';
 import { variables } from '@energyweb/zero-protocol-labs-theme';

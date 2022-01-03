@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/styles';
-import { alpha } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { alpha } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 
 export const useStyles = makeStyles((theme) => ({

@@ -1,6 +1,6 @@
-import { Box, Link } from '@material-ui/core';
-import LoopIcon from '@material-ui/icons/Loop';
-import FileDownloadOutlinedIcon from '@material-ui/icons/FileDownloadOutlined';
+import { Box, Link } from '@mui/material';
+import LoopIcon from '@mui/icons-material/Loop';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 /* eslint-disable-next-line */
 export interface FileDownloadLinkProps {
   filename?: string;

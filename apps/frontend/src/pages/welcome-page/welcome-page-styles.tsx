@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import ImgWelcome from '../../assets/svg/welcome-bg.svg';
 

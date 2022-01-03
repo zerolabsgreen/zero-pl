@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Box } from '@material-ui/core';
+import { Grid, Box } from '@mui/material';
 import {
   OfferSummaryBlock,
   AcceptedOffer,

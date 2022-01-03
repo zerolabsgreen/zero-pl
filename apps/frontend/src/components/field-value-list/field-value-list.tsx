@@ -1,9 +1,7 @@
 import styled from '@emotion/styled';
-import { Box } from '@material-ui/core';
-import StorageIcon from '@material-ui/icons/Storage';
+import { Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-/* eslint-disable-next-line */
 export interface FieldValueListProps {
   valueList: Array<string>;
 }

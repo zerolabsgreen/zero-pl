@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box } from "@material-ui/core"
+import { Box } from "@mui/material"
 import { useState } from "react";
 import { ReactComponent as Chat } from '../../assets/svg/Chat.svg';
 import CardReadMore from "./CardReadMore";

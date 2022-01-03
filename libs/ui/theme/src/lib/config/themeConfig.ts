@@ -3,9 +3,9 @@ import {
   darken,
   Theme,
   ThemeOptions,
-} from '@material-ui/core/styles';
+} from '@mui/material/styles';
 import { variables } from './variables';
-import { enUS, plPL } from '@material-ui/core/locale';
+import { enUS, plPL } from '@mui/material/locale';
 import { IStyleConfig } from '../utils/makeThemeConfig';
 
 const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({

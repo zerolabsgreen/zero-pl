@@ -1,4 +1,4 @@
-import { Button, SvgIconProps } from '@material-ui/core';
+import { Button, SvgIconProps } from '@mui/material';
 import { useStyles } from './welcome-page-submit-button.styles';
 
 export interface IWelcomePageSubmitButtonProps {

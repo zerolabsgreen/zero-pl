@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Helmet } from 'react-helmet-async';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface LoadingProps {}

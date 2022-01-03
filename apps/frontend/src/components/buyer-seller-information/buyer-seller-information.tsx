@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import BuyerInformation from '../buyer-information/buyer-information';
 import SellerInformation from '../seller-information/seller-information';
 import {
@@ -7,7 +7,7 @@ import {
   FilecoinNodeDto,
   SellerDto,
 } from '@energyweb/zero-protocol-labs-api-client';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles((theme) => ({
   flexColumn: {

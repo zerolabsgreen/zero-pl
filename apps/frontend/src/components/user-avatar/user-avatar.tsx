@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Box, Avatar, Typography } from '@material-ui/core';
+import { Box, Avatar, Typography } from '@mui/material';
 import { useStyles } from './user-avatar.style';
 
 interface UserAvatarProps {

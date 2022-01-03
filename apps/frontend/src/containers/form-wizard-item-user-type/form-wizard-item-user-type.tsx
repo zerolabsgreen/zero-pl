@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Typography,
-  MenuItem,
   Button,
   SelectChangeEvent,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
 import { UserTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
 import GenericSelect, { SelectOption } from 'apps/frontend/src/components/generic-select/generic-select';
 import { variables } from '@energyweb/zero-protocol-labs-theme';

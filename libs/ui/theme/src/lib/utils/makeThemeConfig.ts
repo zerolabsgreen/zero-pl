@@ -1,4 +1,4 @@
-import { Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
 
 import { UiThemeVariables, variables } from '../config/variables';
 import createMaterialThemeFor from '../config/themeConfig';

@@ -1,4 +1,4 @@
-import { Box, Typography, Link, useMediaQuery, Theme } from '@material-ui/core';
+import { Box, Typography, Link, useMediaQuery, Theme } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { useStyles } from './footer-styles';
 

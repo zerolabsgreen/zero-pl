@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { Grid, Box, Typography } from '@material-ui/core';
-import { HelpOutline } from '@material-ui/icons';
+import { Grid, Box, Typography } from '@mui/material';
+import { HelpOutline } from '@mui/icons-material';
 import PageSection from '../page-section/page-section';
 import FieldLabel from '../field-label/field-label';
 import { useStyles } from './product-summary-details.style';

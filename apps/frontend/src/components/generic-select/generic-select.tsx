@@ -1,6 +1,6 @@
-import { MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@material-ui/core';
+import { MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import * as React from 'react';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import useStyles from './generic-select-styles';
 
 export interface SelectOption {

@@ -1,5 +1,5 @@
 import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface EthereumAddressProps {

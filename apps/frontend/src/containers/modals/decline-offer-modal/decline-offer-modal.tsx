@@ -7,7 +7,7 @@ import {
   DialogContentText,
   FormLabel,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { StyledButton } from '../../../components/buttons';
 import { ReactComponent as CloseIcon } from '../../../assets/svg/close.svg';
 import { useDeclineOfferModalEffects } from './decline-offer-modal.effects';

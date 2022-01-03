@@ -1,5 +1,5 @@
-import { Box, useMediaQuery } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
+import { Box, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useDropzone, FileWithPath } from 'react-dropzone';
 import { useStyles } from './wire-transfer-instructions.style';
 

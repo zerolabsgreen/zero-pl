@@ -6,7 +6,7 @@ import {
   Button,
   IconButton,
   Box,
-} from '@material-ui/core';
+} from '@mui/material';
 import useStyles from './form-user-type.styles';
 import { Countries } from '@energyweb/utils-general';
 import React from 'react';
@@ -16,7 +16,7 @@ import { DateEnergySection } from './DateEnergySection';
 import { Info } from 'apps/frontend/src/components/info/info';
 import { Dayjs } from 'dayjs';
 import { SelectAutocomplete } from 'apps/frontend/src/components/select-autocomplete';
-import { Clear } from '@material-ui/icons';
+import { Clear } from '@mui/icons-material';
 import { WizardFormValues } from 'apps/frontend/src/pages/wizard-page/WizardPage.effects';
 
 interface FormUserTypeProps {

@@ -1,4 +1,4 @@
-import { Box, Grid, TextField, Typography } from '@material-ui/core';
+import { Box, Grid, TextField, Typography } from '@mui/material';
 import BasicDatePicker from 'apps/frontend/src/components/date-picker/date-picker';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { useEffect, useMemo } from 'react';

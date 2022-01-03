@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Box, Paper, Typography } from '@material-ui/core';
+import { Box, Paper, Typography } from '@mui/material';
 import { StyledButton } from '../buttons';
 import { ProductOfferForm } from '../../containers/product-offer-form';
 import { ProductOfferPayment } from '../../containers/product-offer-payment';

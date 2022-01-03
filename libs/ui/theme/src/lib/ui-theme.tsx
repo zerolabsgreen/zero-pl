@@ -1,7 +1,7 @@
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { ReactNode } from 'react';
 import makeThemeConfig from './utils/makeThemeConfig';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline';
 /* eslint-disable-next-line */
 export interface UiThemeProps {
   children: ReactNode;

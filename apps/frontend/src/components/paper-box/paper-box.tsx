@@ -1,4 +1,4 @@
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 import { ReactNode } from 'react';
 
 /* eslint-disable-next-line */

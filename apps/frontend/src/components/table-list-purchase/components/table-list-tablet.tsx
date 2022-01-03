@@ -1,10 +1,10 @@
-import { Box, Table, TableCell, TableRow } from '@material-ui/core';
+import { Box, Table, TableCell, TableRow } from '@mui/material';
 import FuelType, { FuelTypeEnum } from '../../fuel-type/fuel-type';
 import { useStyles } from '../table-list-purchase.styles';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import EthereumAddress from '../../ethereum-address/ethereum-address';
-import { Tabs } from '@material-ui/core';
+import { Tabs } from '@mui/material';
 import { PurchaseDto } from '@energyweb/zero-protocol-labs-api-client';
 
 dayjs.extend(utc);

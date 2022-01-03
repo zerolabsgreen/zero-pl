@@ -11,7 +11,7 @@ export const usePurchasePageEffects = () => {
   const [transactionsData, setTransactionsData] = useState<PurchaseDto[]>([]);
   const { productId } = useParams();
 
-  const { data, isLoading, isFetched } = useFilecoinNodesControllerGetTransactions(productId);
+  const { data, isLoading, isFetched } = useFilecoinNodesControllerGetTransactions(productId ?? '');
   const transactions = data?.transactions;
 
   const fetchAllTransactionsData = async (transactions: FilecoinNodesControllerGetTransactions200TransactionsItem[]) => {

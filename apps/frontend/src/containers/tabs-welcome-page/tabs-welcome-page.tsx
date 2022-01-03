@@ -3,9 +3,7 @@ import {
   Typography,
   Tabs,
   Tab,
-  useMediaQuery,
-  Theme,
-} from '@material-ui/core';
+} from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import React, { SyntheticEvent } from 'react';
 import useStyles from './tabs-welcome-page-styles';

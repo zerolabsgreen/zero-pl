@@ -1,5 +1,5 @@
 import { FC, ReactElement } from 'react';
-import { Grid, Box, BoxProps, Typography } from '@material-ui/core';
+import { Grid, Box, BoxProps, Typography } from '@mui/material';
 import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard';
 import { useStyles } from './crypto-payment-information.style';
 

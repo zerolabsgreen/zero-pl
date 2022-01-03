@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Box, BoxProps } from '@material-ui/core';
+import { Box, BoxProps } from '@mui/material';
 
 export interface FieldLabelProps extends BoxProps {
   width?: string;
