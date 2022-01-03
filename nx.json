@@ -14,7 +14,8 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "parallel": 3
       }
     }
   },
@@ -26,25 +27,24 @@
       }
     ]
   },
-  "projects": {
-    "api-client": {
-      "tags": []
-    },
-    "ui-theme": {
-      "tags": []
-    },
-    "backend": {
-      "tags": []
-    },
-    "frontend": {
-      "tags": []
-    },
-    "frontend-e2e": {
-      "tags": [],
-      "implicitDependencies": ["frontend"]
-    },
-    "issuer-api": {
-      "tags": []
+  "cli": {
+    "defaultCollection": "@nrwl/nest"
+  },
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "@emotion/styled"
+      },
+      "library": {
+        "style": "@emotion/styled",
+        "linter": "eslint"
+      }
     }
-  }
+  },
+  "defaultProject": "backend"
 }
