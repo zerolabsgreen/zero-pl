@@ -86,8 +86,7 @@ export const TabsWelcomePage = () => {
           return (
             <Tab key={el.label}
               label={
-                <React.Fragment>
-                  <Box
+                <Box
                     minWidth="289px"
                     height="385px"
                     className={styles.tab}
@@ -115,7 +114,6 @@ export const TabsWelcomePage = () => {
                       {el.value}
                     </Typography>
                   </Box>
-                </React.Fragment>
               }
             />
           );

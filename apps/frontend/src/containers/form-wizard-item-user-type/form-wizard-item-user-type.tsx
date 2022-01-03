@@ -6,12 +6,12 @@ import {
   Box,
 } from '@mui/material';
 import { UserTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
-import GenericSelect, { SelectOption } from 'apps/frontend/src/components/generic-select/generic-select';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import React from 'react';
 import { useStyles } from './form-wizard-item-user-type.styles';
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg';
 import { ReactComponent as PlusGreen } from '../../assets/svg/plusGreen.svg';
+import GenericSelect, { SelectOption } from '../../components/generic-select/generic-select';
 import { FormUserType } from './components/form-user-type';
 import { WizardFormValues } from '../../pages/wizard-page/WizardPage.effects';
 import {

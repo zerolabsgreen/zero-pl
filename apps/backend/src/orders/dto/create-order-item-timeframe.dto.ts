@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty } from "@nestjs/swagger";
 import {
   IsInt,
@@ -32,14 +33,14 @@ export class CreateOrderItemTimeframeDto {
 }
 
 function IsStartOfDay(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
       name: "IsStartOfDay",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, validationArguments?: ValidationArguments): boolean {
+        validate(value: string | number | Date): boolean {
           return new Date(value).getUTCMilliseconds() === 0;
         },
         defaultMessage(): string {
@@ -51,14 +52,14 @@ function IsStartOfDay(validationOptions?: ValidationOptions) {
 }
 
 function IsEndOfDay(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
       name: "IsEndOfDay",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, validationArguments?: ValidationArguments): boolean {
+        validate(value: string | number | Date): boolean {
           return new Date(value).getUTCMilliseconds() === 999;
         },
         defaultMessage(): string {
@@ -70,7 +71,7 @@ function IsEndOfDay(validationOptions?: ValidationOptions) {
 }
 
 function IsGreaterThan(property: string, validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
       name: "IsGreaterThan",
       target: object.constructor,
@@ -78,7 +79,7 @@ function IsGreaterThan(property: string, validationOptions?: ValidationOptions) 
       constraints: [property],
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: string | number | Date, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
           const relatedValue = args.object[relatedPropertyName];
           return value > relatedValue;
@@ -92,7 +93,7 @@ function IsGreaterThan(property: string, validationOptions?: ValidationOptions) 
 }
 
 function IsTheSameYearAs(property: string, validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
       name: "IsTheSameYearAs",
       target: object.constructor,
@@ -100,7 +101,7 @@ function IsTheSameYearAs(property: string, validationOptions?: ValidationOptions
       constraints: [property],
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: string | number | Date, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
           const relatedValue = args.object[relatedPropertyName];
           return new Date(value).getUTCFullYear() === new Date(relatedValue).getUTCFullYear();

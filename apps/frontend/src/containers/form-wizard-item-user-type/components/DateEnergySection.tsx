@@ -1,9 +1,9 @@
 import { Box, Grid, TextField, Typography } from '@mui/material';
-import BasicDatePicker from 'apps/frontend/src/components/date-picker/date-picker';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { useEffect, useMemo } from 'react';
-import { useAddressMappingSetState } from 'apps/frontend/src/context';
-import { WizardFormValues } from 'apps/frontend/src/pages/wizard-page/WizardPage.effects';
+import { useAddressMappingSetState } from '../../../context';
+import { WizardFormValues } from '../../../pages/wizard-page/WizardPage.effects';
+import DatePicker from '../../../components/date-picker/date-picker';
 import useStyles from './DateEnergySection.styles';
 
 export interface IDateSectionProps {
@@ -73,7 +73,7 @@ export const DateEnergySection: React.FC<IDateSectionProps> = ({
                     >
                       Consumption start date
                     </Typography>
-                    <BasicDatePicker
+                    <DatePicker
                       value={values[`startDate_${id}_${nestedId}`] || ''}
                       setValue={(value) =>
                         setFieldValue(`startDate_${id}_${nestedId}`, value)
@@ -95,7 +95,7 @@ export const DateEnergySection: React.FC<IDateSectionProps> = ({
                     >
                       Consumption end date
                     </Typography>
-                    <BasicDatePicker
+                    <DatePicker
                       value={values[`endDate_${id}_${nestedId}`] || ''}
                       setValue={(value) =>
                         setFieldValue(`endDate_${id}_${nestedId}`, value)

@@ -5,7 +5,7 @@ import { FC } from 'react';
 const SelectedProtocolStore = createContext<ProtocolTypeEnumType | null>(null);
 const SelectedProtocolDispatch = createContext<
   React.Dispatch<React.SetStateAction<ProtocolTypeEnumType | null>>
->(() => {});
+>(() => {return});
 
 export const SelectedProtocolProvider: FC = ({ children }) => {
   const [selectedProtocol, setSelectedProtocol] = useState<ProtocolTypeEnumType | null>(null);

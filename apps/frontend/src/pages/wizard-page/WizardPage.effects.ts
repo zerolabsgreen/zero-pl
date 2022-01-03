@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CreateOrderDto, PaymentPreferencesEnumType, ProtocolTypeEnumType, useOrdersControllerCreate, UserTypeEnumType } from "@energyweb/zero-protocol-labs-api-client"
 import { useState } from "react";
 import { BigNumber } from '@ethersproject/bignumber';

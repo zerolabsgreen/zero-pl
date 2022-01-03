@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { OrderDto } from "./dto/order.dto";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
@@ -56,8 +55,8 @@ export class OrdersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  update(@Param('id') id: string) {
+    return this.ordersService.update(+id);
   }
 
   @Delete(':id')
