@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControlLabel, Switch, Box, BoxProps } from '@material-ui/core';
+import { FormControlLabel, Switch, Box, BoxProps } from '@mui/material';
 import { useStyles } from './switch-label.style';
 
 interface SwitchLabelProps {
@@ -11,7 +11,7 @@ interface SwitchLabelProps {
   defaultValue?: boolean;
 }
 
-const SwitchLabel: React.FC<SwitchLabelProps> = ({
+export const SwitchLabel: React.FC<SwitchLabelProps> = ({
   labelName,
   isFilecoin,
   checked,

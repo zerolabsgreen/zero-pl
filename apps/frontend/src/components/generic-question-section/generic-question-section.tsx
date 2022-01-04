@@ -1,10 +1,10 @@
-import { Box, Typography, useMediaQuery, Theme } from '@material-ui/core';
+import { Box, Typography, useMediaQuery, Theme } from '@mui/material';
 import * as React from 'react';
 import useStyles from './generic-question-section-styles';
 import WelcomePageSubmitButton from '../welcome-page-submit-button/welcome-page-submit-button';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { ReactNode } from 'react-transition-group/node_modules/@types/react';
-import { SvgIconProps } from '@material-ui/core';
+import { SvgIconProps } from '@mui/material';
 
 export interface IGenericQuestionSectionProps {
   children?: ReactNode;

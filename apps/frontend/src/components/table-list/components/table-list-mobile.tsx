@@ -1,4 +1,4 @@
-import { Box, Table, TableBody, TableCell, TableRow } from '@material-ui/core';
+import { Box, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import FuelType, { FuelTypeEnum } from '../../fuel-type/fuel-type';
 import { useStyles } from '../table-list.styles';
 import dayjs from 'dayjs';

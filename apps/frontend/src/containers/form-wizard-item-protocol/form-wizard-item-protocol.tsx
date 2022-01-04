@@ -2,8 +2,8 @@ import {
   FormControl,
   Typography,
   SelectChangeEvent,
-} from '@material-ui/core';
-import  { SelectOption, GenericSelect } from 'apps/frontend/src/components/generic-select/generic-select';
+} from '@mui/material';
+import  { SelectOption, GenericSelect } from '../../components/generic-select/generic-select';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
 import React from 'react';
@@ -13,7 +13,7 @@ import { useStyles } from './form-wizard-item-protocol.styles';
 import {
   useSelectedProtocolDispatch,
   useSelectedProtocolStore,
-} from 'apps/frontend/src/context';
+} from '../../context';
 
 const protocolOptions: SelectOption[] = [
   { value: ProtocolTypeEnumType.FILECOIN, label: 'Filecoin', img: FilecoinIcon },

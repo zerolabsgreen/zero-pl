@@ -6,7 +6,7 @@ import {
   TableCell,
   TableRow,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import dayjs from 'dayjs';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { FC } from 'react';
@@ -17,10 +17,10 @@ import { useTableListProofsEffects } from './TableListProofs.effects';
 import { useStyles } from './TableListProofs.styles';
 
 interface TableListProofsProps {
-  purchaseId: string;
+  purchaseId?: string;
 }
 
-export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId }) => {
+export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) => {
   const styles = useStyles();
   const { blockchainEvents, isLoading } = useTableListProofsEffects(purchaseId);
 

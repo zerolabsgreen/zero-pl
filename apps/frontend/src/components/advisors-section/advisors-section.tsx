@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery, Theme } from '@material-ui/core';
+import { Box, Typography, useMediaQuery, Theme } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { ReactComponent as EcoImg } from './assets/eco.svg';
 import { ReactComponent as StandardImg } from './assets/standard.svg';

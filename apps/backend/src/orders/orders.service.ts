@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderDto } from './dto/order.dto';
 import { OrderItemDto } from './dto/order-item.dto';
@@ -101,7 +100,7 @@ export class OrdersService {
     });
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
+  update(id: number) {
     return `This action updates a #${id} order`;
   }
 

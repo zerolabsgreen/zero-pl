@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Box, Typography, FormLabel, TextField } from '@material-ui/core';
+import { Grid, Box, Typography, FormLabel, TextField } from '@mui/material';
 import { CryptoPaymentInformation } from '../../components/crypto-payment-information';
 import { useStyles } from './crypto-payment-instructions.style';
 import { cryptoPaymentDataMock } from '../../__mock__';

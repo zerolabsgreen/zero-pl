@@ -1,7 +1,7 @@
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import useStyles from './question-section-welcome-page-styles';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import TollIcon from '@material-ui/icons/Toll';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import TollIcon from '@mui/icons-material/Toll';
 import GenericQuestionSection, { IGenericQuestionSectionProps } from '../../components/generic-question-section/generic-question-section';
 import { useNavigate } from 'react-router-dom';
 

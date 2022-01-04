@@ -1,4 +1,7 @@
 import { variables } from '@energyweb/zero-protocol-labs-theme';
+import React from 'react';
+import { Dayjs } from 'dayjs';
+import { Clear } from '@mui/icons-material';
 import {
   FormControl,
   Typography,
@@ -6,18 +9,16 @@ import {
   Button,
   IconButton,
   Box,
-} from '@material-ui/core';
-import useStyles from './form-user-type.styles';
+} from '@mui/material';
 import { Countries } from '@energyweb/utils-general';
-import React from 'react';
-import BasicDatePicker from 'apps/frontend/src/components/date-picker/date-picker';
+import useStyles from './form-user-type.styles';
 import ButtonIcon from '../../../assets/svg/whiteArrow.svg';
 import { DateEnergySection } from './DateEnergySection';
-import { Info } from 'apps/frontend/src/components/info/info';
-import { Dayjs } from 'dayjs';
-import { SelectAutocomplete } from 'apps/frontend/src/components/select-autocomplete';
-import { Clear } from '@material-ui/icons';
-import { WizardFormValues } from 'apps/frontend/src/pages/wizard-page/WizardPage.effects';
+import { WizardFormValues } from '../../../pages/wizard-page/WizardPage.effects';
+import Info from '../../../components/info/info';
+import { SelectAutocomplete } from '../../../components/select-autocomplete';
+import DatePicker from '../../../components/date-picker/date-picker';
+
 
 interface FormUserTypeProps {
   isFilecoin?: boolean;
@@ -121,7 +122,7 @@ export const FormUserType: React.FC<FormUserTypeProps> = ({
               >
                 Consumption start date
               </Typography>
-              <BasicDatePicker
+              <DatePicker
                 isFilecoin={isFilecoin}
                 value={values[`generalStartDate_${id}`] || ''}
                 setValue={(value) =>
@@ -139,7 +140,7 @@ export const FormUserType: React.FC<FormUserTypeProps> = ({
               >
                 Consumption end date
               </Typography>
-              <BasicDatePicker
+              <DatePicker
                 isFilecoin={isFilecoin}
                 value={values[`generalEndDate_${id}`] || ''}
                 setValue={(value) =>

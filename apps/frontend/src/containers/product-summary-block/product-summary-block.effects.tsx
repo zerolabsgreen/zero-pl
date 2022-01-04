@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { useMediaQuery } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
+import { useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { formatPower, Unit } from '../../utils';
 import { offerMockData } from '../../__mock__';
 

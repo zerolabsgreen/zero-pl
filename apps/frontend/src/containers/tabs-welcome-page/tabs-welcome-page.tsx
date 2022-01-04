@@ -3,9 +3,7 @@ import {
   Typography,
   Tabs,
   Tab,
-  useMediaQuery,
-  Theme,
-} from '@material-ui/core';
+} from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import React, { SyntheticEvent } from 'react';
 import useStyles from './tabs-welcome-page-styles';
@@ -88,8 +86,7 @@ export const TabsWelcomePage = () => {
           return (
             <Tab key={el.label}
               label={
-                <React.Fragment>
-                  <Box
+                <Box
                     minWidth="289px"
                     height="385px"
                     className={styles.tab}
@@ -117,7 +114,6 @@ export const TabsWelcomePage = () => {
                       {el.value}
                     </Typography>
                   </Box>
-                </React.Fragment>
               }
             />
           );

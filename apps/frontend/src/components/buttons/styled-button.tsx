@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import clsx from 'clsx';
-import { Button, ButtonProps } from '@material-ui/core';
+import { Button, ButtonProps } from '@mui/material';
 import { useStyles } from './styled-button.style';
 
 export const StyledButton: FC<ButtonProps> = (props) => {

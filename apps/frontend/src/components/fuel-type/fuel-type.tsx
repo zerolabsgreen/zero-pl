@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { ReactComponent as Solar } from './solar.svg';
 import { ReactComponent as Geothermal } from './geothermal.svg';
 import { ReactComponent as Biomass } from './biomass.svg';

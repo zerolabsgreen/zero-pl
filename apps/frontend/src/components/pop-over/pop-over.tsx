@@ -5,12 +5,12 @@ import {
   Tooltip,
   tooltipClasses,
   withStyles,
-} from '@material-ui/core';
-import Fade from '@material-ui/core/Fade';
-import Popper from '@material-ui/core/Popper';
+} from '@mui/material';
+import Fade from '@mui/material/Fade';
+import Popper from '@mui/material/Popper';
 import React, { FC, ReactElement, ReactNode, useState } from 'react';
 import { useStyles } from './pop-over.styles';
-import { styled } from '@material-ui/styles';
+import { styled } from '@mui/styles';
 /* eslint-disable-next-line */
 
 export interface PopOverProps {

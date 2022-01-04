@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Box, BoxProps, Typography } from '@material-ui/core';
+import { Grid, Box, BoxProps, Typography } from '@mui/material';
 import { useStyles } from './wire-transfer-information.styles';
 
 interface WireTransferInformationProps {

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import TextField from '@material-ui/core/TextField';
-import AdapterDayJs from '@material-ui/lab/AdapterDayjs';
-import { DatePicker, LocalizationProvider } from '@material-ui/lab';
+import TextField from '@mui/material/TextField';
+import AdapterDayJs from '@mui/lab/AdapterDayjs';
+import { DatePicker, LocalizationProvider } from '@mui/lab';
 import useStyles from './date-picker-styles';
 import { ReactComponent as CalendarIconLight } from '../../assets/svg/calendarIconLight.svg';
 import { ReactComponent as CalendarIconDark } from '../../assets/svg/calendarIconDark.svg';

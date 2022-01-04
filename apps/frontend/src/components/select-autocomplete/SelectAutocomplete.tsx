@@ -1,5 +1,5 @@
-import { Autocomplete, TextField } from '@material-ui/core';
-import { KeyboardArrowDown } from '@material-ui/icons';
+import { Autocomplete, TextField } from '@mui/material';
+import { KeyboardArrowDown } from '@mui/icons-material';
 import { FC } from 'react';
 import { useStyles } from './SelectAutocomplete.styles';
 

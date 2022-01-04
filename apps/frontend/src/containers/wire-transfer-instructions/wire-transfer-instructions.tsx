@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Box, Typography } from '@mui/material';
 import { StyledButton } from '../../components/buttons';
 import { WireTransferInformation } from '../../components/wire-transfer-information';
 import { ReactComponent as AddNoteIcon } from '../../assets/svg/add-note.svg';

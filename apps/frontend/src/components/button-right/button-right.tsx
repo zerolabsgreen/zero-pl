@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import Icon from './assets/arrow.svg';
 import useStyles from './button-right-style';
 

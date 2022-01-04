@@ -1,5 +1,5 @@
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
-import { Box, Button, Modal, Paper, Typography, useTheme} from '@material-ui/core';
+import { Box, Button, Modal, Paper, Typography, useTheme} from '@mui/material';
 import { FC } from 'react';
 import { useSelectedProtocolStore } from '../../context';
 import { useStyles } from './RemoveMinerIdModal.styles';

@@ -1,6 +1,6 @@
 import { variables } from "@energyweb/zero-protocol-labs-theme";
-import { Theme } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+import { Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
 export const useStyles = makeStyles<Theme, { isFilecoin: boolean }>((theme) => ({
   wrapper: {

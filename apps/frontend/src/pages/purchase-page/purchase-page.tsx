@@ -1,5 +1,5 @@
-import { Container, Grid, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Container, Grid, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import PageSection from '../../components/page-section/page-section';
 import Loading from '../../components/loading/loading';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';

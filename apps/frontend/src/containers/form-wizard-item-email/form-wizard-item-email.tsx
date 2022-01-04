@@ -1,9 +1,8 @@
-import { FormControl, TextField, Typography } from '@material-ui/core';
-import { Box } from '@material-ui/system';
-import SwitchLabels from 'apps/frontend/src/components/switch-label/switch-label';
+import { FormControl, TextField, Typography, Box } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import * as React from 'react';
 import useStyles from './form-wizard-item-email-styles';
+import { SwitchLabel } from '../../components/switch-label/switch-label'
 import { WizardFormValues } from '../../pages/wizard-page/WizardPage.effects';
 
 export interface IFormWizardItemEmailProps {
@@ -68,13 +67,13 @@ export const FormWizardItemEmail: React.FC<IFormWizardItemEmailProps> = ({
           currencies they accept
         </Typography>
         <Box>
-          <SwitchLabels
+          <SwitchLabel
             labelName={'Wire transfer'}
             isFilecoin={isFilecoin}
             checked={values.wirePayment ?? false}
             setChecked={(value) => setFieldValue('wirePayment', value)}
           />
-          <SwitchLabels
+          <SwitchLabel
             labelName={'Crypto payment'}
             isFilecoin={isFilecoin}
             checked={values.cryptoPayment ?? false}

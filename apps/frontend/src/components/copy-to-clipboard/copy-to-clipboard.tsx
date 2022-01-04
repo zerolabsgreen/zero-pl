@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import ContentCopy from '@material-ui/icons/ContentCopyOutlined';
+import ContentCopy from '@mui/icons-material/ContentCopyOutlined';
 
 /* eslint-disable-next-line */
 export interface CopyToClipboardProps {

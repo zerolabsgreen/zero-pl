@@ -1,4 +1,4 @@
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import PaperBox from '../paper-box/paper-box';
 import FieldLabel from '../field-label/field-label';
 import FieldValue from '../field-value/field-value';
@@ -8,7 +8,7 @@ import {
   AnnualTransactionsDto,
   FilecoinNodeDto,
 } from '@energyweb/zero-protocol-labs-api-client';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles({
   flexColumn: {

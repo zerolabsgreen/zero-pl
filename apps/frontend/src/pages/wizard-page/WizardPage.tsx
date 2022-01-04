@@ -10,7 +10,7 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Form, Formik } from 'formik';
 import BitcoinGlobusImg from '../../assets/svg/globus.svg';
 import FilecoinGlobusImg from '../../assets/svg/filecoinGlobus.svg';

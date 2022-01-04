@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Box, Container, Typography } from '@material-ui/core';
+import { Box, Container, Typography } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 
 /* eslint-disable-next-line */

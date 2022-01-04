@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   ArrayMinSize,
@@ -8,7 +9,6 @@ import {
   IsString,
   registerDecorator,
   ValidateNested,
-  ValidationArguments,
   ValidationOptions
 } from "class-validator";
 import { Countries } from "@energyweb/utils-general";
@@ -41,14 +41,14 @@ export class CreateOrderItemDto {
 }
 
 function TimeframesInSequence(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
       name: "TimeframesInSequence",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: any) {
           if (value.length < 2) {
             return true;
           }
@@ -67,14 +67,14 @@ function TimeframesInSequence(validationOptions?: ValidationOptions) {
 }
 
 function AdjacentTimeframes(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
       name: "AdjacentTimeframes",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, validationArguments?: ValidationArguments): boolean {
+        validate(value: Array<{start: string | number | Date, end: string | number | Date}>): boolean {
           if (value.length < 2) {
             return true;
           }

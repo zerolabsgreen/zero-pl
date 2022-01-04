@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import clsx from 'clsx';
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Box, Typography } from '@mui/material';
 import Info from '../info/info';
 import UserAvatar from '../user-avatar/user-avatar';
 import PageSection from '../page-section/page-section';

@@ -12,7 +12,6 @@ import { intersection } from 'lodash';
 import { SwaggerModule } from "@nestjs/swagger";
 import { getSwaggerDocumentationConfig } from "./swagger/SwaggerDocumentConfig";
 import { PrismaClientExceptionFilter } from "./exception-filters/PrismaClientExceptionFilter";
-import { NoDataInterceptor } from "./interceptors/NoDataInterceptor";
 
 const logger = new Logger('bootstrap', { timestamp: true });
 

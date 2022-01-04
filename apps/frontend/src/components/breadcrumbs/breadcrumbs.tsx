@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs as MatBreadcrumbs } from '@material-ui/core';
+import { Box, Breadcrumbs as MatBreadcrumbs } from '@mui/material';
 import { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -23,7 +23,7 @@ export const Breadcrumbs = ({ breadcrumbList }: BreadcrumbsProps) => {
     <>
       <Helmet>
         <title>
-          {breadcrumbList.join(' - ').replace('[productId]', params.productId)}
+          {breadcrumbList.join(' - ').replace('[productId]', params.productId ?? '')}
         </title>
       </Helmet>
       <MatBreadcrumbs sx={{ mt: 3 }} separator={'›'}>
@@ -31,7 +31,7 @@ export const Breadcrumbs = ({ breadcrumbList }: BreadcrumbsProps) => {
           <Item
             active={index === breadcrumbList.length - 1}
             key={value}
-            text={value.replace('[productId]', params.productId)}
+            text={value.replace('[productId]', params.productId ?? '')}
           />
         ))}
       </MatBreadcrumbs>

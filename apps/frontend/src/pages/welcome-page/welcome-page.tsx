@@ -5,15 +5,15 @@ import {
   Box,
   SelectChangeEvent,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useStyles } from './welcome-page-styles';
 import GenericSelect from '../../components/generic-select/generic-select';
 import { Form, Formik } from 'formik';
 import BasicDatePicker from '../../components/date-picker/date-picker';
 import WelcomePageSubmitButton from '../../components/welcome-page-submit-button/welcome-page-submit-button';
 import Footer from '../../components/footer/footer';
-import SearchIcon from '@material-ui/icons/Search';
-import PersonAddAltIcon from '@material-ui/icons/PersonAddAlt';
+import SearchIcon from '@mui/icons-material/Search';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { QuestionSectionWelcomePage, TabsWelcomePage } from '../../containers';
 import GenericQuestionSection from '../../components/generic-question-section/generic-question-section';
 import { ReactComponent as CountryImg } from '../../assets/svg/country.svg';

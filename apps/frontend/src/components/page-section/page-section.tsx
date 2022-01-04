@@ -1,7 +1,7 @@
 import clsx from 'clsx';
-import { Box, Paper, Typography } from '@material-ui/core';
+import { Box, Paper, Typography } from '@mui/material';
 import { ReactNode, ReactNodeArray } from 'react';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles((theme) => ({
   style: {

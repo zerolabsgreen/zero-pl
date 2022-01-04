@@ -1,5 +1,5 @@
-import { Container, Grid, Typography, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Container, Grid, Typography, Box } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import BuyerSellerInformation from '../../components/buyer-seller-information/buyer-seller-information';
 import PageSection from '../../components/page-section/page-section';
 import DownloadSection from '../../components/download-section/download-section';

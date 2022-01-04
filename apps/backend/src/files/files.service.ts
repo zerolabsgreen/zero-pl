@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Express } from 'express';
 // This is a hack to make Multer available in the Express namespace
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Multer } from 'multer';
 import { PrismaService } from "../prisma/prisma.service";
 import { FileMetadataDto } from "./dto/file-metadata.dto";
 import { UpdateFileMetadataDto } from "./dto/update-file-metadata.dto";
-import { Simulate } from "react-dom/test-utils";
-import select = Simulate.select;
 
 @Injectable()
 export class FilesService {

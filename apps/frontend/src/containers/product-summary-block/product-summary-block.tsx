@@ -8,7 +8,7 @@ import {
   SvgIcon,
   IconButton,
   Collapse,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Unit } from '../../utils';
 import { ReactComponent as Arrow } from '../../assets/svg/arrow-up.svg';
 import { ReactComponent as CalendarIconLight } from '../../assets/svg/calendarIconDark.svg';

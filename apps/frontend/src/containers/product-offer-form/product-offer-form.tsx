@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Box, Typography, FormLabel, TextField } from '@material-ui/core';
+import { Grid, Box, Typography, FormLabel, TextField } from '@mui/material';
 import { useStyles } from './product-offer-form.style';
 
 interface ProductOfferFormProps {
