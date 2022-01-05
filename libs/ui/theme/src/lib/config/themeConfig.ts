@@ -9,15 +9,6 @@ import { enUS, plPL } from '@mui/material/locale';
 import { IStyleConfig } from '../utils/makeThemeConfig';
 
 const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 960,
-      lg: 1200,
-      xl: 1920,
-    },
-  },
   palette: {
     primary: {
       main: styleConfig.PRIMARY_COLOR,
@@ -162,6 +153,19 @@ const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
     },
     MuiButton: {
       styleOverrides: {
+        root: {
+          color: styleConfig.PRIMARY_COLOR,
+          '& .MuiButton-endIcon': {
+            color: styleConfig.SECONDARY_COLOR
+          },
+          '&:hover':{
+            backgroundColor: styleConfig.SECONDARY_COLOR,
+            color: styleConfig.WHITE,
+            '& .MuiButton-endIcon': {
+              color: styleConfig.PRIMARY_COLOR,
+            }
+          }
+        },
         contained: {
           '&.Mui-disabled': {
             color: styleConfig.TEXT_COLOR_DEFAULT,

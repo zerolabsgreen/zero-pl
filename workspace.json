@@ -94,21 +94,75 @@
     },
     "frontend": {
       "root": "apps/frontend",
-      "sourceRoot": "apps/frontend/src",
+      "sourceRoot": "apps/frontend",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/next:build",
+          "outputs": ["{options.outputPath}"],
+          "defaultConfiguration": "production",
+          "options": {
+            "root": "apps/frontend",
+            "outputPath": "dist/apps/frontend"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "frontend:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "frontend:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "executor": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "frontend:build:production"
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/frontend"],
+          "options": {
+            "jestConfig": "apps/frontend/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
+          }
+        }
+      },
+      "tags": []
+    },
+    "frontend-react": {
+      "root": "apps/frontend-react",
+      "sourceRoot": "apps/frontend-react/src",
       "projectType": "application",
       "targets": {
         "build": {
           "executor": "@nrwl/web:webpack",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/frontend",
-            "index": "apps/frontend/src/index.html",
-            "main": "apps/frontend/src/main.tsx",
-            "polyfills": "apps/frontend/src/polyfills.ts",
-            "tsConfig": "apps/frontend/tsconfig.app.json",
+            "outputPath": "dist/apps/frontend-react",
+            "index": "apps/frontend-react/src/index.html",
+            "main": "apps/frontend-react/src/main.tsx",
+            "polyfills": "apps/frontend-react/src/polyfills.ts",
+            "tsConfig": "apps/frontend-react/tsconfig.app.json",
             "assets": [
-              "apps/frontend/src/favicon.png",
-              "apps/frontend/src/assets"
+              "apps/frontend-react/src/favicon.png",
+              "apps/frontend-react/src/assets"
             ],
             "styles": [],
             "scripts": [],
@@ -118,8 +172,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/frontend/src/environments/environment.ts",
-                  "with": "apps/frontend/src/environments/environment.prod.ts"
+                  "replace": "apps/frontend-react/src/environments/environment.ts",
+                  "with": "apps/frontend-react/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -144,23 +198,23 @@
           "options": {
             "parallel": false,
             "commands": [
-              "cp ./apps/frontend/Dockerfile ./dist/apps/frontend/",
-              "cp -R ./apps/frontend/nginx ./dist/apps/frontend/nginx",
-              "cp ./prod-init.sh ./dist/apps/frontend",
-              "docker build ./dist/apps/frontend/ --pull -t zero-pl-frontend",
-              "rm -r ./dist/apps/frontend/Dockerfile ./dist/apps/frontend/prod-init.sh ./dist/apps/frontend/nginx"
+              "cp ./apps/frontend-react/Dockerfile ./dist/apps/frontend-react/",
+              "cp -R ./apps/frontend-react/nginx ./dist/apps/frontend-react/nginx",
+              "cp ./prod-init.sh ./dist/apps/frontend-react",
+              "docker build ./dist/apps/frontend-react/ --pull -t zero-pl-frontend",
+              "rm -r ./dist/apps/frontend-react/Dockerfile ./dist/apps/frontend-react/prod-init.sh ./dist/apps/frontend-react/nginx"
             ]
           }
         },
         "serve": {
           "executor": "@nrwl/web:dev-server",
           "options": {
-            "buildTarget": "frontend:build",
+            "buildTarget": "frontend-react:build",
             "hmr": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "frontend:build:production",
+              "buildTarget": "frontend-react:build:production",
               "hmr": false
             }
           }
@@ -168,14 +222,14 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": ["apps/frontend-react/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/frontend"],
+          "outputs": ["coverage/apps/frontend-react"],
           "options": {
-            "jestConfig": "apps/frontend/jest.config.js",
+            "jestConfig": "apps/frontend-react/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -289,6 +343,49 @@
         }
       },
       "tags": []
+    },
+    "zero-pl-components": {
+      "root": "libs/zero-pl-components",
+      "sourceRoot": "libs/zero-pl-components/src",
+      "projectType": "library",
+      "tags": [],
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:rollup",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/zero-pl-components",
+            "tsConfig": "libs/zero-pl-components/tsconfig.lib.json",
+            "project": "libs/zero-pl-components/package.json",
+            "entryFile": "libs/zero-pl-components/src/index.ts",
+            "external": ["react/jsx-runtime", "@emotion/styled/base"],
+            "rollupConfig": "rollup.config.js",
+            "compiler": "babel",
+            "assets": [
+              {
+                "glob": "libs/zero-pl-components/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/zero-pl-components/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/zero-pl-components"],
+          "options": {
+            "jestConfig": "libs/zero-pl-components/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

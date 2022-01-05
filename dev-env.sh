@@ -5,4 +5,4 @@
 #Read `.env` file
 export $(echo $(cat ./.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
 
-envsubst < ./apps/frontend/src/index.html.template > ./apps/frontend/src/index.html
+envsubst < ./apps/frontend-react/src/index.html.template > ./apps/frontend-react/src/index.html

@@ -1,0 +1,26 @@
+.welcome-block {
+  padding: 0 41px 0 40px;
+  background-size: cover;
+  background-repeat: 'round';
+}
+
+.form-block {
+  background-color: "#fff";
+  padding: '32px 31px 32px 32px';
+  width: '100%';
+  flex-direction: 'unset';
+  box-shadow: 0px 0px 10px rgba(112, 60, 187, 0.2);
+  border-radius: 5px;
+  color: red
+}
+.form-block .MuiSvgIcon-root {
+  margin-right: 20px;
+}
+.form-block .MuiOutlinedInput-root {
+  height: 48px;
+  border-radius: 5px;
+}
+.form-block .MuiOutlinedInput-root .MuiSelect-select {
+  border-radius: 5px;
+  padding: 12px 0 12px 14px;
+}
