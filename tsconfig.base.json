@@ -19,7 +19,8 @@
         "libs/api-client/src/index.ts"
       ],
       "@energyweb/zero-protocol-labs-theme": ["libs/ui/theme/src/index.ts"],
-      "@zerolabs/zero-pl-components": ["libs/zero-pl-components/src/index.ts"]
+      "@zerolabs/zero-pl-crypto-flow": ["libs/ui/crypto-flow/src/index.ts"],
+      "@zerolabs/zero-pl-components": ["libs/ui/components/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

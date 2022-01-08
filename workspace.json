@@ -303,6 +303,92 @@
       },
       "tags": []
     },
+    "ui-components": {
+      "root": "libs/ui/components",
+      "sourceRoot": "libs/ui/components/src",
+      "projectType": "library",
+      "tags": [],
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:rollup",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/ui/components",
+            "tsConfig": "libs/ui/components/tsconfig.lib.json",
+            "project": "libs/ui/components/package.json",
+            "entryFile": "libs/ui/components/src/index.ts",
+            "external": ["react/jsx-runtime", "@emotion/styled/base"],
+            "rollupConfig": "rollup.config.js",
+            "compiler": "babel",
+            "assets": [
+              {
+                "glob": "libs/ui/components/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/ui/components/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ui/components"],
+          "options": {
+            "jestConfig": "libs/ui/components/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "ui-crypto-flow": {
+      "root": "libs/ui/crypto-flow",
+      "sourceRoot": "libs/ui/crypto-flow/src",
+      "projectType": "library",
+      "tags": [],
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:rollup",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/ui/crypto-flow",
+            "tsConfig": "libs/ui/crypto-flow/tsconfig.lib.json",
+            "project": "libs/ui/crypto-flow/package.json",
+            "entryFile": "libs/ui/crypto-flow/src/index.ts",
+            "external": ["react/jsx-runtime"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "compiler": "babel",
+            "assets": [
+              {
+                "glob": "libs/ui/crypto-flow/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/ui/crypto-flow/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ui/crypto-flow"],
+          "options": {
+            "jestConfig": "libs/ui/crypto-flow/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "ui-theme": {
       "root": "libs/ui/theme",
       "sourceRoot": "libs/ui/theme/src",
@@ -343,49 +429,6 @@
         }
       },
       "tags": []
-    },
-    "zero-pl-components": {
-      "root": "libs/zero-pl-components",
-      "sourceRoot": "libs/zero-pl-components/src",
-      "projectType": "library",
-      "tags": [],
-      "targets": {
-        "build": {
-          "executor": "@nrwl/web:rollup",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/libs/zero-pl-components",
-            "tsConfig": "libs/zero-pl-components/tsconfig.lib.json",
-            "project": "libs/zero-pl-components/package.json",
-            "entryFile": "libs/zero-pl-components/src/index.ts",
-            "external": ["react/jsx-runtime", "@emotion/styled/base"],
-            "rollupConfig": "rollup.config.js",
-            "compiler": "babel",
-            "assets": [
-              {
-                "glob": "libs/zero-pl-components/README.md",
-                "input": ".",
-                "output": "."
-              }
-            ]
-          }
-        },
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["libs/zero-pl-components/**/*.{ts,tsx,js,jsx}"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/zero-pl-components"],
-          "options": {
-            "jestConfig": "libs/zero-pl-components/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
     }
   }
 }

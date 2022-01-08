@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs';
-import { useForm } from 'react-hook-form';
+import { useFormik } from 'formik';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -8,7 +8,16 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import { FormDatePicker, FormSelect } from '@zerolabs/zero-pl-components';
 
-export const initialFormData = {
+type SearchBlockFormValues = {
+  region: string;
+  deviceType: string;
+  productType: string;
+  generalStartDate: Dayjs;
+  generalEndDate: Dayjs;
+  amount: string;
+}
+
+export const initialFormData: SearchBlockFormValues = {
   region: '',
   deviceType: '',
   productType: '',
@@ -17,16 +26,16 @@ export const initialFormData = {
   amount: '',
 };
 
-const onSubmit = (data, e) => console.log(data, e);
-const onError = (errors, e) => console.log(errors, e);
+const onSubmit = (data) => console.log(data);
 
 export const SearchBlock = () => {
-  const { register, control, handleSubmit } = useForm({
-    defaultValues: initialFormData
+  const formik = useFormik<SearchBlockFormValues>({
+    initialValues: initialFormData,
+    onSubmit
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)}>
+    <form onSubmit={formik.handleSubmit}>
       <FormBlock>
         <Box display="flex" width="100%">
           <Box mr="16px" width="100%">
@@ -35,7 +44,8 @@ export const SearchBlock = () => {
             </InputLabel>
             <FormSelect
               name="region"
-              control={control}
+              handleChange={formik.handleChange}
+              value={formik.values.region}
               options={regionOptionsMock}
               textFieldProps={{ margin: 'none' }}
             />
@@ -46,7 +56,8 @@ export const SearchBlock = () => {
             </InputLabel>
             <FormSelect
               name="deviceType"
-              control={control}
+              handleChange={formik.handleChange}
+              value={formik.values.deviceType}
               options={deviceTypeOptionsMock}
               textFieldProps={{ margin: 'none' }}
             />
@@ -60,7 +71,8 @@ export const SearchBlock = () => {
               </InputLabel>
               <FormSelect
                 name="productType"
-                control={control}
+                handleChange={formik.handleChange}
+                value={formik.values.productType}
                 options={productTypeOptionsMock}
                 textFieldProps={{ margin: 'none' }}
               />
@@ -71,7 +83,9 @@ export const SearchBlock = () => {
               </InputLabel>
               <TextField
                 fullWidth
-                {...register('amount')}
+                name="amount"
+                onChange={formik.handleChange}
+                value={formik.values.amount}
                 placeholder="Amount"
                 InputProps={{
                   endAdornment: (
@@ -88,7 +102,8 @@ export const SearchBlock = () => {
                 </InputLabel>
                 <FormDatePicker
                   name="generalStartDate"
-                  control={control}
+                  setFieldValue={formik.setFieldValue}
+                  value={formik.values.generalStartDate}
                   textFieldProps={{ margin: 'none' }}
                 />
               </Box>
@@ -98,7 +113,8 @@ export const SearchBlock = () => {
                 </InputLabel>
                 <FormDatePicker
                   name="generalEndDate"
-                  control={control}
+                  setFieldValue={formik.setFieldValue}
+                  value={formik.values.generalEndDate}
                   textFieldProps={{ margin: 'none' }}
                 />
               </Box>
