@@ -14,7 +14,7 @@ export const FormStepper: FC<FormStepperProps> = ({ activeStep, steps }) => {
     <Stepper
       alternativeLabel
       nonLinear
-      connector={<></>}
+      connector={<div></div>}
       activeStep={activeStep}
     >
       {steps.map((label, index) => (
@@ -26,8 +26,7 @@ export const FormStepper: FC<FormStepperProps> = ({ activeStep, steps }) => {
   );
 };
 
-const StyledStep = styled(Step)(
-  ({ theme }) => `
+const StyledStep = styled(Step)(({ theme, active }) => `
   & .MuiStepLabel-iconContainer {
     background-color: transparent;
     display: flex;
@@ -36,7 +35,10 @@ const StyledStep = styled(Step)(
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    border: 2px solid #9B95BD;
+    border: ${active
+    ? `2px solid ${theme.palette.secondary.main}`
+    : '2px solid #9B95BD'};
+
     & .MuiSvgIcon-root {
       & circle {
         display: none;
@@ -47,11 +49,14 @@ const StyledStep = styled(Step)(
     }
   }
   & .MuiStepIcon-text {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 500;
-  },
+    fill: ${active && theme.palette.secondary.main}
+  }
+  & .MuiStepLabel-label.Mui-active {
+    color: ${theme.palette.secondary.main};
+  }
   & .Mui-active {
     color: ${theme.palette.secondary.main};
   }
-`
-);
+`);

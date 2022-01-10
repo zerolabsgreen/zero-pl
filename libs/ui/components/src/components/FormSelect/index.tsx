@@ -1,12 +1,15 @@
 import { FC } from 'react';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
+import type { InputBaseProps } from '@mui/material/InputBase';
+import { styled } from '@mui/material/styles';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { InputBaseProps } from '@mui/material/InputBase';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export type SelectOption = {
   value: string;
   label: string;
-  img?: FC;
+  img?: string;
 };
 
 export interface FormSelectProps {
@@ -16,12 +19,11 @@ export interface FormSelectProps {
   options: SelectOption[];
   errorExists?: boolean;
   errorText?: string;
-  variant?: TextFieldProps['variant'];
   disabled?: boolean;
   required?: boolean;
+  placeholder?: string;
   label?: string;
   inputProps?: InputBaseProps['inputProps'];
-  textFieldProps?: Omit<TextFieldProps, 'value' | 'onChange'>;
 }
 
 
@@ -30,38 +32,68 @@ export const FormSelect: FC<FormSelectProps> = ({
   handleChange,
   value,
   options,
-  label,
-  errorExists = false,
-  errorText = '',
-  variant,
-  disabled = false,
-  required = false,
-  inputProps,
-  textFieldProps,
+  placeholder,
 }) => {
   return (
-    <TextField
-      select
+    <StyledSelect
       fullWidth
+      displayEmpty
       name={name}
-      label={label}
-      error={errorExists}
-      helperText={errorText}
-      margin="normal"
-      variant={variant}
       value={value}
       onChange={handleChange}
-      disabled={disabled}
-      required={required}
-      inputProps={inputProps}
-      {...textFieldProps}
+      IconComponent={KeyboardArrowDownIcon}
+      MenuProps={{ disablePortal: true }}
+      input={<StyledInput />}
+      renderValue={(value: any) => (
+        <ValueRenderer
+          value={value}
+          placeholder={placeholder}
+          options={options}
+        />
+      )}
     >
-      {options.map((option) => (
-        <MenuItem key={option.label} value={option.value}>
-          {option.img ? <option.img /> : null}
-          {option.label}
-        </MenuItem>
-      ))}
-    </TextField>
+      {options.map(option => {
+        return (
+          <MenuItem key={option.label} value={option.value}>
+            <img src={option.img} />
+            {option.label}
+          </MenuItem>
+        )
+      })}
+    </StyledSelect>
   );
 };
+
+const ValueRenderer = ({ value, placeholder, options }: { value: string, placeholder?: string, options: SelectOption[] }) => {
+  if (!value) return (<span className='placeholder'>{placeholder || ''}</span>);
+
+  const label = options.find(option => option.value === value)?.label;
+  return (<span>{label || ''}</span>)
+}
+
+const StyledSelect = styled(Select)`
+  & span {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 23px;
+  }
+  & .placeholder {
+    color: #6A658A;
+    margin-left: 8px;
+  }
+  & .MuiMenuItem-root {
+    font-weight: 600;
+    line-height: 20px;
+  }
+  & .MuiMenuItem-root svg {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const StyledInput = styled(OutlinedInput)`
+  svg {
+    margin-right: 16px;
+  }
+`

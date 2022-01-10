@@ -7,6 +7,7 @@ import {
   Title,
   Subtitle,
   WizardForm,
+  SelectedProtocolProvider,
 } from '@zerolabs/zero-pl-crypto-flow';
 
 const WizardPage: NextPage = () => {
@@ -15,19 +16,21 @@ const WizardPage: NextPage = () => {
       <Head>
         <title>Zero | Create request</title>
       </Head>
-      <WizardContentWrapper>
-        <TitleWrapper>
-          <Title color="secondary">
-            Great! Let’s make your crypto green!
-          </Title>
-          <Subtitle color="#fff">
-            Congratulations on wanting to help the planet
-            by buying Renewable Energy
-          </Subtitle>
-        </TitleWrapper>
-        <WizardForm />
-      </WizardContentWrapper>
-    </WizardPageWrapper>
+      <SelectedProtocolProvider>
+        <WizardContentWrapper>
+          <TitleWrapper>
+            <Title color="secondary">
+              Great! Let’s make your crypto green!
+            </Title>
+            <Subtitle color="#fff">
+              Congratulations on wanting to help the planet
+              by buying Renewable Energy
+            </Subtitle>
+          </TitleWrapper>
+          <WizardForm />
+        </WizardContentWrapper>
+      </SelectedProtocolProvider>
+      </WizardPageWrapper>
   );
 };
 

@@ -47,7 +47,6 @@ export const SearchBlock = () => {
               handleChange={formik.handleChange}
               value={formik.values.region}
               options={regionOptionsMock}
-              textFieldProps={{ margin: 'none' }}
             />
           </Box>
           <Box mb="16px" width="100%">
@@ -59,7 +58,6 @@ export const SearchBlock = () => {
               handleChange={formik.handleChange}
               value={formik.values.deviceType}
               options={deviceTypeOptionsMock}
-              textFieldProps={{ margin: 'none' }}
             />
           </Box>
         </Box>
@@ -74,7 +72,6 @@ export const SearchBlock = () => {
                 handleChange={formik.handleChange}
                 value={formik.values.productType}
                 options={productTypeOptionsMock}
-                textFieldProps={{ margin: 'none' }}
               />
             </Box>
             <Box width="100%">
