@@ -1,17 +1,13 @@
 import {
   Box,
   Paper,
-  Theme,
   Tooltip,
   tooltipClasses,
-  withStyles,
+  useTheme,
 } from '@mui/material';
-import Fade from '@mui/material/Fade';
-import Popper from '@mui/material/Popper';
-import React, { FC, ReactElement, ReactNode, useState } from 'react';
+import { FC, ReactElement } from 'react';
 import { useStyles } from './pop-over.styles';
 import { styled } from '@mui/styles';
-/* eslint-disable-next-line */
 
 export interface PopOverProps {
   children: ReactElement;
@@ -22,7 +18,7 @@ export interface PopOverProps {
 
 const CustomTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme: Theme }) => ({
+))(() => ({
   [`& .${tooltipClasses.tooltip}`]: {
     color: 'rgba(0, 0, 0, 0.87)',
     maxWidth: '500px',
@@ -38,6 +34,7 @@ export const PopOver: FC<PopOverProps> = ({
   children,
 }) => {
   const styles = useStyles();
+  const theme = useTheme();
   if (!popoverContent && !popoverContentElement) {
     throw new Error(
       `Please provide "popoverContent" or "popoverContentElement" property!`
@@ -47,7 +44,7 @@ export const PopOver: FC<PopOverProps> = ({
     <CustomTooltip
       leaveDelay={hideTimeout}
       title={
-        <Paper sx={{ backgroundColor: '#2D1155', color: '#fff' }}>
+        <Paper sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.text.primary }}>
           <Box p={'10px 40px'}>
             {popoverContent ? (
               <pre className={styles.popoverText}>{popoverContent}</pre>

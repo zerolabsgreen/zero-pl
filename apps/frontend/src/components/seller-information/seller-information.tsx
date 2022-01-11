@@ -1,5 +1,5 @@
 import PaperBox from '../paper-box/paper-box';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import FieldLabel from '../field-label/field-label';
 import FieldValue from '../field-value/field-value';
 import FieldValueMultiline from '../field-value-multiline/field-value-multiline';
@@ -16,6 +16,7 @@ export const useStyles = makeStyles({
 
 export interface SellerInformationProps {
   name: string;
+  id: string;
   contactPerson: string;
   addressFirstLine: string;
   addressSecondLine?: string;
@@ -25,22 +26,33 @@ export const SellerInformation = ({
   addressFirstLine,
   addressSecondLine,
   name,
+  id,
   contactPerson,
 }: SellerInformationProps) => {
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
-    <Box height={'100%'}>
+    <Box height="90%">
       <Typography
-        mb={3}
+        mb="20px"
         fontWeight={700}
         lineHeight={'24px'}
-        color={'#2D1155'}
+        color='primary'
         fontSize={'20px'}
       >
         Seller information
       </Typography>
-      <PaperBox customHeight={'calc(100% - 48px)'} bgColor={'#F6EFFF'}>
+      <PaperBox bgColor={theme.palette.background.default}>
+      <Box
+          className={classes.flexColumn}
+          display={'flex'}
+          alignItems={'center'}
+          mb={2}
+        >
+          <FieldLabel width={'200px'} labelText={'Seller ID'} />
+          <FieldValue valueText={id} />
+        </Box>
         <Box
           className={classes.flexColumn}
           display={'flex'}

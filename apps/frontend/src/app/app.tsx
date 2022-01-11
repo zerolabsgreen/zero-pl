@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Header } from '../components/header/header';
-import ProductPage from '../pages/product-page/product-page';
+import ProofPage from '../pages/ProofPage/ProofPage';
 import NotFoundPage from '../pages/not-found-page/not-found-page';
 import PurchasePage from '../pages/purchase-page/purchase-page';
 import { ProductOfferPage } from '../pages/product-offer-page/product-offer-page';
@@ -28,7 +28,7 @@ export const App = () => {
             <Route path={'/'} element={<WelcomePage />} />
             <Route
               path={'/partners/filecoin/purchases/:productId'}
-              element={<ProductPage />}
+              element={<ProofPage />}
             />
             <Route
               path={'/partners/filecoin/nodes/:productId/transactions'}

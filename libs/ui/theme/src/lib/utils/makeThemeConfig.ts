@@ -34,7 +34,7 @@ export function createStyleConfig(
   return {
     PRIMARY_COLOR: themeVariables.primaryColor,
     PRIMARY_COLOR_DARK: themeVariables.primaryColorDark,
-    PRIMARY_COLOR_LIGHT: themeVariables.purpleLight,
+    PRIMARY_COLOR_LIGHT: themeVariables.primaryColorLight,
     PRIMARY_COLOR_DIM: themeVariables.primaryColorDim,
     SECONDARY_COLOR: themeVariables.secondaryColor,
     SECONDARY_COLOR_LIGHT: themeVariables.secondaryColorLight,

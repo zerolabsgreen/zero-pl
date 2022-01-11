@@ -1,4 +1,5 @@
-const $purpleExtraDark = '#2D1155';
+const $blueExtraDark = '#19355E';
+const $blueLight = '#4480DB';
 const $purpleDark = '#421D77';
 const $purple = '#362c45';
 const $purpleLight = '#703CBB';
@@ -13,6 +14,7 @@ const $greenLight = '#b1ebcd';
 const $graphite = '#6A658A';
 
 const $textColorDefault = '#a8a8a8';
+const $simpleTextColor = '#ffffff';
 const $inputBackgroundColor = '#F6F3F9';
 const $inputTextColor = '#2D1155';
 const $boxShadowColor = '#A09AC6';
@@ -39,6 +41,7 @@ const $fontSize = 14;
 
 export type UiThemeVariables = {
   primaryColor: string;
+  primaryColorLight: string;
   primaryColorDark: string;
   primaryColorDim: string;
   secondaryColor: string;
@@ -74,13 +77,14 @@ export type UiThemeVariables = {
 };
 
 export const variables: UiThemeVariables = {
-  primaryColor: $purpleExtraDark,
+  primaryColor: $blueExtraDark,
+  primaryColorLight: $blueLight,
   primaryColorDark: $purpleDark,
   primaryColorDim: $purple,
   secondaryColor: $green,
   secondaryColorLight: $greenLight,
   textColorDefault: $textColorDefault,
-  simpleTextColor: $textColorDefault,
+  simpleTextColor: $simpleTextColor,
   bodyBackgroundColor: $bodyBackgroundColor,
   mainBackgroundColor: $mainBackgroundColor,
   defaultBackgroundColor: $defaultBackgroundColor,

@@ -1,4 +1,4 @@
-import { Box, Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableRow, useTheme } from '@mui/material';
 import FuelType, { FuelTypeEnum } from '../../fuel-type/fuel-type';
 import { useStyles } from '../table-list.styles';
 import dayjs from 'dayjs';
@@ -21,16 +21,17 @@ export const TableListMobile = ({
   recsSold,
 }: TableListMobileProps) => {
   const styles = useStyles();
+  const theme = useTheme();
   return (
     <Box
       boxShadow={'none'}
       borderRadius={'5px'}
-      bgcolor={'#F6F3F9'}
+      bgcolor={theme.palette.background.default}
       mb={2}
       p={'16px 16px'}
       className="MobileList"
     >
-      <Table sx={{ backgroundColor: '#fff' }}>
+      <Table sx={{ backgroundColor: theme.palette.background.paper }}>
         <TableBody>
           <TableRow className={styles.tbRowMedia}>
             <TableCell className={styles.thCell} align="left">

@@ -36,7 +36,7 @@ export const PageSection = ({
     <Box pt={'13px'} className={clsx(classes.style, wrapperClassName)}>
       <Typography
         sx={{ my: '13px', textTransform: 'uppercase' }}
-        color={'#2D1155'}
+        color='primary'
         lineHeight={'31px'}
         fontSize={'24px'}
         fontWeight={700}
@@ -53,7 +53,7 @@ export const PageSection = ({
             <Typography
               component={'div'}
               fontWeight={600}
-              color={'#2D1155'}
+              color='primary'
               fontSize={'18px'}
               className={helperTextClassName}
             >
