@@ -17,7 +17,7 @@ jobs:
 
   run-tests:
     services:
-      postgres:
+      db:
         image: postgres:13-alpine
         env:
           POSTGRES_USER: postgres
@@ -30,8 +30,46 @@ jobs:
           --health-retries 10
         ports:
           - 5432:5432
+      db-issuer:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: issuer
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 10
+        ports:
+          - 5433:5432
+      ganache:
+        image: trufflesuite/ganache-cli
+        ports:
+          - 5432:5432
+      mailhog:
+        image: mailhog/mailhog:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+
     runs-on: ubuntu-latest
     needs: cancel-previous
+    env:
+      DATABASE_URL: 'postgresql://postgres:postgres@db:5432/zero-protocol-labs'
+      ISSUER_DATABASE_URL: 'postgresql://postgres:postgres@db-issuer:5433/issuer'
+      PG_TRANSACTION_TIMEOUT: 120000
+      PORT: 3333
+      ISSUER_API_PORT: 3334
+      WEB3: http://ganache:8545
+      MNEMONIC: 'chalk park staff buzz chair purchase wise oak receive avoid avoid home'
+      ISSUER_CHAIN_ADDRESS: '0xD173313A51f8fc37BcF67569b463abd89d81844f'
+      LOG_LEVELS: 'log,error,warn,debug,verbose'
+      CORS_ORIGIN: '*'
+      CORS_MAX_AGE: 900
+      UPLOADED_FILE_SIZE_LIMIT: 200000
+      SMTP_URL: 'smtp://mailhog:1025'
+
     steps:
     - uses: actions/checkout@v2
       with:
@@ -46,6 +84,9 @@ jobs:
 
     - name: Build application
       run: yarn build
+
+    - name: Migrate 
+      run: yarn migrate:all
 
     - name: Run tests
       run: yarn test
