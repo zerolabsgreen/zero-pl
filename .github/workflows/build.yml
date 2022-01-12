@@ -44,7 +44,7 @@ jobs:
         ports:
           - 5433:5432
       ganache:
-        image: trufflesuite/ganache-cli
+        image: piotrkosinski/ganache-cli:v6.12.2
         ports:
           - 8545:8545
       mailhog:
