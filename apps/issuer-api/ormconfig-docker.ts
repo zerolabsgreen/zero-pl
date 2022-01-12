@@ -14,7 +14,10 @@ const getDBConnectionOptions = (): ConnectionOptions => {
     port: parseInt(url.port, 10),
     username: url.username,
     password: url.password,
-    database: url.pathname.replace('/', '')
+    database: url.pathname.replace('/', ''),
+    ssl: Boolean(process.env.DB_SSL_OFF)
+      ? false
+      : { rejectUnauthorized: false },
   };
 };
 
@@ -23,10 +26,12 @@ const config: ConnectionOptions = {
   synchronize: false,
   migrationsRun: true,
   migrations: [
-    resolve(`${__dirname}/../node_modules/@energyweb/issuer-api/dist/js/migrations/*.js`),
-    `${__dirname}/migrations/*.ts`
+    resolve(
+      `${__dirname}/../node_modules/@energyweb/issuer-api/dist/js/migrations/*.js`
+    ),
+    `${__dirname}/migrations/*.ts`,
   ],
-  migrationsTableName: 'migrations_issuer_api'
+  migrationsTableName: 'migrations_issuer_api',
 };
 
 export = config;

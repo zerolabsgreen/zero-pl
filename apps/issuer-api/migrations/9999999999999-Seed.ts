@@ -4,7 +4,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { providers, Wallet } from 'ethers';
-import { Contracts as IssuerContracts, IContractsLookup } from '@energyweb/issuer';
+import {
+  Contracts as IssuerContracts,
+  IContractsLookup,
+} from '@energyweb/issuer';
 import { getProviderWithFallback } from '@energyweb/utils-general';
 
 require('dotenv').config({ path: '../.env' });
@@ -23,21 +26,38 @@ export class Seed9999999999999 implements MigrationInterface {
       throw new Error('process.env.WEB3 is undefined');
     }
 
-    if (!process.env.MNEMONIC) {
-      throw new Error('process.env.MNEMONIC is undefined');
+    if (!process.env.MNEMONIC && !process.env.ISSUER_PK) {
+      throw new Error(
+        'process.env.MNEMONIC and process.env.ISSUER_PK is undefined'
+      );
     }
 
     const [primaryRpc, fallbackRpc] = process.env.WEB3.split(';');
     const provider = getProviderWithFallback(primaryRpc, fallbackRpc);
-    const deployer = Wallet.fromMnemonic(process.env.MNEMONIC, `m/44'/60'/0'/0/${0}`); // Index 0 account
+
+    let deployer: Wallet;
+
+    if (process.env.MNEMONIC) {
+      deployer = Wallet.fromMnemonic(
+        process.env.MNEMONIC,
+        `m/44'/60'/0'/0/${0}`
+      );
+    } else {
+      deployer = new Wallet(String(process.env.ISSUER_PK));
+    }
+
+    console.log(`Deploying using ${deployer.address}`);
+
     const contractsLookup = await this.deployContracts(deployer, provider);
 
     await queryRunner.query(
       `INSERT INTO public.issuer_blockchain_properties (
                 "netId", "registry", "issuer", "rpcNode", "rpcNodeFallback", "platformOperatorPrivateKey"
-            ) VALUES (${provider.network.chainId}, '${contractsLookup.registry}', '${
-                contractsLookup.issuer
-            }', '${primaryRpc}', '${fallbackRpc ?? ''}', '${deployer.privateKey}')`
+            ) VALUES (${provider.network.chainId}, '${
+        contractsLookup.registry
+      }', '${contractsLookup.issuer}', '${primaryRpc}', '${
+        fallbackRpc ?? ''
+      }', '${deployer.privateKey}')`
     );
   }
 
@@ -50,11 +70,15 @@ export class Seed9999999999999 implements MigrationInterface {
       : `0x${deployer.privateKey}`;
 
     const registry = await IssuerContracts.migrateRegistry(provider, adminPK);
-    const issuer = await IssuerContracts.migrateIssuer(provider, adminPK, registry.address);
+    const issuer = await IssuerContracts.migrateIssuer(
+      provider,
+      adminPK,
+      registry.address
+    );
 
     return {
       registry: registry.address,
-      issuer: issuer.address
+      issuer: issuer.address,
     };
   }
 }

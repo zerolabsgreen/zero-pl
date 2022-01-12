@@ -5,7 +5,7 @@ RUN apk add --no-cache bash
 WORKDIR /usr/share/nginx/html
 
 COPY . /usr/share/nginx/html/
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY nginx/default.conf.template /etc/nginx/conf.d/default.conf.template
 
 COPY ./prod-init.sh .
 RUN chmod +x ./prod-init.sh
