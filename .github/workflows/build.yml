@@ -46,9 +46,7 @@ jobs:
       ganache:
         image: trufflesuite/ganache-cli
         ports:
-          - 5432:5432
-        env:
-          DOCKER: false
+          - 8545:8545
       mailhog:
         image: mailhog/mailhog:latest
         ports:
