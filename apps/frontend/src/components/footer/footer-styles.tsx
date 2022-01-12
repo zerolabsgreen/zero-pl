@@ -1,11 +1,11 @@
 import { makeStyles } from '@mui/styles';
-import { variables } from '@energyweb/zero-protocol-labs-theme';
 
-export const useStyles = makeStyles({
+export const useStyles = makeStyles((theme) => ({
   footer: {
-    backgroundColor: variables.primaryColorDark,
+    backgroundColor: theme.palette.primary.main,
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: '36px 72px 37px 72px',
     '@media (max-width: 960px)': {
       flexDirection: 'column',
@@ -16,7 +16,7 @@ export const useStyles = makeStyles({
     justifyContent: 'center',
     fontSize: '12px',
     fontWeight: 700,
-    color: variables.purpleFooterText,
+    color: theme.palette.text.primary,
     textDecoration: 'none',
     cursor: 'pointer',
   },
@@ -28,4 +28,4 @@ export const useStyles = makeStyles({
       flexDirection: 'column',
     },
   },
-});
+}));

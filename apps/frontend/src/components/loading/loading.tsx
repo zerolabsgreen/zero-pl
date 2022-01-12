@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Helmet } from 'react-helmet-async';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface LoadingProps {}
@@ -13,12 +13,14 @@ const StyledLoading = styled.div`
   flex-wrap: wrap;
 `;
 
-export const Loading = () => (
+export const Loading = () => {
+  const theme = useTheme();
+  return (
   <StyledLoading>
     <Helmet>
       <title>Loading - Please Wait</title>
       <style type={'text/css'}>
-        {`body * { background-color: #2D1155 ; }
+        {`body * { background-color: ${theme.palette.primary.main} ; }
         .opacitor { animation: showHide 2s infinite; }
         @keyframes showHide { from { opacity:1 } to { opacity:0.3 } alternate;  }
 `}
@@ -30,7 +32,7 @@ export const Loading = () => (
         <Typography
           className={'opacitor'}
           textAlign={'center'}
-          color={'#F6F3F9'}
+          color={theme.palette.background.default}
           fontWeight={700}
           fontSize={'32px'}
         >
@@ -96,8 +98,8 @@ export const Loading = () => (
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(151.5 151.5) rotate(90) scale(151.5)"
           >
-            <stop stopColor="#703CBB" />
-            <stop offset="1" stopColor="#2D1155" />
+            <stop stopColor={theme.palette.primary.light} />
+            <stop offset="1" stopColor={theme.palette.primary.main} />
           </radialGradient>
           <radialGradient
             id="paint1_angular"
@@ -107,8 +109,8 @@ export const Loading = () => (
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(151 151) rotate(90) scale(127)"
           >
-            <stop stopColor="#703CBB" />
-            <stop offset="1" stopColor="#2D1155" />
+            <stop stopColor={theme.palette.primary.light} />
+            <stop offset="1" stopColor={theme.palette.primary.main} />
           </radialGradient>
           <radialGradient
             id="paint2_angular"
@@ -118,13 +120,13 @@ export const Loading = () => (
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(152 151) rotate(90) scale(107)"
           >
-            <stop stopColor="#703CBB" />
-            <stop offset="1" stopColor="#2D1155" />
+            <stop stopColor={theme.palette.primary.light} />
+            <stop offset="1" stopColor={theme.palette.primary.main} />
           </radialGradient>
         </defs>
       </svg>
     </Box>
   </StyledLoading>
-);
+)}
 
 export default Loading;

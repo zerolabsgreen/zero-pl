@@ -48,7 +48,7 @@ const tabsData = [
 export const TabsWelcomePage = () => {
   const styles = useStyles();
 
-  const [value, setValue] = React.useState(3);
+  const [value, setValue] = React.useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);

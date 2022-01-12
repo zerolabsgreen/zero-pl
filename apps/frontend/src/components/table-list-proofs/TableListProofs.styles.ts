@@ -36,6 +36,7 @@ export const useStyles = makeStyles({
   nameType: {
     color: variables.secondaryColor,
     fontWeight: 700,
+    marginLeft: '10px'
   },
   endIcon: {
     marginLeft: '22px',
@@ -48,7 +49,7 @@ export const useStyles = makeStyles({
     width: 130
   },
   nameCell: {
-    width: 230
+    width: 280
   },
   startIcon: {
     marginLeft: '34px',
