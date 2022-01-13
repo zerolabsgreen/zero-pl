@@ -5,7 +5,7 @@ import Loading from '../../components/loading/loading';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import TableListPurchase from '../../components/table-list-purchase/table-list-purchase';
 import PurchaseBuyerInformation from '../../components/purchase-buyer-information/purchase-buyer-information';
-import { usePurchasePageEffects } from './purchase-page.effects';
+import { usePurchasePageEffects } from './PurchasePage.effects';
 
 export const useStyles = makeStyles({
   pdTop: {
@@ -23,8 +23,8 @@ export const PurchasePage = () => {
         <Breadcrumbs
           breadcrumbList={[
             'Product Offer',
-            'PurchaseID: [productId]',
-            'REC Delivery Proof',
+            'Miner ID: [productId]',
+            'Purchase history',
           ]}
         />
         <PageSection headingText={'Purchase History'}>
@@ -45,7 +45,7 @@ export const PurchasePage = () => {
                 mb={'18px'}
                 fontWeight={700}
                 fontSize={'20px'}
-                color={'#2D1155'}
+                color='primary'
               >
                 Purchase information
               </Typography>

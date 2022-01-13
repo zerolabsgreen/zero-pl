@@ -11,7 +11,7 @@ export interface ButtonDetailsProps {
 export const ButtonDetails = ({
   onClick,
   name,
-  isButtonUp,
+  isButtonUp
 }: ButtonDetailsProps) => {
   const styles = useStyles();
   return (

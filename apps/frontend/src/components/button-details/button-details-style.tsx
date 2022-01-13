@@ -1,11 +1,11 @@
 import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   btn: {
     width: '100%',
     height: '100%',
-    padding: '14px 17px',
-    backgroundColor: '#00D08A',
+    padding: '10px 17px',
+    backgroundColor: theme.palette.secondary.main,
     boxShadow: ' 0px 4px 10px rgba(160, 154, 198, 0.2)',
     cursor: 'pointer',
     fontFamily: 'Rajdhani',
@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     fontWeight: 700,
     textTransform: 'unset',
     '&:hover': {
-      backgroundColor: '#00D08A',
+      backgroundColor: theme.palette.secondary.main,
     },
   },
   icon: {
@@ -24,6 +24,6 @@ const useStyles = makeStyles({
     marginLeft: '20px',
     transform: 'rotate(180deg)',
   },
-});
+}));
 
 export default useStyles;
