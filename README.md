@@ -69,3 +69,17 @@ have insight into all email messages sent during development and testing. It exp
 user interface on port 8025. Backend during development accesses it when the following is set in your .env
 file: `SMTP_URL=smtp://localhost:1025`. To see emails sent, navigate to `http://localhost:8025/#`. SMTP mock service has
 no data persistence, so you will lose all the email messages when it is restarted.
+
+## Deployment to Heroku
+
+Requires `heroku`command line tool
+
+One time action:
+
+```
+heroku login
+```
+
+```
+bash deploy-heroku.sh
+```
