@@ -42,20 +42,21 @@ export const BuyerSellerInformation = ({
       container
     >
       <Grid item sm={6}>
-        <SellerInformation
-          contactPerson={seller.contactPerson}
-          name={seller.name}
-          addressFirstLine={seller.addressLine1}
-          addressSecondLine={seller.addressLine2}
-        />
-      </Grid>
-      <Grid item sm={6}>
         <BuyerInformation
           generationPeriod={generationPeriod}
           buyerId={buyer.id}
           buyerName={buyer.name}
           filecoinMinerIdList={filecoinMinerIdList}
           recsAmount={recsTransactions}
+        />
+      </Grid>
+      <Grid item sm={6}>
+        <SellerInformation
+          id={seller.id}
+          name={seller.name}
+          addressFirstLine={seller.addressLine1}
+          addressSecondLine={seller.addressLine2}
+          contactPerson={seller.contactPerson}
         />
       </Grid>
     </Grid>

@@ -1,27 +1,34 @@
 import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard';
-import { Box } from '@mui/material';
+import { ReactComponent as EyeIcon } from '../../assets/svg/eye.svg';
+import { Box, styled } from '@mui/material';
 
-/* eslint-disable-next-line */
 export interface EthereumAddressProps {
   address: string;
   shortify?: boolean;
   clipboard?: boolean;
+  visibility?: boolean;
 }
 
 export const EthereumAddress = ({
-  shortify,
   address,
-  clipboard,
+  shortify = false,
+  clipboard = false,
+  visibility = false
 }: EthereumAddressProps) => {
   if (address) {
     return (
       <Box title={address}>
         {shortify ? shortifyEthAddr(address) : address}
         {clipboard && <CopyToClipboard value={address} />}
+        {visibility && <StyledEyeIcon />}
       </Box>
     );
   } else return <div>NA</div>;
 };
+
+const StyledEyeIcon = styled(EyeIcon)`
+  margin-left: 10px;
+`
 
 export const shortifyEthAddr = (str: string) => {
   return `${str.substr(0, 4)}...${str.substr(str.length - 4, str.length - 1)}`;

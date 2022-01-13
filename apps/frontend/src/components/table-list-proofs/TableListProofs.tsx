@@ -11,10 +11,10 @@ import dayjs from 'dayjs';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { FC } from 'react';
 import EthereumAddress from '../ethereum-address/ethereum-address';
-import { ReactComponent as TickIcon } from '../../assets/svg/tick.svg';
 import clsx from 'clsx';
 import { useTableListProofsEffects } from './TableListProofs.effects';
 import { useStyles } from './TableListProofs.styles';
+import { BlockchainEventIcons } from '../BlockchainEventIcons';
 
 interface TableListProofsProps {
   purchaseId?: string;
@@ -51,9 +51,6 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                     sx={{ backgroundColor: variables.inputBackgroundColor }}
                   >
                       <TableCell className={styles.tbCell}>
-                        <span className={styles.startIcon}>
-                          <TickIcon />
-                        </span>
                         <span className={styles.dateCell}>
                           <span className={styles.thCell}>Date</span>
                           <span>{dayjs(event.timestamp!*1000).format('YYYY.MM.DD')}</span>
@@ -63,6 +60,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                         className={clsx(styles.tbCell, styles.nameCell)}
                         sx={{ display: 'flex', alignItems: 'center' }}
                       >
+                        <BlockchainEventIcons event={event.name} />
                         <span className={styles.nameType}>{event.name}</span>
                       </TableCell>
                       <TableCell
@@ -83,14 +81,14 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                         <span className={clsx(styles.thCell, styles.sellerCell)}>
                           From Address
                         </span>
-                        <EthereumAddress shortify clipboard address={event.from ?? ''} />
+                        <EthereumAddress shortify address={event.from ?? ''} />
                       </TableCell>
                       <TableCell
                         className={styles.tbCell}
                         sx={{ display: 'flex', flexDirection: 'column' }}
                       >
                         <span className={styles.thCell}>To Address</span>
-                        <EthereumAddress shortify clipboard address={event.to ?? ''} />
+                        <EthereumAddress shortify address={event.to ?? ''} />
                       </TableCell>
                       <TableCell
                         className={styles.tbCell}
@@ -100,7 +98,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                           <span className={styles.thCell}>
                             Transaction proof
                           </span>
-                          <EthereumAddress shortify clipboard address={event.transactionHash ?? ''} />
+                          <EthereumAddress shortify visibility address={event.transactionHash ?? ''} />
                         </span>
                       </TableCell>
                   </TableRow>

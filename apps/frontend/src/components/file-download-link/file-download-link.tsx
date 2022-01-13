@@ -1,7 +1,7 @@
-import { Box, Link } from '@mui/material';
+import { Box, Link, useTheme } from '@mui/material';
 import LoopIcon from '@mui/icons-material/Loop';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-/* eslint-disable-next-line */
+
 export interface FileDownloadLinkProps {
   filename?: string;
   downloadUrl?: string;
@@ -11,12 +11,14 @@ export const FileDownloadLink = ({
   downloadUrl,
   filename,
 }: FileDownloadLinkProps) => {
+  const theme = useTheme();
+
   if (!downloadUrl) {
     return (
       <Box
         display={'flex'}
         alignItems={'center'}
-        color={'#00D08A'}
+        color={theme.palette.secondary.main}
         fontSize={'16px'}
         fontWeight={600}
         lineHeight={'21px'}
@@ -26,10 +28,10 @@ export const FileDownloadLink = ({
     );
   } else {
     return (
-      <Link color={'#00D08A'} href={downloadUrl}>
+      <Link color={theme.palette.secondary.main} href={downloadUrl}>
         <Box
           component={'span'}
-          color={'#fff'}
+          color={theme.palette.background.paper}
           fontSize={'16px'}
           fontWeight={600}
           lineHeight={'21px'}
@@ -39,7 +41,7 @@ export const FileDownloadLink = ({
         >
           {filename}
           <FileDownloadOutlinedIcon
-            sx={{ color: '#00D08A', marginLeft: '8px' }}
+            sx={{ color: theme.palette.secondary.main, marginLeft: '8px' }}
           />
         </Box>
       </Link>

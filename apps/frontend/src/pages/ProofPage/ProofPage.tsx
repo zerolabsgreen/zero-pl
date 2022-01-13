@@ -5,10 +5,10 @@ import PageSection from '../../components/page-section/page-section';
 import DownloadSection from '../../components/download-section/download-section';
 import TableList from '../../components/table-list/table-list';
 import TableListProofs from '../../components/table-list-proofs/TableListProofs';
-import Info from '../../components/info/info';
 import Loading from '../../components/loading/loading';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
-import { useProductPageEffects } from './product-page.effects';
+import { useProductPageEffects } from './ProofPage.effects';
+import { FC } from 'react';
 
 export const useStyles = makeStyles({
   pdTop: {
@@ -28,30 +28,17 @@ export const ProductPage = () => {
             <Breadcrumbs
               breadcrumbList={[
                 'Product Offer',
-                'PurchaseID: [productId]',
-                'REC Delivery Proof',
+                'Proof ID: [productId]',
+                'EAC Delivery Proof',
               ]}
             />
             <PageSection
-              headingText={'REC Redeemed'}
+              headingText={'Proof of Renewable Energy Consumption'}
               sectionHelpText={
-                <div style={{ letterSpacing: '0.3px' }}>
-                  This page is a summary of the proof that some{' '}
-                  <Info
-                    popoverContent={`RECs (Renewable Energy Certificates) , also known as EAC (Energy Attribute Certificate),
-GOs (Guarantees of Origin) in the EU, and many other names in different markets.
-RECs represent the proof that 1 unit of clean electricity (normally MWh)
-was produced from renewable energy sources at a specific time point.
-After electrons enter the grid, there is no way to trace it back to the source.
-Hence, RECs serve as a tracking tool to prove renewable energy generation
-and consumption, and are widely used for renewable energy procurement.`}
-                    noIcon
-                  >
-                    RECs
-                  </Info>{' '}
-                  (Renewable Energy Certificates)
-                  <br /> have been purchased and redeemed in the name of a
-                  specific user.
+                <div>
+                  This page is a summary of the proof that the buyer <b>0x1234...ABCD</b> has
+                  bought  <b>35 Mwh</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
                 </div>
               }
             >
@@ -68,11 +55,11 @@ and consumption, and are widely used for renewable energy procurement.`}
               <Grid container>
                 <Grid item xs={12}>
                   <Typography
-                    mt={'30px'}
+                    mt={'50px'}
                     mb={'18px'}
                     fontWeight={700}
                     fontSize={'20px'}
-                    color={'#2D1155'}
+                    color='primary'
                   >
                     Certificate information
                   </Typography>
@@ -98,5 +85,13 @@ and consumption, and are widely used for renewable energy procurement.`}
     <Loading />
   );
 };
+
+const UnderlinedText: FC = ({ children }) => {
+  return (
+    <span style={{ textDecoration: 'underline' }}>
+      {children}
+    </span>
+  )
+}
 
 export default ProductPage;

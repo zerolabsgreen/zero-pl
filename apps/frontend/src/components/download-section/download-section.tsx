@@ -1,5 +1,5 @@
 import PaperBox from '../paper-box/paper-box';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import FileDownloadLink from '../file-download-link/file-download-link';
 import { File } from '@energyweb/zero-protocol-labs-api-client';
 import { makeStyles } from '@mui/styles';
@@ -25,9 +25,10 @@ export interface DownloadSectionProps {
 
 export const DownloadSection = ({ fileList = [] }: DownloadSectionProps) => {
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
-    <PaperBox customPadding={'25px'} bgColor={'#2D1155'}>
+    <PaperBox customPadding={'25px'} bgColor={theme.palette.primary.main}>
       <Box
         className={classes.style}
         display={'flex'}
@@ -35,13 +36,13 @@ export const DownloadSection = ({ fileList = [] }: DownloadSectionProps) => {
       >
         <Typography
           className={classes.styleText}
-          color={'#fff'}
+          color={theme.palette.text.primary}
           fontWeight={600}
           lineHeight={'22px'}
         >
           Download official Attestation
         </Typography>
-        {fileList.map((file, index) => (
+        {fileList.map((file) => (
           <FileDownloadLink
             key={file.fileName + file.url}
             downloadUrl={file.url}

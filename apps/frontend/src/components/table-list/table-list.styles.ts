@@ -1,8 +1,8 @@
 import { makeStyles } from '@mui/styles';
 
-export const useStyles = makeStyles({
+export const useStyles = makeStyles((theme) => ({
     thCell: {
-      color: '#2D1155',
+      color: theme.palette.primary.main,
       fontWeight: 700,
       fontSize: '12px',
       border: 'none',
@@ -12,7 +12,7 @@ export const useStyles = makeStyles({
       }
     },
     tbCell: {
-      color: '#2D1155',
+      color: theme.palette.primary.main,
       fontWeight: 700,
       fontSize: '18px',
       border: 'none',
@@ -27,4 +27,4 @@ export const useStyles = makeStyles({
         padding: '5px 16px'
       },
     },
-});
+}));

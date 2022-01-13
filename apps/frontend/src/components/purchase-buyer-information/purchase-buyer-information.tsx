@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import PaperBox from '../paper-box/paper-box';
 import FieldLabel from '../field-label/field-label';
 import FieldValue from '../field-value/field-value';
@@ -25,25 +25,22 @@ export const PurchaseBuyerInformation = ({
   recsAmount = [],
 }: PurchaseBuyerInformationProps) => {
   const classes = useStyles();
-
+  const theme = useTheme();
   const [info, setInfo] = useState(false);
-
-  const SowInfo = () => {
-    info === false ? setInfo(true) : setInfo(false);
-  };
+  const showInfo = () => setInfo(!info);
 
   return (
     <Box>
       <Typography
         lineHeight={'24px'}
         mb={3}
-        color={'#2D1155'}
+        color='primary'
         fontSize={'20px'}
         fontWeight={700}
       >
         Buyer information
       </Typography>
-      <PaperBox bgColor={'#F6EFFF'}>
+      <PaperBox bgColor={theme.palette.background.default}>
         <Box
           display={'flex'}
           className={classes.flexColumn}
@@ -92,11 +89,13 @@ export const PurchaseBuyerInformation = ({
               <FieldValueTransactionList generationPeriod={generationPeriod} />
             </Box>
             <Box ml={'20px'}>
-              <ButtonDetails
-                name={'Details'}
-                onClick={SowInfo}
-                isButtonUp={info}
-              />
+              <div>
+                <ButtonDetails
+                  name={'Details'}
+                  onClick={showInfo}
+                  isButtonUp={info}
+                />
+              </div>
             </Box>
           </Box>
         </Box>

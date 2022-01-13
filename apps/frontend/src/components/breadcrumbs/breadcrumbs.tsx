@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs as MatBreadcrumbs } from '@mui/material';
+import { Box, Breadcrumbs as MatBreadcrumbs, useTheme } from '@mui/material';
 import { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -7,15 +7,18 @@ export interface BreadcrumbsProps {
   breadcrumbList: string[];
 }
 
-const Item: FC<{ text: string; active: boolean }> = ({ text, active }) => (
-  <Box
-    color={!active ? '#2D1155' : '#703CBB'}
-    fontSize={'12px'}
-    component={'span'}
-  >
-    {text}
-  </Box>
-);
+const Item: FC<{ text: string; active: boolean }> = ({ text, active }) => {
+  const theme = useTheme();
+  return (
+    <Box
+      color={!active ? theme.palette.primary.main : theme.palette.primary.light}
+      fontSize={'12px'}
+      component={'span'}
+    >
+      {text}
+    </Box>
+  )
+};
 
 export const Breadcrumbs = ({ breadcrumbList }: BreadcrumbsProps) => {
   const params = useParams();

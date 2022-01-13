@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import { AnnualTransactionsDto } from '@energyweb/zero-protocol-labs-api-client';
 import Info from '../info/info';
 import dayjs from 'dayjs';
@@ -36,13 +36,14 @@ export function FieldValueTransactionList({
     );
 
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
     <Box width={'100%'}>
       <Box
         className={classes.styles}
         pl={transactionList && '13px'}
-        color={'#2D1155'}
+        color={theme.palette.primary.main}
         mb={'14px'}
         fontWeight={700}
         fontSize={'16px'}
@@ -52,16 +53,16 @@ export function FieldValueTransactionList({
       </Box>
       <Box
         borderRadius={'5px'}
-        bgcolor={'#fff'}
+        bgcolor={theme.palette.text.primary}
         display={'flex'}
-        border={transactionList && '0.5px solid #00D08A'}
+        border={transactionList && `0.5px solid ${theme.palette.secondary.main}`}
         px={transactionList && '13px'}
         py={transactionList && '7px'}
       >
         <Grid container>
           {showRec === false ? (
             <Box mr={'30px'}>
-              <Typography fontWeight={500} fontSize={'14px'}>
+              <Typography fontWeight={500} color="primary" fontSize={'14px'}>
                 Total amount of RECs in
               </Typography>
             </Box>
@@ -71,7 +72,7 @@ export function FieldValueTransactionList({
           {transactionList &&
             transactionList.map((value) => (
               <Grid className={classes.margin} key={value.amount.toString() + value.year.toString()} item sm={2}>
-                <Box color={'#2D1155'} fontWeight={500}>
+                <Box color={theme.palette.primary.main} fontWeight={500}>
                   {shouldShowNote(generationPeriod.fromDate, value.year) ? (
                     <Info
                       hideTimeout={1000}
@@ -80,7 +81,7 @@ export function FieldValueTransactionList({
                           {value.year} consumption matched with generation
                           according to{' '}
                           <a
-                            style={{ color: '#fff' }}
+                            style={{ color: theme.palette.text.primary }}
                             target={'_blank'}
                             href="https://www.epa.gov/greenpower/green-power-partnership-eligible-generation-dates"
                             rel="noreferrer"
@@ -97,7 +98,7 @@ export function FieldValueTransactionList({
                     value.year
                   )}
                 </Box>
-                <Box color={'#2D1155'} fontWeight={700} fontSize={'16px'}>
+                <Box color={theme.palette.primary.main} fontWeight={700} fontSize={'16px'}>
                   {value.amount} {value.amount === 1 ? 'REC' : 'RECs'}
                 </Box>
               </Grid>

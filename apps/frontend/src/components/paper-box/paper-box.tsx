@@ -9,11 +9,12 @@ export interface PaperBoxProps {
   customHeight?: string;
   customBorderRadius?: string;
   display?: string;
+  minHeight?: string;
 }
 
 export const PaperBox = ({
   customBorderRadius = '10px',
-  customHeight,
+  customHeight = '100%',
   children,
   bgColor,
   display,
@@ -25,7 +26,7 @@ export const PaperBox = ({
       p: 3,
       backgroundColor: bgColor,
       borderRadius: customBorderRadius,
-      display: display,
+      display,
     }}
   >
     {children}

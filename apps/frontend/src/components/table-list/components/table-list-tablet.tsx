@@ -5,6 +5,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  useTheme,
 } from '@mui/material';
 import FuelType, { FuelTypeEnum } from '../../fuel-type/fuel-type';
 import { useStyles } from '../table-list.styles';
@@ -13,11 +14,9 @@ import utc from 'dayjs/plugin/utc';
 import Info from '../../info/info';
 import { CertificateDto } from '@energyweb/zero-protocol-labs-api-client';
 import EthereumAddress from '../../ethereum-address/ethereum-address';
-import { variables } from '@energyweb/zero-protocol-labs-theme';
 
 dayjs.extend(utc);
 
-/* eslint-disable-next-line */
 export interface TableListTablet {
   data: CertificateDto;
   recsSold: number;
@@ -30,11 +29,12 @@ export const TableListTablet = ({
   recsSold,
 }: TableListTablet) => {
   const styles = useStyles();
+  const theme = useTheme();
   return (
     <Box
       boxShadow={'none'}
       borderRadius={'5px'}
-      bgcolor={variables.defaultBackgroundColor}
+      bgcolor={theme.palette.background.default}
       mb={2}
       p={2}
       pt={0}
@@ -74,7 +74,7 @@ export const TableListTablet = ({
         <TableBody
           sx={{
             borderRadius: '5px',
-            backgroundColor: variables.mainBackgroundColor,
+            backgroundColor: theme.palette.background.paper
           }}
         >
           <TableRow>
@@ -125,7 +125,7 @@ export const TableListTablet = ({
         <TableBody
           sx={{
             borderRadius: '5px',
-            backgroundColor: variables.mainBackgroundColor,
+            backgroundColor: theme.palette.background.paper
           }}
         >
           <TableRow>

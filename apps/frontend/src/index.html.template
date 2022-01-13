@@ -2,12 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Frontend</title>
+    <title>Zero</title>
     <base href="/" />
 
     <style>
       body {
-        background-color: #703CBB;
+        background-color: #19355E;
       }
 
       * {

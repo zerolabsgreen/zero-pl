@@ -5,6 +5,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  useTheme,
 } from '@mui/material';
 import FuelType, { FuelTypeEnum } from '../../fuel-type/fuel-type';
 import { useStyles } from '../table-list.styles';
@@ -28,11 +29,13 @@ export const TableListDesktop = ({
   recsSold,
 }: TableListDesktop) => {
   const styles = useStyles();
+  const theme = useTheme();
+
   return (
     <Box
       boxShadow={'none'}
       borderRadius={'5px'}
-      bgcolor={'#F6F3F9'}
+      bgcolor={theme.palette.background.default}
       mb={2}
       p={2}
       pt={0}
@@ -45,7 +48,7 @@ export const TableListDesktop = ({
                 popoverContent={`Seller ID
                     Seller ID represents the seller in EW Zero marketplace`}
               >
-                Seller ID
+                Proof ID
               </Info>
             </TableCell>
             <TableCell className={styles.thCell} align="left">

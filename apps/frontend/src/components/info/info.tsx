@@ -2,7 +2,6 @@ import HelpOutline from '@mui/icons-material/HelpOutline';
 import { ReactElement, ReactNode } from 'react';
 import PopOver from '../pop-over/pop-over';
 import { Box, BoxProps } from '@mui/material';
-import { variables } from '@energyweb/zero-protocol-labs-theme';
 
 export interface InfoProps {
   noIcon?: boolean;
@@ -20,7 +19,6 @@ export const Info = ({
   popoverContent,
   children,
   hideTimeout,
-  isFilecoin,
   boxProps,
 }: InfoProps) => {
   return !noIcon ? (
@@ -35,9 +33,7 @@ export const Info = ({
           <HelpOutline
             sx={{
               fontSize: '12px',
-              color: isFilecoin
-                ? variables.filcoinColor
-                : variables.purpleLight,
+              color: '#4480DB',
               cursor: 'pointer',
               right: '-4px',
               top: '-6px',

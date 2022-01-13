@@ -1,8 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import PaperBox from '../paper-box/paper-box';
 import FieldLabel from '../field-label/field-label';
 import FieldValue from '../field-value/field-value';
-import FieldValueTransactionList from '../field-value-transaction-list/field-value-transaction-list';
 import FieldValueList from '../field-value-list/field-value-list';
 import {
   AnnualTransactionsDto,
@@ -28,26 +27,25 @@ export interface BuyerInformationProps {
 }
 
 export const BuyerInformation = ({
-  generationPeriod,
   buyerName,
   buyerId,
   filecoinMinerIdList = [],
-  recsAmount = [],
 }: BuyerInformationProps) => {
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
-    <Box>
+    <Box height="90%">
       <Typography
         lineHeight={'24px'}
-        mb={3}
-        color={'#2D1155'}
+        mb="20px"
+        color="primary"
         fontSize={'20px'}
         fontWeight={700}
       >
         Buyer information
       </Typography>
-      <PaperBox bgColor={'#F6EFFF'}>
+      <PaperBox bgColor={theme.palette.background.default}>
         <Box
           className={classes.flexColumn}
           display={'flex'}
@@ -63,8 +61,8 @@ export const BuyerInformation = ({
           alignItems={'flex-start'}
           mb={2}
         >
-          <FieldLabel width={'200px'} labelText={'Filecoin Miner IDs'} />
-          <FieldValueList valueList={filecoinMinerIdList.map((el) => el.id)} />
+          <FieldLabel width={'200px'} labelText={'Buyer Name'} />
+          <FieldValue valueText={buyerName} />
         </Box>
         <Box
           className={classes.flexColumn}
@@ -72,16 +70,8 @@ export const BuyerInformation = ({
           alignItems={'flex-start'}
           mb={2}
         >
-          <FieldLabel width={'200px'} labelText={'Buyer Name'} />
-          <FieldValue valueText={buyerName} />
-        </Box>
-        <Box className={classes.flexColumn} display={'flex'} mb={2}>
-          <FieldLabel width={'200px'} labelText={'Total amount of RECs'} />
-          <FieldValueTransactionList
-            transactionList={recsAmount}
-            generationPeriod={generationPeriod}
-            showRec={true}
-          />
+          <FieldLabel width={'200px'} labelText={'Filecoin Miner IDs'} />
+          <FieldValueList valueList={filecoinMinerIdList.map((el) => el.id)} />
         </Box>
       </PaperBox>
     </Box>

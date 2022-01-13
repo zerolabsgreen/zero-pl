@@ -1,13 +1,13 @@
-import { Box, Container } from '@mui/material';
+import { Box, Container, useTheme } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
-import { ReactComponent as Logo } from '../../assets/svg/logo.svg';
 import { ReactComponent as LogoFilecoin } from '../../assets/svg/filecoinLogo.svg';
-import { ReactComponent as ZeroLogo } from '../../assets/svg/zeroLogo.svg';
+import { ReactComponent as ZeroLogo } from '../../assets/svg/zero-labs-logo.svg';
 import { useSelectedProtocolStore } from '../../context';
 
 export const Header = () => {
   const selectedProtocol = useSelectedProtocolStore();
+  const theme = useTheme();
   // bad should be more generic
   const isFilecoin = selectedProtocol === ProtocolTypeEnumType.FILECOIN;
 
@@ -16,7 +16,7 @@ export const Header = () => {
         style={{
           background: isFilecoin
             ? variables.filcoinBackgroundColor
-            : variables.primaryColor,
+            : theme.palette.primary.main
         }}
       >
         <Container maxWidth={'xl'}>
@@ -33,7 +33,7 @@ export const Header = () => {
                 <LogoFilecoin />
               </Box>
             ) : (
-              <Logo />
+              <ZeroLogo />
             )}
           </Box>
         </Container>
