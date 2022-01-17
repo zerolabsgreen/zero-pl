@@ -10,7 +10,7 @@ import { WelcomePage } from '../pages/welcome-page/welcome-page';
 import { ThankYouPage } from '../pages/thank-you-page/thank-you-page';
 import { AddressMappingProvider, SelectedProtocolProvider } from '../context';
 import WizardThankPage from '../pages/wizard-thank-page/wizard-thank-page';
-import { UserPage } from '../pages/UserPage';
+// import { UserPage } from '../pages/UserPage';
 import { useAxiosDefaults } from '../hooks';
 
 const StyledDiv = styled.div`
@@ -47,10 +47,10 @@ export const App = () => {
                 </AddressMappingProvider>
               }
             />
-            <Route
+            {/* <Route
               path={'/user-page'}
               element={<UserPage />}
-            />
+            /> */}
             <Route path={'/wizard/thank-you'} element={<WizardThankPage />} />
             <Route path={'/thank-you'} element={<ThankYouPage />} />
             <Route path={'/404'} element={<NotFoundPage />} />
