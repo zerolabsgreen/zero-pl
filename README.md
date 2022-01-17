@@ -72,7 +72,7 @@ no data persistence, so you will lose all the email messages when it is restarte
 
 ## Deployment to Heroku
 
-Requires `heroku`command line tool
+Requires `heroku` command line tool
 
 One time action:
 

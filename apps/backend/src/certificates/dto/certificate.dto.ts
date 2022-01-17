@@ -26,16 +26,22 @@ export class CertificateDto {
   generationStart: string;
 
   @ApiPropertyOptional({ example: 180 })
-  generationStartTimezoneOffset: number;
+  generationStartTimezoneOffset?: number;
 
   @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
   generationEnd: string;
 
   @ApiPropertyOptional({ example: 180 })
-  generationEndTimezoneOffset: number;
+  generationEndTimezoneOffset?: number;
 
   @ApiProperty({ example: '0x65ca0692df73b3ff23126fd69e15d2f7de7a317def6016ebfdeedde1e24a7a8f' })
-  txHash: string;
+  txHash: string; 
+
+  @ApiPropertyOptional({ example: 'Some Corp Ltd.' })
+  beneficiary?: string;
+
+  @ApiPropertyOptional({ example: new Date('2021-06-30T23:59:59.999Z') })
+  redemptionDate?: string;
 
   constructor(partial: Partial<CertificateDto>) {
     Object.assign(this, partial);

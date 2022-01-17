@@ -58,6 +58,8 @@ model Certificate {
   purchase                      Purchase[]
   seller                        Seller     @relation(fields: [initialSellerId], references: [id])
   initialSellerId               String
+  beneficiary                   String?
+  redemptionDate                DateTime?
 }
 
 model FilecoinNode {
