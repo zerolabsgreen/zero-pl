@@ -1,7 +1,6 @@
 import { Paper } from '@mui/material';
 import { ReactNode } from 'react';
 
-/* eslint-disable-next-line */
 export interface PaperBoxProps {
   children: ReactNode;
   bgColor?: string;
@@ -10,23 +9,27 @@ export interface PaperBoxProps {
   customBorderRadius?: string;
   display?: string;
   minHeight?: string;
+  marginTop?: string;
 }
 
 export const PaperBox = ({
   customBorderRadius = '10px',
   customHeight = '100%',
+  customPadding,
   children,
   bgColor,
   display,
+  marginTop
 }: PaperBoxProps) => (
   <Paper
     sx={{
       boxShadow: 'none',
       height: customHeight,
-      p: 3,
+      p: customPadding ?? 3,
       backgroundColor: bgColor,
       borderRadius: customBorderRadius,
       display,
+      marginTop,
     }}
   >
     {children}

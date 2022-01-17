@@ -11,11 +11,11 @@ export interface SelectOption {
 
 export interface IGenericSelectProps {
   value: string;
-  handleChange?: (value: SelectChangeEvent) => void;
   options: SelectOption[];
-  bgColor?: string;
+  handleChange: (value: SelectChangeEvent) => void;
   placeholder?: string;
   isFilecoin?: boolean;
+  bgColor?: string;
   name?: string;
   menuItemClassName?: string;
 }
@@ -28,10 +28,9 @@ export const GenericSelect: React.FC<IGenericSelectProps> = ({
   bgColor,
   isFilecoin,
   name,
-  menuItemClassName
+  menuItemClassName,
 }) => {
   const styles = useStyles();
-
   return (
     <Select
       input={

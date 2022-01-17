@@ -3,39 +3,42 @@ import { Box, Paper, Typography } from '@mui/material';
 import { ReactNode, ReactNodeArray } from 'react';
 import { makeStyles } from '@mui/styles';
 
-export const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles({
   style: {
     '@media (max-width: 375px)': {
       padding: '15px',
     },
   },
-}));
+});
 
 export interface PageSectionProps {
-  headingText: string;
+  children: ReactNode | ReactNodeArray;
+  headingText?: string;
   wrapperClassName?: string;
   paperClassName?: string;
   headingTextClassName?: string;
   helperTextClassName?: string;
   sectionHelpText?: ReactNode;
-  children: ReactNode | ReactNodeArray;
+  regularCase?: boolean;
 }
 
 export const PageSection = ({
   children,
-  headingText,
+  headingText = '',
   sectionHelpText,
   paperClassName,
   wrapperClassName,
   headingTextClassName,
   helperTextClassName,
+  regularCase = false
 }: PageSectionProps) => {
   const classes = useStyles();
 
   return (
     <Box pt={'13px'} className={clsx(classes.style, wrapperClassName)}>
+      {headingText &&
       <Typography
-        sx={{ my: '13px', textTransform: 'uppercase' }}
+        sx={{ my: '13px', textTransform: regularCase ? undefined : 'uppercase' }}
         color='primary'
         lineHeight={'31px'}
         fontSize={'24px'}
@@ -43,7 +46,7 @@ export const PageSection = ({
         className={headingTextClassName}
       >
         {headingText}
-      </Typography>
+      </Typography>}
       <Paper
         className={clsx(classes.style, paperClassName)}
         sx={{ p: 4, borderRadius: '10px' }}
