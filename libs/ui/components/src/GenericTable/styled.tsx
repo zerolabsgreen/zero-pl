@@ -1,0 +1,32 @@
+import styled from "@mui/material/styles/styled";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+
+export const ThCell = styled(TableCell)(({ theme }) => `
+    color: ${theme.palette.primary.main};
+    font-weight: 700;
+    font-size: 12px;
+    border: none;
+    line-height: 16px;
+    ${theme.breakpoints.down('sm')} {
+      padding: 4px
+    }
+`)
+
+export const TbCell = styled(TableCell)(({ theme }) => `
+    color: ${theme.palette.primary.main};
+    font-weight: 700;
+    font-size: 18px;
+    border: none;
+    ${theme.breakpoints.down('sm')} {
+      padding: 4px
+    }
+`)
+
+export const SmallScreenTableRow = styled(TableRow)`
+  @media (max-width: 375px) {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 16px;
+  }
+`

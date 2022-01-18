@@ -1,11 +1,11 @@
 import { Container, Grid, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { GenericTable } from '@zero-labs/zero-ui-components';
 import PageSection from '../../components/page-section/page-section';
 import Loading from '../../components/loading/loading';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
-import TableListPurchase from '../../components/table-list-purchase/table-list-purchase';
 import PurchaseBuyerInformation from '../../components/purchase-buyer-information/purchase-buyer-information';
-import { usePurchasePageEffects } from './PurchasePage.effects';
+import { purchaseInfoHeaders, usePurchasePageEffects } from './PurchasePage.effects';
 
 export const useStyles = makeStyles({
   pdTop: {
@@ -14,7 +14,7 @@ export const useStyles = makeStyles({
 });
 
 export const PurchasePage = () => {
-  const { transactionsData, isLoading, isFetched } = usePurchasePageEffects();
+  const { transactionsData, purchaseInfoTableData, isLoading, isFetched } = usePurchasePageEffects();
 
   return !isLoading && transactionsData && isFetched ? (
     <Container maxWidth={'xl'}>
@@ -49,7 +49,7 @@ export const PurchasePage = () => {
               >
                 Purchase information
               </Typography>
-              <TableListPurchase data={transactionsData} />
+              <GenericTable headers={purchaseInfoHeaders} data={purchaseInfoTableData} />
             </Grid>
           </Grid>
         </PageSection>

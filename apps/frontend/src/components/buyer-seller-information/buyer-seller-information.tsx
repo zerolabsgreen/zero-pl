@@ -1,22 +1,12 @@
-import { Grid } from '@mui/material';
-import BuyerInformation from '../buyer-information/buyer-information';
-import SellerInformation from '../seller-information/seller-information';
+import { Grid, styled } from '@mui/material';
 import {
   AnnualTransactionsDto,
   BuyerDto,
   FilecoinNodeDto,
   SellerDto,
 } from '@energyweb/zero-protocol-labs-api-client';
-import { makeStyles } from '@mui/styles';
-
-export const useStyles = makeStyles((theme) => ({
-  flexColumn: {
-    '@media (max-width: 620px)': {
-      flexDirection: 'column',
-    },
-  },
-}));
-
+import BuyerInformation from '../buyer-information/buyer-information';
+import SellerInformation from '../seller-information/seller-information';
 export interface BuyerSellerInformationProps {
   recsTransactions: AnnualTransactionsDto[];
   buyer: BuyerDto;
@@ -32,11 +22,8 @@ export const BuyerSellerInformation = ({
   filecoinMinerIdList,
   generationPeriod,
 }: BuyerSellerInformationProps) => {
-  const classes = useStyles();
-
   return (
-    <Grid
-      className={classes.flexColumn}
+    <ResponsiveGrid
       columnGap={3}
       wrap={'nowrap'}
       container
@@ -59,8 +46,14 @@ export const BuyerSellerInformation = ({
           contactPerson={seller.contactPerson}
         />
       </Grid>
-    </Grid>
+    </ResponsiveGrid>
   );
 };
+
+const ResponsiveGrid = styled(Grid)(({ theme }) => `
+  ${theme.breakpoints.down('sm')} {
+    flex-direction: column;
+  }
+`)
 
 export default BuyerSellerInformation;

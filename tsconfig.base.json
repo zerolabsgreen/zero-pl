@@ -18,7 +18,8 @@
       "@energyweb/zero-protocol-labs-api-client": [
         "libs/api-client/src/index.ts"
       ],
-      "@energyweb/zero-protocol-labs-theme": ["libs/ui/theme/src/index.ts"]
+      "@energyweb/zero-protocol-labs-theme": ["libs/ui/theme/src/index.ts"],
+      "@zero-labs/zero-ui-components": ["libs/ui/components/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

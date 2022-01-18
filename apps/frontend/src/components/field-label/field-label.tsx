@@ -1,17 +1,16 @@
-import styled from '@emotion/styled';
-import { Box, BoxProps } from '@mui/material';
+import { Box, BoxProps, styled } from '@mui/material';
 
 export interface FieldLabelProps extends BoxProps {
   width?: string;
   labelText: string;
 }
 
-const StyledFieldLabel = styled(Box)`
+const StyledFieldLabel = styled(Box)(({ theme }) => `
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
-  color: #2d1155;
-`;
+  color: ${theme.palette.primary.main};
+`);
 
 export const FieldLabel = ({
   className,
