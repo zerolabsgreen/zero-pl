@@ -6,17 +6,18 @@ import { ReactComponent as Wind } from './wind.svg';
 import { ReactComponent as Hydro } from './hydro.svg';
 import { FC, ReactElement } from 'react';
 
-/* eslint-disable-next-line */
 export interface FuelTypeProps {
   fuelType: FuelTypeEnum;
 }
 
 export enum FuelTypeEnum {
-  Wind = 'Wind',
-  Solar = 'Solar',
-  Hydro = 'Hydro',
-  Geothermal = 'Geothermal',
-  Biomass = 'Biomass',
+  SOLAR = 'SOLAR',
+  WIND = 'WIND',
+  HYDRO = 'HYDRO',
+  MARINE = 'MARINE',
+  THERMAL = 'THERMAL',
+  BIOMASS = 'BIOMASS',
+  BIOGAS = 'BIOGAS',
 }
 
 const TextWithIconPartial: FC<{
@@ -30,42 +31,44 @@ const TextWithIconPartial: FC<{
 
 export const FuelType = ({ fuelType }: FuelTypeProps) => {
   switch (fuelType) {
-    case FuelTypeEnum.Hydro:
+    case FuelTypeEnum.HYDRO:
       return (
         <TextWithIconPartial
-          fuelType={FuelTypeEnum.Hydro}
+          fuelType={FuelTypeEnum.HYDRO}
           iconElement={<Hydro height={'22px'} />}
         />
       );
 
-    case FuelTypeEnum.Solar:
+    case FuelTypeEnum.SOLAR:
       return (
         <TextWithIconPartial
-          fuelType={FuelTypeEnum.Solar}
+          fuelType={FuelTypeEnum.SOLAR}
           iconElement={<Solar height={'22px'} />}
         />
       );
-    case FuelTypeEnum.Wind:
+    case FuelTypeEnum.WIND:
       return (
         <TextWithIconPartial
-          fuelType={FuelTypeEnum.Wind}
+          fuelType={FuelTypeEnum.WIND}
           iconElement={<Wind height={'22px'} />}
         />
       );
-    case FuelTypeEnum.Geothermal:
+    case FuelTypeEnum.THERMAL:
       return (
         <TextWithIconPartial
-          fuelType={FuelTypeEnum.Geothermal}
+          fuelType={FuelTypeEnum.THERMAL}
           iconElement={<Geothermal height={'22px'} />}
         />
       );
-    case FuelTypeEnum.Biomass:
+    case FuelTypeEnum.BIOMASS:
       return (
         <TextWithIconPartial
-          fuelType={FuelTypeEnum.Biomass}
+          fuelType={FuelTypeEnum.BIOMASS}
           iconElement={<Biomass height={'22px'} />}
         />
       );
+    default:
+      return <></>
   }
 };
 
