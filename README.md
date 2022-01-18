@@ -35,12 +35,6 @@ docker-compose -f docker-compose-dev.yaml up -d
 yarn migrate:all
 ```
 
-To seed the system with sample data necessary to develop, execute the following. It will submit data to the system over
-REST API and backend processes will save transactions on Ganache local chain
-
-```shell
-yarn seed:all:dev
-```
 
 ## Update Prisma ORM client
 
@@ -62,6 +56,13 @@ yarn build
 yarn start
 ```
 
+To seed the system with sample data necessary to develop, execute the following. It will submit data to the system over
+REST API and backend processes will save transactions on Ganache local chain
+
+```shell
+yarn seed:all:dev
+```
+
 ## Receive email messages
 
 The `docker-compose-dev.yaml` file contains `mailhog` service definition. This a mock SMTP server that allows you to
@@ -72,7 +73,7 @@ no data persistence, so you will lose all the email messages when it is restarte
 
 ## Deployment to Heroku
 
-Requires `heroku`command line tool
+Requires `heroku` command line tool
 
 One time action:
 

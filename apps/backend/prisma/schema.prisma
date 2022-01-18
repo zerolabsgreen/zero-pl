@@ -49,7 +49,8 @@ model Certificate {
   generatorId                   String?
   region                        String?
   country                       String
-  energySource                  String
+  productType                   ProductEnumType @default(IREC)
+  energySource                  EnergySourceEnumType @default(SOLAR)
   generationStart               DateTime?
   generationStartTimezoneOffset Int?
   generationEnd                 DateTime?
@@ -58,6 +59,8 @@ model Certificate {
   purchase                      Purchase[]
   seller                        Seller     @relation(fields: [initialSellerId], references: [id])
   initialSellerId               String
+  beneficiary                   String?
+  redemptionDate                DateTime?
 }
 
 model FilecoinNode {
@@ -144,6 +147,23 @@ enum PaymentPreferencesEnumType {
 enum ProtocolTypeEnumType {
   FILECOIN
   BITCOIN
+}
+
+enum ProductEnumType {
+  REC
+  IREC
+  GO
+  TIGR
+}
+
+enum EnergySourceEnumType {
+  SOLAR
+  WIND
+  HYDRO
+  MARINE
+  THERMAL
+  BIOMASS
+  BIOGAS
 }
 
 enum UserTypeEnumType {

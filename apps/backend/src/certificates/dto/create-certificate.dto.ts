@@ -1,6 +1,7 @@
 import { CertificateDto } from './certificate.dto';
 import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger';
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsNumberString,
@@ -9,6 +10,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators'
+import { EnergySourceEnumType, ProductEnumType } from '@prisma/client';
 
 export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @ApiPropertyOptional({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
@@ -39,9 +41,13 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @IsString()
   country: string;
 
-  @ApiProperty({ example: 'Wind' })
-  @IsString()
-  energySource: string;
+  @ApiProperty({ example: EnergySourceEnumType.SOLAR })
+  @IsEnum(EnergySourceEnumType)
+  energySource: EnergySourceEnumType;
+
+  @ApiProperty({ example: ProductEnumType.IREC })
+  @IsEnum(ProductEnumType)
+  productType: ProductEnumType;
 
   @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
   @IsISO8601({ strict: true })

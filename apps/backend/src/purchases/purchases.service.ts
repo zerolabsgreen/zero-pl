@@ -152,12 +152,15 @@ export class PurchasesService {
       }
 
       this.logger.debug(`claiming certificate (id=${purchase.certificateId}, issuerApiId=${chainCertData.id}) from blockchainAddress=${accountToRedeemFrom}`);
+
+      const beneficiary = buyerData.name;
+
       const { txHash: txHashClaiming } = await this.issuerService.claimCertificate({
         id: chainCertData.id,
         fromAddress: accountToRedeemFrom,
         amount: purchase.recsSold.toString(),
         claimData: {
-          'beneficiary': '',
+          'beneficiary': beneficiary,
           'location': '',
           'countryCode': '',
           'periodStartDate': '',
@@ -166,6 +169,21 @@ export class PurchasesService {
         }
       });
       this.logger.debug(`certificate claiming initiated, txHash=${txHashClaiming}`);
+
+      try {
+        await prisma.certificate.update({
+          data: {
+            beneficiary,
+            redemptionDate: new Date() // TO-DO: Replace with the exact blockchain timestamp of the claiming action
+          },
+          where: { id: certData.id }
+        });
+
+        this.logger.debug(`set claim data for the certificate: ${certData.id}`);
+      } catch (err) {
+        this.logger.error(`error setting claim data for the certificate: ${certData.id}: ${err}`);
+        throw err;
+      }
 
       await prisma.purchase.update({
         data: { txHash: txHashClaiming },

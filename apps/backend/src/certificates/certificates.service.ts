@@ -79,7 +79,8 @@ export class CertificatesService {
     return new CertificateDto({
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString()
+      generationEnd: dbRecord.generationEnd.toISOString(),
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     });
   }
 
@@ -87,7 +88,8 @@ export class CertificatesService {
     return (await this.prisma.certificate.findMany()).map((dbRecord) => new CertificateDto({
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString()
+      generationEnd: dbRecord.generationEnd.toISOString(),
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     }));
   }
 
@@ -100,7 +102,8 @@ export class CertificatesService {
     return new CertificateDto({
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString()
+      generationEnd: dbRecord.generationEnd.toISOString(),
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     });
   }
 
@@ -110,7 +113,8 @@ export class CertificatesService {
     return new CertificateDto({
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString()
+      generationEnd: dbRecord.generationEnd.toISOString(),
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     });
   }
 
