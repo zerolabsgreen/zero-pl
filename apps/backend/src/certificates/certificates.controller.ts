@@ -61,4 +61,11 @@ export class CertificatesController {
   remove(@Param('id') id: string) {
     return this.certificatesService.remove(id);
   }
+
+  @Post()
+  @UseGuards(AuthGuard('api-key'))
+  @ApiSecurity('api-key', ['api-key'])
+  syncOnChain(@Param('id') id: string) {
+    return this.certificatesService.syncOnChain(id);
+  }
 }

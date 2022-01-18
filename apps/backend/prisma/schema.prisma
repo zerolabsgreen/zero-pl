@@ -45,6 +45,7 @@ model Seller {
 
 model Certificate {
   id                            String     @id @default(uuid())
+  energy                        BigInt     @default(0)
   generatorName                 String?
   generatorId                   String?
   region                        String?
