@@ -80,7 +80,7 @@ export class CertificatesService {
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate.toISOString()
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     });
   }
 
@@ -89,7 +89,7 @@ export class CertificatesService {
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate.toISOString()
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     }));
   }
 
@@ -103,7 +103,7 @@ export class CertificatesService {
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate.toISOString()
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     });
   }
 
@@ -114,7 +114,7 @@ export class CertificatesService {
       ...dbRecord,
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate.toISOString()
+      redemptionDate: dbRecord.redemptionDate?.toISOString()
     });
   }
 

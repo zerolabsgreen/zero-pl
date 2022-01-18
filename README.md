@@ -35,12 +35,6 @@ docker-compose -f docker-compose-dev.yaml up -d
 yarn migrate:all
 ```
 
-To seed the system with sample data necessary to develop, execute the following. It will submit data to the system over
-REST API and backend processes will save transactions on Ganache local chain
-
-```shell
-yarn seed:all:dev
-```
 
 ## Update Prisma ORM client
 
@@ -60,6 +54,13 @@ yarn build
 
 ```shell
 yarn start
+```
+
+To seed the system with sample data necessary to develop, execute the following. It will submit data to the system over
+REST API and backend processes will save transactions on Ganache local chain
+
+```shell
+yarn seed:all:dev
 ```
 
 ## Receive email messages
