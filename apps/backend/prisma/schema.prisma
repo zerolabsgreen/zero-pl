@@ -62,6 +62,9 @@ model Certificate {
   initialSellerId               String
   beneficiary                   String?
   redemptionDate                DateTime?
+  capacity                      Int?
+  commissioningDate             DateTime?
+  label                         LabelEnumType?
 }
 
 model FilecoinNode {
@@ -174,4 +177,21 @@ enum UserTypeEnumType {
   APP_DEVELOPER
   CRYPTO_USER
   OTHER
+}
+
+enum LabelEnumType {
+  EKOENERGY
+  EUROPEAN_GREEN
+  GREEN_POWER_AUSTRALIA
+  GREEN_E_ENERGY
+  HKN_NEU100
+  MILIEUKEUR
+  NATUREMADE
+  OK_POWER
+  RECS_INTERNATIONAL_QUALITY_STANDARD
+  RENEWABLEPLUS
+  TUV_SUD_MARK_EE01_EE02
+  ENERGIA_VERDE_100
+  BRA_MILJOVAL
+  GRUENER_STROM
 }

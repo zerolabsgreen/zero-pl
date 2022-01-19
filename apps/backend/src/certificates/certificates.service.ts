@@ -50,7 +50,8 @@ export class CertificatesService {
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
       redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString()
+      energy: dbRecord.energy.toString(),
+      commissioningDate: dbRecord.commissioningDate?.toISOString(),
     });
   }
 
@@ -60,7 +61,8 @@ export class CertificatesService {
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
       redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString()
+      energy: dbRecord.energy.toString(),
+      commissioningDate: dbRecord.commissioningDate?.toISOString(),
     }));
   }
 
@@ -75,7 +77,8 @@ export class CertificatesService {
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
       redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString()
+      energy: dbRecord.energy.toString(),
+      commissioningDate: dbRecord.commissioningDate?.toISOString(),
     });
   }
 
@@ -87,7 +90,8 @@ export class CertificatesService {
       generationStart: dbRecord.generationStart.toISOString(),
       generationEnd: dbRecord.generationEnd.toISOString(),
       redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString()
+      energy: dbRecord.energy.toString(),
+      commissioningDate: dbRecord.commissioningDate?.toISOString(),
     });
   }
 
