@@ -20,6 +20,9 @@ export class CertificateDto {
   @ApiProperty({ example: 'China' })
   country: string;
 
+  @ApiProperty()
+  energy: string;
+
   @ApiProperty({ example: EnergySourceEnumType.SOLAR })
   energySource: EnergySourceEnumType;
 
