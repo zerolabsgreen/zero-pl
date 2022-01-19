@@ -47,14 +47,6 @@ export class PurchasesService {
       throw new BadRequestException(`certificate has to be owned by transaction seller`);
     }
 
-    const chainCertData = await this.issuerService.getCertificateByTransactionHash(certData.txHash);
-
-    if (!chainCertData) {
-      throw new NotFoundException(`no chain data for certificate ${certData.id} (txHash=${certData.txHash})`);
-    }
-
-    this.logger.debug(`fetched certificate chain data: ${JSON.stringify(chainCertData)}`);
-
     const buyerData = await this.buyersService.findOne(purchase.buyerId);
 
     if (!buyerData) {
@@ -104,16 +96,6 @@ export class PurchasesService {
         });
       }
 
-      this.logger.debug(`transferring on-chain certificate (id=${purchase.certificateId}, issuerApiId=${chainCertData.id}) to buyer (id=${buyerData.id}, blockchainAddress=${buyerData.blockchainAddress})`);
-      const { txHash: txHash1 } = await this.issuerService.transferCertificate({
-        id: chainCertData.id,
-        amount: purchase.recsSold.toString(),
-        fromAddress: this.configService.get('ISSUER_CHAIN_ADDRESS'),
-        toAddress: buyerData.blockchainAddress
-      })
-
-      this.logger.debug(`certificate transfer initiated, txHash=${txHash1}`);
-
       let accountToRedeemFrom: string;
 
       if (filecoinNodes && filecoinNodes[0]) {
@@ -125,55 +107,14 @@ export class PurchasesService {
           throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
         }
 
-        this.logger.debug(`transferring on-chain certificate (id=${purchase.certificateId}, issuerApiId=${chainCertData.id}) to filecoin node (id=${buyerData.id}, blockchainAddress=${buyerData.blockchainAddress})`);
-        const { txHash: txHash2 } = await this.issuerService.transferCertificate({
-          id: chainCertData.id,
-          amount: purchase.recsSold.toString(),
-          fromAddress: buyerData.blockchainAddress,
-          toAddress: filecoinNodeData.blockchainAddress
-        });
-        this.logger.debug(`certificate transfer initiated, txHash=${txHash2}`);
-
-        await prisma.purchase.update({
-          data: { txHash: txHash2 },
-          where: { id: newRecord.id }
-        }).catch(err => {
-          this.logger.error(`error setting a txHash on the new purchase: ${err}`);
-          throw err;
-        });
-
         accountToRedeemFrom = filecoinNodeData.blockchainAddress;
       } else {
         this.logger.debug(`no fielcoin node defined for purchase`);
-        await prisma.purchase.update({
-          data: { txHash: txHash1 },
-          where: { id: newRecord.id }
-        }).catch(err => {
-          this.logger.error(`error setting a txHash on the new purchase: ${err}`);
-          throw err;
-        });
 
         accountToRedeemFrom = buyerData.blockchainAddress;
       }
 
-      this.logger.debug(`claiming certificate (id=${purchase.certificateId}, issuerApiId=${chainCertData.id}) from blockchainAddress=${accountToRedeemFrom}`);
-
       const beneficiary = buyerData.name;
-
-      const { txHash: txHashClaiming } = await this.issuerService.claimCertificate({
-        id: chainCertData.id,
-        fromAddress: accountToRedeemFrom,
-        amount: purchase.recsSold.toString(),
-        claimData: {
-          'beneficiary': beneficiary,
-          'location': '',
-          'countryCode': '',
-          'periodStartDate': '',
-          'periodEndDate': '',
-          'purpose': 'Claiming'
-        }
-      });
-      this.logger.debug(`certificate claiming initiated, txHash=${txHashClaiming}`);
 
       try {
         await prisma.certificate.update({
@@ -189,14 +130,6 @@ export class PurchasesService {
         this.logger.error(`error setting claim data for the certificate: ${certData.id}: ${err}`);
         throw err;
       }
-
-      await prisma.purchase.update({
-        data: { txHash: txHashClaiming },
-        where: { id: newRecord.id }
-      }).catch(err => {
-        this.logger.error(`error setting a txHash on the new purchase: ${err}`);
-        throw err;
-      });
 
       const data = await prisma.purchase.findUnique({
         where: { id: newRecord.id },
