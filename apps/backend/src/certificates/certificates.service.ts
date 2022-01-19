@@ -30,41 +30,10 @@ export class CertificatesService {
 
     await this.prisma.$transaction(async (prisma) => {
       try {
-        newCertificate = await prisma.certificate.create({ data: newCertificateData });
+        newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energy: BigInt(energy) } });
         this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
       } catch (err) {
         this.logger.error(`error creating a new certificate: ${err}`);
-        throw err;
-      }
-
-      const seller = await this.prisma.seller.findUnique({ where: { id: createCertificateDto.initialSellerId } });
-
-      let txHash: string;
-
-      try {
-        ({ txHash } = await this.issuerService.issueCertificate({
-          toSeller: seller.blockchainAddress,
-          deviceId: createCertificateDto.generatorId,
-          energy,
-          fromTime: new Date(createCertificateDto.generationStart),
-          toTime: new Date(createCertificateDto.generationEnd)
-        }));
-
-        this.logger.debug(`issued a new certificate on chain: txHash=${txHash}`);
-      } catch (err) {
-        this.logger.error(`error issuing a new certificate on chain: ${err}`);
-        throw err;
-      }
-
-      try {
-        await prisma.certificate.update({
-          data: { txHash },
-          where: { id: newCertificate.id }
-        });
-
-        this.logger.debug(`set transaction hash for the certificate: ${newCertificate.id}`);
-      } catch (err) {
-        this.logger.error(`error setting transaction hash for the certificate: ${newCertificate.id}: ${err}`);
         throw err;
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
@@ -120,5 +89,43 @@ export class CertificatesService {
 
   remove(id: string) {
     return `This action removes a #${id} certificate`;
+  }
+
+  async syncOnChain(id: string) {
+    const offChainCert = await this.prisma.certificate.findUnique({
+      where: { id },
+      rejectOnNotFound: () => new NotFoundException(`certificateId=${id} not found`)
+    });
+
+    const seller = await this.prisma.seller.findUnique({ where: { id: offChainCert.initialSellerId } });
+
+    let txHash: string;
+
+    try {
+      ({ txHash } = await this.issuerService.issueCertificate({
+        toSeller: seller.blockchainAddress,
+        deviceId: offChainCert.generatorId,
+        energy: offChainCert.energy.toString(),
+        fromTime: new Date(offChainCert.generationStart),
+        toTime: new Date(offChainCert.generationEnd)
+      }));
+
+      this.logger.debug(`issued a new certificate on chain: txHash=${txHash}`);
+    } catch (err) {
+      this.logger.error(`error issuing a new certificate on chain: ${err}`);
+      throw err;
+    }
+
+    try {
+      await this.prisma.certificate.update({
+        data: { txHash },
+        where: { id: offChainCert.id }
+      });
+
+      this.logger.debug(`set transaction hash for the certificate: ${offChainCert.id}`);
+    } catch (err) {
+      this.logger.error(`error setting transaction hash for the certificate: ${offChainCert.id}: ${err}`);
+      throw err;
+    }
   }
 }
