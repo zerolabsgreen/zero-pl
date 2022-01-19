@@ -4,6 +4,7 @@ import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
 import { ReactComponent as LogoFilecoin } from '../../assets/svg/filecoinLogo.svg';
 import { ReactComponent as ZeroLogo } from '../../assets/svg/zero-labs-logo.svg';
 import { useSelectedProtocolStore } from '../../context';
+import { AuthButton } from '../AuthButton';
 
 export const Header = () => {
   const selectedProtocol = useSelectedProtocolStore();
@@ -14,6 +15,7 @@ export const Header = () => {
   return (
       <header
         style={{
+          position: 'relative',
           background: isFilecoin
             ? variables.filcoinBackgroundColor
             : theme.palette.primary.main
@@ -37,6 +39,7 @@ export const Header = () => {
             )}
           </Box>
         </Container>
+        <AuthButton />
       </header>
   );
 };
