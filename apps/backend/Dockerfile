@@ -10,4 +10,4 @@ COPY . .
 RUN prisma generate
 RUN rm -rf /tmp/*
 
-CMD node ./main.js
+CMD /bin/sh -c "prisma migrate deploy && node ./main.js"
