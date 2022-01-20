@@ -79,6 +79,6 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @ApiPropertyOptional({ example: new Date('2021-06-30T23:59:59.999Z') })
   commissioningDate?: string;
 
-  @ApiProperty({ example: LabelEnumType.EUROPEAN_GREEN })
-  label: LabelEnumType;
+  @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
+  label?: LabelEnumType;
 }
