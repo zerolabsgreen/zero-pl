@@ -8,6 +8,8 @@ import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
 import { pick } from 'lodash';
 import { Cache } from 'cache-manager';
+import { PurchaseDto } from './dto/purchase.dto';
+import { Purchase } from '@prisma/client';
 
 @Injectable()
 export class PurchasesService {
@@ -24,123 +26,126 @@ export class PurchasesService {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
 
-  async create(createPurchaseDto: CreatePurchaseDto) {
-    this.logger.log(`received request to create a purchase: ${JSON.stringify(createPurchaseDto)}`);
-    const { filecoinNodes, ...purchase } = createPurchaseDto;
+  async create(createPurchaseDtos: CreatePurchaseDto[]) {
+    this.logger.log(`received request to create purchases: ${JSON.stringify(createPurchaseDtos)}`);
 
-    if (filecoinNodes && filecoinNodes.length > 1) {
-      throw new BadRequestException('only one filecoin node per transaction allowed');
-    }
+    const purchases: Purchase[] = [];
 
-    if (filecoinNodes && filecoinNodes.length > 0) {
-      const existingFilecoinNodes = await this.prisma.filecoinNode.findMany({ where: { id: { in: filecoinNodes.map(n => n.id) } } });
-      if (filecoinNodes.length !== existingFilecoinNodes.length) {
-        const nonExistingFilecoinNodes = filecoinNodes.filter(n => existingFilecoinNodes.findIndex((en) => en.id === n.id) < 0)
-        this.logger.warn(`purchase submitted for non-existing filecoin nodes: ${nonExistingFilecoinNodes.map(n=>n.id).join()}`);
-        throw new NotFoundException();
-      }
-    }
+    await this.prisma.$transaction(async (prisma) => {
+      for (const createPurchaseDto of createPurchaseDtos) {
 
-    const certData = await this.certificatesService.findOne(purchase.certificateId);
+        const { filecoinNodes, ...purchase } = createPurchaseDto;
 
-    if (certData.initialSellerId !== createPurchaseDto.sellerId) {
-      throw new BadRequestException(`certificate has to be owned by transaction seller`);
-    }
-
-    const buyerData = await this.buyersService.findOne(purchase.buyerId);
-
-    if (!buyerData) {
-      this.logger.warn(`purchase submitted for non-existing buyerId=${purchase.buyerId}`);
-      throw new NotFoundException(`buyerId=${purchase.buyerId} not found`);
-    }
-
-    if (!buyerData.blockchainAddress) {
-      throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
-    }
-
-    if (filecoinNodes && filecoinNodes[0]) {
-
-      const filecoinNodesNotOwned = (await this.prisma.filecoinNode.findMany({
-        where: {
-          id: { in: filecoinNodes.map(n => n.id) },
-          buyerId: { not: purchase.buyerId }
+        if (filecoinNodes && filecoinNodes.length > 1) {
+          throw new BadRequestException('only one filecoin node per transaction allowed');
         }
-      }));
 
-      if (filecoinNodesNotOwned.length > 0) {
-        throw new BadRequestException(`filecoin nodes (${filecoinNodesNotOwned.map(n => n.id)}) have to be owned by the buyer`);
-      }
-    }
+        if (filecoinNodes && filecoinNodes.length > 0) {
+          const existingFilecoinNodes = await this.prisma.filecoinNode.findMany({ where: { id: { in: filecoinNodes.map(n => n.id) } } });
+          if (filecoinNodes.length !== existingFilecoinNodes.length) {
+            const nonExistingFilecoinNodes = filecoinNodes.filter(n => existingFilecoinNodes.findIndex((en) => en.id === n.id) < 0)
+            this.logger.warn(`purchase submitted for non-existing filecoin nodes: ${nonExistingFilecoinNodes.map(n=>n.id).join()}`);
+            throw new NotFoundException();
+          }
+        }
 
-    return await this.prisma.$transaction(async (prisma) => {
-      const newRecord = await prisma.purchase.create({
-        data: {
-          ...purchase,
-          createdOn: new Date()
-        } 
-      }).catch(err => {
-        this.logger.error(`error creating a new purchase: ${err}`);
-        throw err;
-      });
+        const certData = await this.certificatesService.findOne(purchase.certificateId);
 
-      if (filecoinNodes) {
-        await prisma.filecoinNodesOnPurchases.createMany({
-          data: filecoinNodes.map((n) => ({
-            buyerId: newRecord.buyerId,
-            purchaseId: newRecord.id,
-            filecoinNodeId: n.id
-          }))
+        if (certData.initialSellerId !== createPurchaseDto.sellerId) {
+          throw new BadRequestException(`certificate has to be owned by transaction seller`);
+        }
+
+        const buyerData = await this.buyersService.findOne(purchase.buyerId);
+
+        if (!buyerData) {
+          this.logger.warn(`purchase submitted for non-existing buyerId=${purchase.buyerId}`);
+          throw new NotFoundException(`buyerId=${purchase.buyerId} not found`);
+        }
+
+        if (!buyerData.blockchainAddress) {
+          throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
+        }
+
+        if (filecoinNodes && filecoinNodes[0]) {
+
+          const filecoinNodesNotOwned = (await this.prisma.filecoinNode.findMany({
+            where: {
+              id: { in: filecoinNodes.map(n => n.id) },
+              buyerId: { not: purchase.buyerId }
+            }
+          }));
+
+          if (filecoinNodesNotOwned.length > 0) {
+            throw new BadRequestException(`filecoin nodes (${filecoinNodesNotOwned.map(n => n.id)}) have to be owned by the buyer`);
+          }
+        }
+
+        const newRecord = await prisma.purchase.create({
+          data: {
+            ...purchase,
+            createdOn: new Date()
+          } 
         }).catch(err => {
-          this.logger.error(`error linking filecoin nodes to the new purchase: ${err}`);
+          this.logger.error(`error creating a new purchase: ${err}`);
           throw err;
         });
-      }
 
-      let accountToRedeemFrom: string;
-
-      if (filecoinNodes && filecoinNodes[0]) {
-        const filecoinNode = filecoinNodes[0];
-
-        const filecoinNodeData = await this.prisma.filecoinNode.findUnique({ where: { id: filecoinNode.id } });
-
-        if (!filecoinNodeData.blockchainAddress) {
-          throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
+        if (filecoinNodes) {
+          await prisma.filecoinNodesOnPurchases.createMany({
+            data: filecoinNodes.map((n) => ({
+              buyerId: newRecord.buyerId,
+              purchaseId: newRecord.id,
+              filecoinNodeId: n.id
+            }))
+          }).catch(err => {
+            this.logger.error(`error linking filecoin nodes to the new purchase: ${err}`);
+            throw err;
+          });
         }
 
-        accountToRedeemFrom = filecoinNodeData.blockchainAddress;
-      } else {
-        this.logger.debug(`no fielcoin node defined for purchase`);
+        let accountToRedeemFrom: string;
 
-        accountToRedeemFrom = buyerData.blockchainAddress;
+        if (filecoinNodes && filecoinNodes[0]) {
+          const filecoinNode = filecoinNodes[0];
+
+          const filecoinNodeData = await this.prisma.filecoinNode.findUnique({ where: { id: filecoinNode.id } });
+
+          if (!filecoinNodeData.blockchainAddress) {
+            throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
+          }
+
+          accountToRedeemFrom = filecoinNodeData.blockchainAddress;
+        } else {
+          this.logger.debug(`no fielcoin node defined for purchase`);
+
+          accountToRedeemFrom = buyerData.blockchainAddress;
+        }
+
+        const beneficiary = buyerData.name;
+
+        try {
+          await prisma.certificate.update({
+            data: {
+              beneficiary,
+              redemptionDate: new Date() // TO-DO: Replace with the exact blockchain timestamp of the claiming action
+            },
+            where: { id: certData.id }
+          });
+
+          this.logger.debug(`set claim data for the certificate: ${certData.id}`);
+        } catch (err) {
+          this.logger.error(`error setting claim data for the certificate: ${certData.id}: ${err}`);
+          throw err;
+        }
+
+        purchases.push(newRecord);
       }
-
-      const beneficiary = buyerData.name;
-
-      try {
-        await prisma.certificate.update({
-          data: {
-            beneficiary,
-            redemptionDate: new Date() // TO-DO: Replace with the exact blockchain timestamp of the claiming action
-          },
-          where: { id: certData.id }
-        });
-
-        this.logger.debug(`set claim data for the certificate: ${certData.id}`);
-      } catch (err) {
-        this.logger.error(`error setting claim data for the certificate: ${certData.id}: ${err}`);
-        throw err;
-      }
-
-      const data = await prisma.purchase.findUnique({
-        where: { id: newRecord.id },
-        include: { filecoinNodes: { select: { filecoinNode: true } } }
-      });
-
-      return { ...data, filecoinNodes: data.filecoinNodes.map(n => n.filecoinNode) };
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
       throw err;
     });
+
+    return purchases;
   }
 
   async findAll() {
