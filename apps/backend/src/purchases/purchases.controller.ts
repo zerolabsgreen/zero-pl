@@ -15,7 +15,7 @@ import {
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { PurchaseDto } from './dto/purchase.dto';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
@@ -31,8 +31,13 @@ export class PurchasesController {
   @Post()
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  create(@Body() createPurchaseDto: CreatePurchaseDto) {
-    return this.purchasesService.create(createPurchaseDto);
+  @ApiBody({ type: [CreatePurchaseDto] })
+  @ApiCreatedResponse({
+      type: [PurchaseDto],
+      description: 'Creates purchases'
+  })
+  create(@Body() createPurchaseDtos: [CreatePurchaseDto]) {
+    return this.purchasesService.create(createPurchaseDtos);
   }
 
   @Get()

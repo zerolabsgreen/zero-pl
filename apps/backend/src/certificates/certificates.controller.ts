@@ -15,7 +15,7 @@ import {
 import { CertificatesService } from './certificates.service';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
-import { ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { CertificateDto } from "./dto/certificate.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
@@ -30,8 +30,13 @@ export class CertificatesController {
   @Post()
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  create(@Body() createCertificateDto: CreateCertificateDto) {
-    return this.certificatesService.create(createCertificateDto);
+  @ApiBody({ type: [CreateCertificateDto] })
+  @ApiCreatedResponse({
+      type: [CertificateDto],
+      description: 'Creates certificates'
+  })
+  create(@Body() createCertificateDtos: CreateCertificateDto[]) {
+    return this.certificatesService.create(createCertificateDtos);
   }
 
   @Get()
