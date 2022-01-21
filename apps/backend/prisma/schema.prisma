@@ -89,7 +89,6 @@ model Purchase {
   sellerId                     String?
   files                        File[]
   recsSold                     Int
-  recsTransactions             Json
   reportingStart               DateTime?
   reportingStartTimezoneOffset Int?
   reportingEnd                 DateTime?

@@ -9,7 +9,6 @@ describe('BuyerInformation', () => {
         buyerId={'buyerID1'}
         buyerName={'A Buyer'}
         filecoinMinerIdList={[]}
-        recsAmount={[]}
       />
     );
     expect(baseElement).toBeTruthy();
