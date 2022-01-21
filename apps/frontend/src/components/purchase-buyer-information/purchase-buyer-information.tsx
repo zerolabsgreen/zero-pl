@@ -2,9 +2,8 @@ import { Box, Typography, useTheme } from '@mui/material';
 import PaperBox from '../paper-box/paper-box';
 import FieldLabel from '../field-label/field-label';
 import FieldValue from '../field-value/field-value';
-import FieldValueTransactionList from '../field-value-transaction-list/field-value-transaction-list';
 import FieldValueList from '../field-value-list/field-value-list';
-import { AnnualTransactionsDto, FilecoinNodeDto } from '@energyweb/zero-protocol-labs-api-client';
+import { FilecoinNodeDto } from '@energyweb/zero-protocol-labs-api-client';
 import { useState } from 'react';
 import { ButtonDetails } from '../button-details/button-details';
 import { useStyles } from './purchase-buyer-information-styles';
@@ -13,7 +12,6 @@ export interface PurchaseBuyerInformationProps {
   buyerName: string;
   buyerId: string;
   filecoinMinerIdList: FilecoinNodeDto[];
-  recsAmount: Array<AnnualTransactionsDto>;
   generationPeriod: { fromDate: string; toDate: string };
 }
 
@@ -22,7 +20,6 @@ export const PurchaseBuyerInformation = ({
   buyerName,
   buyerId,
   filecoinMinerIdList = [],
-  recsAmount = [],
 }: PurchaseBuyerInformationProps) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -80,14 +77,6 @@ export const PurchaseBuyerInformation = ({
             </Box>
           </Box>
           <Box display={'flex'}>
-            <Box mb={0}>
-              <FieldLabel
-                className={classes.fieldLab}
-                mb={'10px'}
-                labelText={'Total amount of RECs'}
-              />
-              <FieldValueTransactionList generationPeriod={generationPeriod} />
-            </Box>
             <Box ml={'20px'}>
               <div>
                 <ButtonDetails
@@ -99,15 +88,6 @@ export const PurchaseBuyerInformation = ({
             </Box>
           </Box>
         </Box>
-        {info && (
-          <Box>
-            <FieldValueTransactionList
-              transactionList={recsAmount}
-              generationPeriod={generationPeriod}
-              showRec={false}
-            />
-          </Box>
-        )}
       </PaperBox>
     </Box>
   );

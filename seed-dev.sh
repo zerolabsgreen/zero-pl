@@ -91,16 +91,6 @@ curl -w "\n" -s -X 'POST' \
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000002",
   "recsSold": 3,
-  "recsTransactions": [
-    {
-      "year": 2020,
-      "amount": 2
-    },
-    {
-      "year": 2021,
-      "amount": 1
-    }
-  ],
   "filecoinNodes": [{"id": "f00001"}]
 },{
   "id": "00000000-0000-0000-0000-000000555555",
@@ -108,16 +98,6 @@ curl -w "\n" -s -X 'POST' \
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000003",
   "recsSold": 7,
-  "recsTransactions": [
-    {
-      "year": 2020,
-      "amount": 2
-    },
-    {
-      "year": 2021,
-      "amount": 1
-    }
-  ],
   "reportingStart": "2020-11-01T00:00:00.000+03:00",
   "reportingStartTimezoneOffset": 180,
   "reportingEnd": "2021-06-01T23:59:59.999+03:00",

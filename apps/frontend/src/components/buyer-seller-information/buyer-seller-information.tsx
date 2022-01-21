@@ -1,6 +1,5 @@
 import { Grid, styled } from '@mui/material';
 import {
-  AnnualTransactionsDto,
   BuyerDto,
   FilecoinNodeDto,
   SellerDto,
@@ -8,7 +7,6 @@ import {
 import BuyerInformation from '../buyer-information/buyer-information';
 import SellerInformation from '../seller-information/seller-information';
 export interface BuyerSellerInformationProps {
-  recsTransactions: AnnualTransactionsDto[];
   buyer: BuyerDto;
   seller: SellerDto;
   filecoinMinerIdList: FilecoinNodeDto[];
@@ -18,7 +16,6 @@ export interface BuyerSellerInformationProps {
 export const BuyerSellerInformation = ({
   buyer,
   seller,
-  recsTransactions,
   filecoinMinerIdList,
   generationPeriod,
 }: BuyerSellerInformationProps) => {
@@ -34,7 +31,6 @@ export const BuyerSellerInformation = ({
           buyerId={buyer.id}
           buyerName={buyer.name}
           filecoinMinerIdList={filecoinMinerIdList}
-          recsAmount={recsTransactions}
         />
       </Grid>
       <Grid item sm={6}>

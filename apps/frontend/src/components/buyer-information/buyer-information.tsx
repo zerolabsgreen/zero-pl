@@ -3,10 +3,7 @@ import PaperBox from '../paper-box/paper-box';
 import FieldLabel from '../field-label/field-label';
 import FieldValue from '../field-value/field-value';
 import FieldValueList from '../field-value-list/field-value-list';
-import {
-  AnnualTransactionsDto,
-  FilecoinNodeDto,
-} from '@energyweb/zero-protocol-labs-api-client';
+import { FilecoinNodeDto } from '@energyweb/zero-protocol-labs-api-client';
 import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles({
@@ -22,7 +19,6 @@ export interface BuyerInformationProps {
   buyerName: string;
   buyerId: string;
   filecoinMinerIdList: FilecoinNodeDto[];
-  recsAmount: Array<AnnualTransactionsDto>;
   generationPeriod: { fromDate: string; toDate: string };
 }
 

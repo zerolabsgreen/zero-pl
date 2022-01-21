@@ -20,7 +20,6 @@ describe('BuyerSellerInformation', () => {
     const { baseElement } = render(
       <BuyerSellerInformation
         filecoinMinerIdList={[{ buyerId: 'b1', id: 'fileId1222' }]}
-        recsTransactions={[]}
         seller={sellerMock}
         buyer={buyerMock}
       />

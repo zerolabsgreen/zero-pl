@@ -36,7 +36,6 @@ export const PurchasePage = () => {
             buyerId={transactionsData[0]?.buyer.id}
             buyerName={transactionsData[0]?.buyer.name}
             filecoinMinerIdList={transactionsData[0]?.filecoinNodes}
-            recsAmount={transactionsData[0]?.recsTransactions}
           />
           <Grid container>
             <Grid item xs={12}>
