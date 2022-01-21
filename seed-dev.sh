@@ -71,7 +71,7 @@ curl -w "\n" -s -X 'POST' \
   "generatorId": "NA",
   "initialSellerId": "00000000-0000-0000-0000-000000000001",
   "region": "north_china",
-  "country": "China",
+  "country": "CN",
   "energySource": "WIND",
   "productType": "IREC",
   "generationStart": "2020-11-01T00:00:00.000Z",

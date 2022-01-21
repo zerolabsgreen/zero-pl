@@ -10,7 +10,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators'
-import { EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
+import { CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
 
 export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @ApiPropertyOptional({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
@@ -37,9 +37,9 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @IsOptional()
   region: string;
 
-  @ApiProperty({ example: 'China' })
-  @IsString()
-  country: string;
+  @ApiProperty({ example: CountryEnumType.DE })
+  @IsEnum(CountryEnumType)
+  country: CountryEnumType;
 
   @ApiProperty({ example: EnergySourceEnumType.SOLAR })
   @IsEnum(EnergySourceEnumType)
