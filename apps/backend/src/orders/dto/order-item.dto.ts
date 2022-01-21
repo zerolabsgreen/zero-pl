@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { OrderItem } from ".prisma/client";
 import { OrderItemTimeframeDto } from "./order-item-timeframe.dto";
+import { CountryEnumType } from "@prisma/client";
+import { IsEnum } from "class-validator";
 
 export class OrderItemDto implements OrderItem {
   constructor(partial: Partial<OrderItemDto>) {
@@ -13,8 +15,9 @@ export class OrderItemDto implements OrderItem {
   @ApiProperty({ example: "ca85db1a-fa8d-49fc-a2b9-b6de147bfd74" })
   orderId: string;
 
-  @ApiProperty({ example: "PL" })
-  country: string;
+  @ApiProperty({ example: CountryEnumType.DE })
+  @IsEnum(CountryEnumType)
+  country: CountryEnumType;
 
   @ApiProperty({ example: "Kraków" })
   city: string;
