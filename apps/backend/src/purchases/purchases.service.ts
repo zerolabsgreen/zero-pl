@@ -62,9 +62,11 @@ export class PurchasesService {
           throw new NotFoundException(`buyerId=${purchase.buyerId} not found`);
         }
 
-        if (!buyerData.blockchainAddress) {
-          throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
-        }
+        // TODO: Re-enable later after we re-enable blockchain interactions
+
+        // if (!buyerData.blockchainAddress) {
+        //   throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
+        // }
 
         if (filecoinNodes && filecoinNodes[0]) {
 
@@ -110,10 +112,13 @@ export class PurchasesService {
 
           const filecoinNodeData = await this.prisma.filecoinNode.findUnique({ where: { id: filecoinNode.id } });
 
-          if (!filecoinNodeData.blockchainAddress) {
-            throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
-          }
+          // TODO: Re-enable later after we re-enable blockchain interactions
 
+          // if (!filecoinNodeData.blockchainAddress) {
+          //   throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
+          // }
+
+          
           accountToRedeemFrom = filecoinNodeData.blockchainAddress;
         } else {
           this.logger.debug(`no fielcoin node defined for purchase`);
