@@ -40,7 +40,17 @@ export class FilesController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadFileDto })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @ApiCreatedResponse({ type: FileMetadataDto })
   @UseInterceptors(NoDataInterceptor, FileInterceptor('file', {
     storage: multer.memoryStorage(),
@@ -102,6 +112,7 @@ export class FilesController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: FileMetadataDto })
+  @ApiBody({ type: UpdateFileMetadataDto })
   @UseInterceptors(NoDataInterceptor)
   async updateFileMetadata(
     @Param('id') id: string,

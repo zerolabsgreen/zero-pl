@@ -27,25 +27,27 @@ export class FilecoinNodesService {
         throw err;
       }
 
-      let blockchainAddress: string;
+      // TODO: Re-enable with a proper setup for creating blockchain accounts
 
-      try {
-        blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-        this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for filecoin node (${newFilecoinNode.id})`);
-      } catch (err) {
-        this.logger.error(`error gathering blockchain account: ${err}`);
-        throw err;
-      }
+      // let blockchainAddress: string;
 
-      try {
-        await prisma.filecoinNode.update({
-          data: { blockchainAddress },
-          where: { id: newFilecoinNode.id }
-        });
-      } catch (err) {
-        this.logger.error(`error setting blockchain address for buyer ${newFilecoinNode.id}: ${err}`);
-        throw err;
-      }
+      // try {
+      //   blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
+      //   this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for filecoin node (${newFilecoinNode.id})`);
+      // } catch (err) {
+      //   this.logger.error(`error gathering blockchain account: ${err}`);
+      //   throw err;
+      // }
+
+      // try {
+      //   await prisma.filecoinNode.update({
+      //     data: { blockchainAddress },
+      //     where: { id: newFilecoinNode.id }
+      //   });
+      // } catch (err) {
+      //   this.logger.error(`error setting blockchain address for buyer ${newFilecoinNode.id}: ${err}`);
+      //   throw err;
+      // }
 
     }, { timeout: 60000 }).catch((err) => {
       this.logger.error('rolling back transaction');

@@ -44,7 +44,7 @@ export class PurchasesService {
           const existingFilecoinNodes = await this.prisma.filecoinNode.findMany({ where: { id: { in: filecoinNodes.map(n => n.id) } } });
           if (filecoinNodes.length !== existingFilecoinNodes.length) {
             const nonExistingFilecoinNodes = filecoinNodes.filter(n => existingFilecoinNodes.findIndex((en) => en.id === n.id) < 0)
-            this.logger.warn(`purchase submitted for non-existing filecoin nodes: ${nonExistingFilecoinNodes.map(n=>n.id).join()}`);
+            this.logger.error(`purchase submitted for non-existing filecoin nodes: ${nonExistingFilecoinNodes.map(n=>n.id).join()}`);
             throw new NotFoundException();
           }
         }
@@ -62,9 +62,11 @@ export class PurchasesService {
           throw new NotFoundException(`buyerId=${purchase.buyerId} not found`);
         }
 
-        if (!buyerData.blockchainAddress) {
-          throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
-        }
+        // TODO: Re-enable later after we re-enable blockchain interactions
+
+        // if (!buyerData.blockchainAddress) {
+        //   throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
+        // }
 
         if (filecoinNodes && filecoinNodes[0]) {
 
@@ -110,10 +112,13 @@ export class PurchasesService {
 
           const filecoinNodeData = await this.prisma.filecoinNode.findUnique({ where: { id: filecoinNode.id } });
 
-          if (!filecoinNodeData.blockchainAddress) {
-            throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
-          }
+          // TODO: Re-enable later after we re-enable blockchain interactions
 
+          // if (!filecoinNodeData.blockchainAddress) {
+          //   throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
+          // }
+
+          
           accountToRedeemFrom = filecoinNodeData.blockchainAddress;
         } else {
           this.logger.debug(`no fielcoin node defined for purchase`);
@@ -178,6 +183,7 @@ export class PurchasesService {
 
     return {
       ...data,
+      certificate: { ...data.certificate, energy: data.certificate.energy.toString() },
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${data.id}`,
       files: data.files.map(f => ({ ...f, url: `${process.env.FILES_BASE_URL}/${f.id}` })),
       filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode)
