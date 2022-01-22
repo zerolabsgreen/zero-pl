@@ -2,7 +2,7 @@ import { Box, Grid, TextField, Typography } from '@mui/material';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import { useEffect, useMemo } from 'react';
 import { useAddressMappingSetState } from '../../../context';
-import { WizardFormValues } from '../../../pages/wizard-page/WizardPage.effects';
+import { WizardFormValues } from '../../../pages/WizardPage/effects';
 import DatePicker from '../../../components/date-picker/date-picker';
 import useStyles from './DateEnergySection.styles';
 

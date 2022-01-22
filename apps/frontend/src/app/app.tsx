@@ -5,7 +5,7 @@ import ProofPage from '../pages/ProofPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import PurchasePage from '../pages/PurchasePage';
 import { ProductOfferPage } from '../pages/ProductOfferPage';
-import { WizardPage } from '../pages/wizard-page/WizardPage';
+import { WizardPage } from '../pages/WizardPage';
 import { WelcomePage } from '../pages/WelcomePage';
 import { ThankYouPage } from '../pages/ThankYouPage';
 import { AddressMappingProvider, SelectedProtocolProvider } from '../context';

@@ -2,7 +2,7 @@ import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
 import { SetStateAction } from 'react';
 import { FormWizardItemConfirm, FormWizardItemEmail, FormWizardItemProtocol, FormWizardItemUserType } from '../../containers';
 import { useSelectedProtocolStore } from '../../context';
-import { WizardFormValues } from './WizardPage.effects';
+import { WizardFormValues } from '../../pages/WizardPage/effects';
 
 export interface IFormStepItem {
   handleFormikChange: (value: any) => void;

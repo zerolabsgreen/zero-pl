@@ -3,7 +3,7 @@ import { variables } from '@energyweb/zero-protocol-labs-theme';
 import * as React from 'react';
 import useStyles from './form-wizard-item-email-styles';
 import { SwitchLabel } from '../../components/switch-label/switch-label'
-import { WizardFormValues } from '../../pages/wizard-page/WizardPage.effects';
+import { WizardFormValues } from '../../pages/WizardPage/effects';
 
 export interface IFormWizardItemEmailProps {
   isFilecoin?: boolean;

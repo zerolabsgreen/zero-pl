@@ -13,7 +13,7 @@ import { ReactComponent as Plus } from '../../assets/svg/plus.svg';
 import { ReactComponent as PlusGreen } from '../../assets/svg/plusGreen.svg';
 import GenericSelect, { SelectOption } from '../../components/generic-select/generic-select';
 import { FormUserType } from './components/form-user-type';
-import { WizardFormValues } from '../../pages/wizard-page/WizardPage.effects';
+import { WizardFormValues } from '../../pages/WizardPage/effects';
 import {
   useAddressMappingSetState,
   useAddressMappingState,

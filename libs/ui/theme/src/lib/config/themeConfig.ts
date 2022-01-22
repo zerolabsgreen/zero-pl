@@ -158,12 +158,18 @@ const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
           '& .MuiButton-endIcon': {
             color: styleConfig.SECONDARY_COLOR
           },
+          '& .MuiButton-startIcon': {
+            color: styleConfig.SECONDARY_COLOR
+          },
           '&:hover':{
             backgroundColor: styleConfig.SECONDARY_COLOR,
             color: styleConfig.WHITE,
             '& .MuiButton-endIcon': {
               color: styleConfig.PRIMARY_COLOR,
-            }
+            },
+            '& .MuiButton-startIcon': {
+              color: styleConfig.PRIMARY_COLOR,
+            },
           }
         },
         contained: {

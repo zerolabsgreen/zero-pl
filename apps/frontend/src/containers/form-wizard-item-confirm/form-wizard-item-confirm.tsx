@@ -11,7 +11,7 @@ import {
 import { variables } from '@energyweb/zero-protocol-labs-theme';
 import * as React from 'react';
 import { useAddressMappingState } from '../../context';
-import { WizardFormValues } from '../../pages/wizard-page/WizardPage.effects';
+import { WizardFormValues } from '../../pages/WizardPage/effects';
 import useStyles from './form-wizard-item-confirm-styles';
 import { useMemo } from 'react';
 import { Dayjs } from 'dayjs';

@@ -9,7 +9,7 @@ interface WrapperProps extends GridProps {
   isFilecoin?: boolean;
 }
 
-export const Wrapper = styled(Grid)<WrapperProps>(({ theme, isFilecoin }) => `
+export const Wrapper = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<WrapperProps>(({ theme, isFilecoin }) => `
   background-color: ${isFilecoin ? FilecoinColors.background : theme.palette.primary.main};
   background-image: ${isFilecoin ? `url(${FilecoinGlobusImg})` : `url(${BitcoinGlobusImg})`};
   min-height: 90vh;
@@ -28,7 +28,7 @@ interface BackButtonProps extends ButtonProps {
   isFilecoin?: boolean;
 }
 
-export const BackButton = styled(Button)<BackButtonProps>(({ theme, isFilecoin }) => `
+export const BackButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<BackButtonProps>(({ theme, isFilecoin }) => `
   background-color: ${theme.palette.background.paper};
   box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
   border: none;

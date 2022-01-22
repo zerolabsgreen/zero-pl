@@ -14,7 +14,7 @@ import { Countries } from '@energyweb/utils-general';
 import useStyles from './form-user-type.styles';
 import ButtonIcon from '../../../assets/svg/whiteArrow.svg';
 import { DateEnergySection } from './DateEnergySection';
-import { WizardFormValues } from '../../../pages/wizard-page/WizardPage.effects';
+import { WizardFormValues } from '../../../pages/WizardPage/effects';
 import Info from '../../../components/info/info';
 import { SelectAutocomplete } from '../../../components/select-autocomplete';
 import DatePicker from '../../../components/date-picker/date-picker';
