@@ -9,7 +9,7 @@ import { WizardPage } from '../pages/wizard-page/WizardPage';
 import { WelcomePage } from '../pages/WelcomePage';
 import { ThankYouPage } from '../pages/ThankYouPage';
 import { AddressMappingProvider, SelectedProtocolProvider } from '../context';
-import WizardThankPage from '../pages/wizard-thank-you-page';
+import WizardThankPage from '../pages/WizardThankYouPage';
 // import { UserPage } from '../pages/UserPage';
 import { useAxiosDefaults } from '../hooks';
 
