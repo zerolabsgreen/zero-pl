@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
+import { CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
 
 export class CertificateDto {
   @ApiProperty({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
@@ -17,8 +17,8 @@ export class CertificateDto {
   @ApiProperty({ example: 'NE' })
   region: string;
 
-  @ApiProperty({ example: 'China' })
-  country: string;
+  @ApiProperty({ example: CountryEnumType.DE })
+  country: CountryEnumType;
 
   @ApiProperty()
   energy: string;

@@ -65,70 +65,42 @@ curl -w "\n" -s -X 'POST' \
   "http://localhost:$PORT/api/partners/filecoin/certificates" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
-  -d '{
+  -d '[{
   "id": "00000000-0000-0000-0000-000000000333",
   "generatorName": "Solar 1 - Non Bua Lampon",
   "generatorId": "NA",
   "initialSellerId": "00000000-0000-0000-0000-000000000001",
   "region": "north_china",
-  "country": "China",
+  "country": "CN",
   "energySource": "WIND",
   "productType": "IREC",
   "generationStart": "2020-11-01T00:00:00.000Z",
   "generationEnd": "2021-06-01T23:59:59.999Z",
   "energy": "10000"
-}'
+}]'
 
 echo
-echo "creating purchase of certificateId=00000000-0000-0000-0000-000000000333, 00000000-0000-0000-0000-000000000001 -> 00000000-0000-0000-0000-000000000002"
+echo "creating purchases"
 curl -w "\n" -s -X 'POST' \
   "http://localhost:$PORT/api/partners/filecoin/purchases" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
-  -d '{
+  -d '[{
   "id": "00000000-0000-0000-0000-000000444444",
   "certificateId": "00000000-0000-0000-0000-000000000333",
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000002",
   "recsSold": 3,
-  "recsTransactions": [
-    {
-      "year": 2020,
-      "amount": 2
-    },
-    {
-      "year": 2021,
-      "amount": 1
-    }
-  ],
   "filecoinNodes": [{"id": "f00001"}]
-}'
-
-echo
-echo "creating purchase of certificateId=00000000-0000-0000-0000-000000000333, 00000000-0000-0000-0000-000000000001 -> 00000000-0000-0000-0000-000000000003"
-curl -w "\n" -s -X 'POST' \
-  "http://localhost:$PORT/api/partners/filecoin/purchases" \
-  -H "X-API-KEY: $X_API_KEY" \
-  -H 'Content-Type: application/json' \
-  -d '{
+},{
   "id": "00000000-0000-0000-0000-000000555555",
   "certificateId": "00000000-0000-0000-0000-000000000333",
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000003",
   "recsSold": 7,
-  "recsTransactions": [
-    {
-      "year": 2020,
-      "amount": 2
-    },
-    {
-      "year": 2021,
-      "amount": 1
-    }
-  ],
   "reportingStart": "2020-11-01T00:00:00.000+03:00",
   "reportingStartTimezoneOffset": 180,
   "reportingEnd": "2021-06-01T23:59:59.999+03:00",
   "reportingEndTimezoneOffset": 180,
   "filecoinNodes": [{"id": "f00002"}]
-}'
+}]'

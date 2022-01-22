@@ -17,42 +17,47 @@ export class CertificatesService {
     private readonly configService: ConfigService
   ) {}
 
-  async create(createCertificateDto: CreateCertificateDto) {
-    this.logger.log(`received request to create a certificate: ${JSON.stringify(createCertificateDto)}`);
-    let newCertificate: Certificate;
+  async create(createCertificateDtos: CreateCertificateDto[]): Promise<CertificateDto[]> {
+    this.logger.log(`received request to create a certificates: ${JSON.stringify(createCertificateDtos)}`);
 
-    const { energy, ...newCertificateData } = createCertificateDto;
-
-    if (!(await this.prisma.seller.findUnique({ where: { id: newCertificateData.initialSellerId } }))) {
-      this.logger.warn(`attempt to create a certificate for non-existing sellerId=${newCertificateData.initialSellerId}`);
-      throw new NotFoundException(`sellerId=${newCertificateData.initialSellerId} not found`);
-    }
-
+    const certificates: CertificateDto[] = [];
+  
     await this.prisma.$transaction(async (prisma) => {
-      try {
-        newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energy: BigInt(energy) } });
-        this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
-      } catch (err) {
-        this.logger.error(`error creating a new certificate: ${err}`);
-        throw err;
+      for (const createCertificateDto of createCertificateDtos) {
+        let newCertificate: Certificate;
+
+        const { energy, ...newCertificateData } = createCertificateDto;
+
+        if (!(await this.prisma.seller.findUnique({ where: { id: newCertificateData.initialSellerId } }))) {
+          this.logger.warn(`attempt to create a certificate for non-existing sellerId=${newCertificateData.initialSellerId}`);
+          throw new NotFoundException(`sellerId=${newCertificateData.initialSellerId} not found`);
+        }
+
+        try {
+          newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energy: BigInt(energy) } });
+          this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
+        } catch (err) {
+          this.logger.error(`error creating a new certificate: ${err}`);
+          throw err;
+        }
+
+        // TODO: we need criteria to know it is possible to go to a next cert. issuance
+
+        certificates.push(new CertificateDto({
+          ...newCertificate,
+          generationStart: newCertificate.generationStart.toISOString(),
+          generationEnd: newCertificate.generationEnd.toISOString(), 
+          redemptionDate: newCertificate.redemptionDate?.toISOString(),
+          energy: newCertificate.energy.toString(),
+          commissioningDate: newCertificate.commissioningDate?.toISOString(),
+        }));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
       throw err;
     });
 
-    // TODO: we need criteria to know it is possible to go to a next cert. issuance
-
-    const dbRecord = await this.prisma.certificate.findUnique({ where: { id: newCertificate.id } });
-
-    return new CertificateDto({
-      ...dbRecord,
-      generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString(),
-      commissioningDate: dbRecord.commissioningDate?.toISOString(),
-    });
+    return certificates;
   }
 
   async findAll() {

@@ -55,18 +55,6 @@ export class CreatePurchaseDto {
   @IsPositive()
   recsSold: number;
 
-  @ApiProperty({
-    type: [RecsAnnuallyDTO],
-    example: [
-      { 'year': 2020, 'amount': 2 },
-      { 'year': 2021, 'amount': 1 }
-    ]
-  })
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => RecsAnnuallyDTO)
-  recsTransactions: Prisma.JsonValue;
-
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()

@@ -11,14 +11,14 @@ import {
   ValidateNested,
   ValidationOptions
 } from "class-validator";
-import { Countries } from "@energyweb/utils-general";
 import { CreateOrderItemTimeframeDto } from "./create-order-item-timeframe.dto";
 import { Type } from "class-transformer";
+import { CountryEnumType } from "@prisma/client";
 
 export class CreateOrderItemDto {
-  @ApiProperty({ example: "PL" })
-  @IsEnum(Countries.map(i => i.code))
-  country: string;
+  @ApiProperty({ example: CountryEnumType.DE })
+  @IsEnum(CountryEnumType)
+  country: CountryEnumType;
 
   @ApiPropertyOptional({ example: "Kraków" })
   @IsString()

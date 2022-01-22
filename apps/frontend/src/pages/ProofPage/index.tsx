@@ -41,7 +41,6 @@ export const ProductPage = () => {
                   toDate: data.certificate.generationEnd,
                 }}
                 filecoinMinerIdList={data.filecoinNodes}
-                recsTransactions={data.recsTransactions}
                 buyer={data.buyer}
                 seller={data.seller}
               />

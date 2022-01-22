@@ -10,14 +10,6 @@ class File extends PartialType(PickType(FileMetadataDto, ['id', 'fileName', 'mim
   url: string;
 }
 
-class AnnualTransactionsDto {
-  @ApiProperty({ example: 2020 })
-  year: number;
-
-  @ApiProperty({ example: 2 })
-  amount: number;
-}
-
 export class PurchaseDto { // TODO: should implement Purchase interface
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
   id: string;
@@ -39,9 +31,6 @@ export class PurchaseDto { // TODO: should implement Purchase interface
 
   @ApiProperty({ example: 2 })
   recsSold: number;
-
-  @ApiProperty({ type: [AnnualTransactionsDto] })
-  recsTransactions: AnnualTransactionsDto[];
 
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
   reportingStart: string;
