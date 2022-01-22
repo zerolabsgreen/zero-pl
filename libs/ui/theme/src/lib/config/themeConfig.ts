@@ -153,6 +153,19 @@ const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
     },
     MuiButton: {
       styleOverrides: {
+        root: {
+          color: styleConfig.PRIMARY_COLOR,
+          '& .MuiButton-endIcon': {
+            color: styleConfig.SECONDARY_COLOR
+          },
+          '&:hover':{
+            backgroundColor: styleConfig.SECONDARY_COLOR,
+            color: styleConfig.WHITE,
+            '& .MuiButton-endIcon': {
+              color: styleConfig.PRIMARY_COLOR,
+            }
+          }
+        },
         contained: {
           '&.Mui-disabled': {
             color: styleConfig.TEXT_COLOR_DEFAULT,

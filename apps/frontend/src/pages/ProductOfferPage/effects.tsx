@@ -4,17 +4,9 @@ export const useProductOfferPageEffects = () => {
   const [declineModalOpen, setDeclineModalOpen] = useState(false);
   const [offerAccepted, setOfferAccepted] = useState(false);
 
-  const handleModalOpen = () => {
-    setDeclineModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setDeclineModalOpen(false);
-  };
-
-  const handleAcceptOffer = () => {
-    setOfferAccepted(true);
-  };
+  const handleModalOpen = () => setDeclineModalOpen(true);
+  const handleModalClose = () => setDeclineModalOpen(false);
+  const handleAcceptOffer = () => setOfferAccepted(true);
 
   return {
     offerAccepted,

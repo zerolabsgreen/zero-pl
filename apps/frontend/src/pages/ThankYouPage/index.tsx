@@ -1,18 +1,17 @@
 import { FC } from 'react';
-import { Grid, Typography } from '@mui/material';
-import BitcoinGlobusImg from '../../assets/svg/globus.svg';
 import { variables } from '@energyweb/zero-protocol-labs-theme';
-import { useStyles } from './thank-you-page.style';
+import styled from '@mui/material/styles/styled';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import useTheme from '@mui/material/styles/useTheme';
+import BitcoinGlobusImg from '../../assets/svg/globus.svg';
 
 export const ThankYouPage: FC = () => {
-  const classes = useStyles();
+  const theme = useTheme();
   return (
-    <Grid
-      className={classes.grid}
-      bgcolor={variables.primaryColor}
-      style={{
-        backgroundImage: `url(${BitcoinGlobusImg})`,
-      }}
+    <StyledGrid
+      bgcolor={theme.palette.primary.main}
+      style={bgStyle}
     >
       <Grid item>
         <Typography
@@ -35,6 +34,20 @@ export const ThankYouPage: FC = () => {
           Our team will be in contact with you very soon
         </Typography>
       </Grid>
-    </Grid>
+    </StyledGrid>
   );
 };
+
+const bgStyle = {
+  backgroundImage: `url(${BitcoinGlobusImg})`,
+}
+
+const StyledGrid = styled(Grid)`
+  height: calc(100vh - 88px);
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`

@@ -1,5 +1,8 @@
 import { FC } from 'react';
-import { Grid, Box } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import styled from '@mui/material/styles/styled';
+
 import {
   OfferSummaryBlock,
   AcceptedOffer,
@@ -10,14 +13,14 @@ import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import NotificationStrip from '../../components/notification-strip/notification-strip';
 import { ProductSummaryBlock } from '../../containers';
 import { DeclineOfferModal } from '../../containers/modals';
+
 import { ReactComponent as MailIcon } from '../../assets/svg/mail.svg';
 import { ReactComponent as CloseIcon } from '../../assets/svg/close.svg';
 import { ReactComponent as OkIcon } from '../../assets/svg/ok.svg';
-import { useProductOfferPageEffects } from './ProductOfferPage.effects';
-import { useStyles } from './product-offer-page.style';
+
+import { useProductOfferPageEffects } from './effects';
 
 export const ProductOfferPage: FC = () => {
-  const classes = useStyles();
   const {
     offerAccepted,
     declineModalOpen,
@@ -32,12 +35,12 @@ export const ProductOfferPage: FC = () => {
         open={declineModalOpen}
         handleClose={handleModalClose}
       />
-      <Box className={classes.stripWrapper}>
+      <StripWrapper>
         <NotificationStrip text="You're received an Offer" height={72} />
-      </Box>
+      </StripWrapper>
 
       <Grid container>
-        <Grid item xs={12} className={classes.wrapper}>
+        <Wrapper item xs={12}>
           <Breadcrumbs
             breadcrumbList={['Product Offer', 'PurchaseID: [productId]']}
           />
@@ -47,10 +50,9 @@ export const ProductOfferPage: FC = () => {
             <AcceptedOffer />
           ) : (
             <>
-              <Box className={classes.buttonsGroup}>
+              <ButtonsGroupWrapper>
                 <StyledButton
                   variant="contained"
-                  classes={{ endIcon: classes.endIcon }}
                   href="mailto:someone@yoursite.com"
                   endIcon={<MailIcon />}
                 >
@@ -59,7 +61,6 @@ export const ProductOfferPage: FC = () => {
                 <StyledButton
                   variant="contained"
                   onClick={handleModalOpen}
-                  classes={{ endIcon: classes.endIcon }}
                   endIcon={<CloseIcon />}
                 >
                   Decline Offer
@@ -68,19 +69,41 @@ export const ProductOfferPage: FC = () => {
                   variant="contained"
                   color="primary"
                   onClick={handleAcceptOffer}
-                  classes={{ endIcon: classes.endIcon }}
                   endIcon={<OkIcon />}
                 >
                   Accept Offer
                 </StyledButton>
-              </Box>
+              </ButtonsGroupWrapper>
               <ProductSummaryDetails />
             </>
           )}
-        </Grid>
+        </Wrapper>
       </Grid>
     </>
   );
 };
+
+const Wrapper = styled(Grid)(({ theme }) => `
+  margin-top: 72px;
+  padding: 0 24px 32px 24px;
+  ${theme.breakpoints.down('md')} {
+    padding: 0 16px 32px 16px;
+  };
+`)
+
+const StripWrapper = styled(Box)`
+  position: absolute;
+  width: 100%;
+  left: 0;
+`
+
+const ButtonsGroupWrapper = styled(Box)(({ theme }) => `
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  ${theme.breakpoints.down('md')} {
+    flex-direction: column;
+  };
+`)
 
 export default ProductOfferPage;

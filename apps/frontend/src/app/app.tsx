@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Header } from '../components/header/header';
-import ProofPage from '../pages/ProofPage/ProofPage';
-import NotFoundPage from '../pages/not-found-page/not-found-page';
-import PurchasePage from '../pages/PurchasePage/PurchasePage';
-import { ProductOfferPage } from '../pages/product-offer-page/product-offer-page';
+import ProofPage from '../pages/ProofPage';
+import NotFoundPage from '../pages/NotFoundPage';
+import PurchasePage from '../pages/PurchasePage';
+import { ProductOfferPage } from '../pages/ProductOfferPage';
 import { WizardPage } from '../pages/wizard-page/WizardPage';
-import { WelcomePage } from '../pages/welcome-page/welcome-page';
-import { ThankYouPage } from '../pages/thank-you-page/thank-you-page';
+import { WelcomePage } from '../pages/WelcomePage';
+import { ThankYouPage } from '../pages/ThankYouPage';
 import { AddressMappingProvider, SelectedProtocolProvider } from '../context';
-import WizardThankPage from '../pages/wizard-thank-page/wizard-thank-page';
+import WizardThankPage from '../pages/wizard-thank-you-page';
 // import { UserPage } from '../pages/UserPage';
 import { useAxiosDefaults } from '../hooks';
 

@@ -7,7 +7,7 @@ import DownloadSection from '../../components/download-section/download-section'
 import TableListProofs from '../../components/table-list-proofs/TableListProofs';
 import Loading from '../../components/loading/loading';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
-import { useProductPageEffects, certificateInfoTableHeaders } from './ProofPage.effects';
+import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
 import { shortifyEthAddr } from '../../components/ethereum-address/ethereum-address';
 
 export const ProductPage = () => {

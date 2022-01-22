@@ -1,17 +1,10 @@
 import { Container, Grid, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { GenericTable } from '@zero-labs/zero-ui-components';
 import PageSection from '../../components/page-section/page-section';
 import Loading from '../../components/loading/loading';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import PurchaseBuyerInformation from '../../components/purchase-buyer-information/purchase-buyer-information';
-import { purchaseInfoHeaders, usePurchasePageEffects } from './PurchasePage.effects';
-
-export const useStyles = makeStyles({
-  pdTop: {
-    paddingTop: '16px',
-  },
-});
+import { purchaseInfoHeaders, usePurchasePageEffects } from './effects';
 
 export const PurchasePage = () => {
   const { transactionsData, purchaseInfoTableData, isLoading, isFetched } = usePurchasePageEffects();
