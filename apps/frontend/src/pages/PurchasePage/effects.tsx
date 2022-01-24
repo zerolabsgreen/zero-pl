@@ -21,7 +21,7 @@ export const purchaseInfoHeaders: TableHeader = {
   country: { label: 'Country' },
   energySource: { label: 'Energy Source' },
   amountPurchased: { label: 'Amount Purchased' },
-  purchaseDate: { label: 'Purchase Date' },
+  generationPeriod: { label: 'Period of Generation' },
   action: { label: '' }
 }
 
@@ -55,7 +55,7 @@ export const usePurchasePageEffects = () => {
     country: tx.certificate.country,
     energySource: tx.certificate.energySource,
     amountPurchased: `${tx.recsSold} MWh`,
-    purchaseDate: `${dayjs(tx.certificate.generationStart).isValid()
+    generationPeriod: `${dayjs(tx.certificate.generationStart).isValid()
       ? dayjs(tx.certificate.generationStart)
           .utc()
           .format('YYYY-MM-DD')
