@@ -15,7 +15,7 @@ model File {
   createdAt  DateTime  @default(now())
   content    Bytes
   purchase   Purchase? @relation(fields: [purchaseId], references: [id])
-  purchaseId String?
+  purchaseId String?   @unique()
 
   @@index([createdAt])
 }
