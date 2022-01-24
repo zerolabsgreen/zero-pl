@@ -14,7 +14,7 @@ import { FilesModule } from '../files/files.module';
     PDFModule.register({
       view: {
           root: `${__dirname}/templates`,
-          engine: 'pug',
+          engine: 'htmling',
       },
     }),
     FilesModule,

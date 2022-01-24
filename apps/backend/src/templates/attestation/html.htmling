@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{purchaseId}}</title>
+    <meta name="description" content="{{purchaseId}}">
+  </head>
+  <body>
+    <h1>{{purchaseId}}</h1>
+  </body>
+</html>

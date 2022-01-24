@@ -53,7 +53,7 @@ import { EmailModule } from '../email/email.module';
     PDFModule.register({
       view: {
           root: `${__dirname}/templates`,
-          engine: 'pug',
+          engine: 'htmling',
       },
     }),
     PrismaModule,
