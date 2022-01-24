@@ -24,10 +24,17 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
   const styles = useStyles();
   const { blockchainEvents, isLoading } = useTableListProofsEffects(purchaseId);
 
-  if (isLoading) return <CircularProgress />
+  if (isLoading) {
+    return (
+      <Box width="100%" my="20px" display="flex" justifyContent="center">
+        <CircularProgress />
+      </Box>
+    )
+  };
 
   return (
     <Box mb={4}>
+      {blockchainEvents &&
       <Box display="flex" alignItems="center">
         <Typography
           mt={'30px'}
@@ -39,7 +46,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
         >
           BLOCKCHAIN PROOFS {'&'} HISTORY
         </Typography>
-      </Box>
+      </Box>}
         <Box className={styles.wrapper}>
           <Table className={styles.table}>
             <TableBody>
