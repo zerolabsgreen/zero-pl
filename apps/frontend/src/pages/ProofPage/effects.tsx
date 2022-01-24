@@ -40,8 +40,8 @@ export const useProductPageEffects = () => {
     generatorId: data?.certificate?.generatorId ?? '',
     energySource: <FuelType fuelType={data?.certificate?.energySource as FuelTypeEnum} />,
     region: `${data?.certificate?.country}, ${data?.certificate?.region}`,
-    redemptionDate: dayjs(data?.certificate?.generationStart).isValid()
-      ? dayjs(data?.certificate?.generationStart).utc().format('YYYY-MM-DD')
+    redemptionDate: dayjs(data?.certificate?.redemptionDate).isValid()
+      ? dayjs(data?.certificate?.redemptionDate).utc().format('YYYY-MM-DD')
       : '-',
     seller: <EthereumAddress shortify clipboard address={data?.certificate?.initialSellerId ?? ''} />
   }]
