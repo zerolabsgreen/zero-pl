@@ -25,7 +25,6 @@ import { Express, Response } from 'express';
 import * as multer from 'multer';
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
-import { UpdateFileMetadataDto } from "./dto/update-file-metadata.dto";
 
 @Controller('files')
 @ApiTags('files')
@@ -44,6 +43,7 @@ export class FilesController {
     schema: {
       type: 'object',
       properties: {
+        purchaseId: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',
@@ -59,11 +59,11 @@ export class FilesController {
     }
   }))
   create(
-    @Body() body: UploadFileDto,
+    @Body() { purchaseId }: UploadFileDto,
     @UploadedFile() file: Express.Multer.File
   ) {
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
-    return this.filesService.create(file);
+    return this.filesService.create(file, purchaseId);
   }
 
   @Get()
@@ -106,19 +106,6 @@ export class FilesController {
     }
 
     return new FileMetadataDto(file)
-  }
-
-  @Patch(':id/metadata')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
-  @ApiOkResponse({ type: FileMetadataDto })
-  @ApiBody({ type: UpdateFileMetadataDto })
-  @UseInterceptors(NoDataInterceptor)
-  async updateFileMetadata(
-    @Param('id') id: string,
-    @Body() updateFileMetadata: UpdateFileMetadataDto
-  ) {
-    return this.filesService.update(id, updateFileMetadata);
   }
 
   @Delete(':id')
