@@ -15,7 +15,7 @@ model File {
   createdAt  DateTime  @default(now())
   content    Bytes
   purchase   Purchase? @relation(fields: [purchaseId], references: [id])
-  purchaseId String?   @unique()
+  purchaseId String?   @unique
 
   @@index([createdAt])
 }
@@ -26,6 +26,7 @@ model Buyer {
   blockchainAddress String?
   purchase          Purchase[]
   filecoinNodes     FilecoinNode[]
+  contracts         Contract[]
 
   @@unique([blockchainAddress])
 }
@@ -39,18 +40,19 @@ model Seller {
   blockchainAddress String?
   purchase          Purchase[]
   certificates      Certificate[]
+  contracts         Contract[]
 
   @@unique([blockchainAddress])
 }
 
 model Certificate {
-  id                            String     @id @default(uuid())
-  energy                        BigInt     @default(0)
+  id                            String               @id @default(uuid())
+  energy                        BigInt               @default(0)
   generatorName                 String?
   generatorId                   String?
   region                        String?
   country                       CountryEnumType
-  productType                   ProductEnumType @default(IREC)
+  productType                   ProductEnumType      @default(IREC)
   energySource                  EnergySourceEnumType @default(SOLAR)
   generationStart               DateTime?
   generationStartTimezoneOffset Int?
@@ -58,13 +60,15 @@ model Certificate {
   generationEndTimezoneOffset   Int?
   txHash                        String?
   purchase                      Purchase[]
-  seller                        Seller     @relation(fields: [initialSellerId], references: [id])
+  seller                        Seller               @relation(fields: [initialSellerId], references: [id])
   initialSellerId               String
   beneficiary                   String?
   redemptionDate                DateTime?
   capacity                      Int?
   commissioningDate             DateTime?
   label                         LabelEnumType?
+  Contract                      Contract?            @relation(fields: [contractId], references: [id])
+  contractId                    String?
 }
 
 model FilecoinNode {
@@ -73,6 +77,7 @@ model FilecoinNode {
   buyerId           String
   blockchainAddress String?
   purchases         FilecoinNodesOnPurchases[]
+  contracts         Contract[]
 
   @@unique([id, buyerId])
 }
@@ -143,6 +148,27 @@ model OrderItemTimeFrame {
   energy      BigInt
 }
 
+model Contract {
+  id              String                 @id @default(uuid())
+  buyer           Buyer                  @relation(fields: [buyerId], references: [id])
+  buyerId         String
+  seller          Seller                 @relation(fields: [sellerId], references: [id])
+  sellerId        String
+  filecoinNode    FilecoinNode?          @relation(fields: [filecoinNodeId], references: [id])
+  filecoinNodeId  String?
+  productType     ProductEnumType
+  energySources   EnergySourceEnumType[]
+  region          String?
+  country         CountryEnumType
+  generationStart DateTime
+  generationEnd   DateTime
+  timezoneOffset  Int
+  openVolume      BigInt
+  deliveredVolume BigInt
+
+  certificates Certificate[]
+}
+
 enum PaymentPreferencesEnumType {
   WIRE_TRANSFER
   CRYPTO
@@ -196,7 +222,7 @@ enum LabelEnumType {
 }
 
 // Taken from https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
-enum CountryEnumType { 
+enum CountryEnumType {
   AF
   AX
   AL
