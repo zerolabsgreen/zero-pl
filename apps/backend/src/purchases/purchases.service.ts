@@ -1,15 +1,18 @@
 import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { pick } from 'lodash';
+import { Cache } from 'cache-manager';
+import { Purchase } from '@prisma/client';
+import { PDFService } from '@t00nday/nestjs-pdf';
+import { ConfigService } from '@nestjs/config';
+
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { ConfigService } from '@nestjs/config';
 import { IssuerService } from '../issuer/issuer.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
-import { pick } from 'lodash';
-import { Cache } from 'cache-manager';
-import { PurchaseDto } from './dto/purchase.dto';
-import { Purchase } from '@prisma/client';
+import { FilesService } from '../files/files.service';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PurchasesService {
@@ -21,7 +24,9 @@ export class PurchasesService {
     private certificatesService: CertificatesService,
     private issuerService: IssuerService,
     private buyersService: BuyersService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private pdfService: PDFService,
+    private filesService: FilesService
   ) {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
@@ -104,6 +109,11 @@ export class PurchasesService {
             throw err;
           });
         }
+
+        const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
+            locals: { purchaseId: newRecord.id },
+        }));
+        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, newRecord.id);
 
         let accountToRedeemFrom: string;
 

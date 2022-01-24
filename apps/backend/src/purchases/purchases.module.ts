@@ -6,9 +6,18 @@ import { BuyersModule } from '../buyers/buyers.module';
 import { IssuerModule } from '../issuer/issuer.module';
 import * as redisStore from 'cache-manager-redis-store';
 import * as process from 'process';
+import { PDFModule } from '@t00nday/nestjs-pdf';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
+    PDFModule.register({
+      view: {
+          root: `${__dirname}/templates`,
+          engine: 'pug',
+      },
+    }),
+    FilesModule,
     BuyersModule,
     CacheModule.registerAsync({
       useFactory: () => {
@@ -22,7 +31,7 @@ import * as process from 'process';
       }
     }),
     CertificatesModule,
-    IssuerModule
+    IssuerModule,
   ],
   controllers: [PurchasesController],
   providers: [PurchasesService]

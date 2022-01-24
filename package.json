@@ -115,6 +115,7 @@
     "@nrwl/tao": "13.4.2",
     "@nrwl/web": "13.4.2",
     "@nrwl/workspace": "13.4.2",
+    "@t00nday/nestjs-pdf": "^2.0.6",
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
     "@types/cache-manager": "^3.4.2",

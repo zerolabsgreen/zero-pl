@@ -63,7 +63,7 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File
   ) {
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
-    return this.filesService.create(file, purchaseId);
+    return this.filesService.create(file.originalname, file.buffer, purchaseId, file.mimetype);
   }
 
   @Get()

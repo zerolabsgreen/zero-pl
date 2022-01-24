@@ -1,9 +1,11 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { PDFModule } from '@t00nday/nestjs-pdf';
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { PrismaModule } from "../prisma/prisma.module";
 import { AuthModule } from "../auth/auth.module";
 import { FilesModule } from "../files/files.module";
@@ -47,6 +49,12 @@ import { EmailModule } from '../email/email.module';
           .default('smtp://localhost:1025'),
         SMTP_FROM: Joi.string().default('"EW Zero" <notification@energyweb.org>'),
       })
+    }),
+    PDFModule.register({
+      view: {
+          root: `${__dirname}/templates`,
+          engine: 'pug',
+      },
     }),
     PrismaModule,
     AuthModule,

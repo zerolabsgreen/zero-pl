@@ -8,12 +8,12 @@ import { FileMetadataDto } from "./dto/file-metadata.dto";
 export class FilesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(file: Express.Multer.File, purchaseId: string) {
+  async create(filename: string, buffer: Buffer, purchaseId: string, mimeType = 'application/pdf') {
     const newRecord = await this.prisma.file.create({
       data: {
-        content: file.buffer,
-        fileName: file.originalname,
-        mimeType: file.mimetype,
+        content: buffer,
+        fileName: filename,
+        mimeType: mimeType,
         purchaseId: purchaseId
       }
     })
