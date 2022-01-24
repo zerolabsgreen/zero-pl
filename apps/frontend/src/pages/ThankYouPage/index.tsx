@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { variables } from '@energyweb/zero-protocol-labs-theme';
 import styled from '@mui/material/styles/styled';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -15,7 +14,7 @@ export const ThankYouPage: FC = () => {
     >
       <Grid item>
         <Typography
-          color={variables.secondaryColor}
+          color={'secondary'}
           fontSize={'32px'}
           lineHeight={'41px'}
           fontWeight={700}
@@ -25,7 +24,7 @@ export const ThankYouPage: FC = () => {
           Thank you for submitting your request
         </Typography>
         <Typography
-          color={variables.white}
+          color={theme.palette.text.primary}
           fontSize={'20px'}
           lineHeight={'24px'}
           fontWeight={500}

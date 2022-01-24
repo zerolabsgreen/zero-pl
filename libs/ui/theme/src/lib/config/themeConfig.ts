@@ -4,8 +4,8 @@ import {
   Theme,
   ThemeOptions,
 } from '@mui/material/styles';
-import { variables } from './variables';
 import { enUS, plPL } from '@mui/material/locale';
+import { variables } from './variables';
 import { IStyleConfig } from '../utils/makeThemeConfig';
 
 const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
@@ -97,11 +97,6 @@ const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
           backgroundColor: styleConfig.INPUT_BACKGROUND_COLOR,
           lineHeight: '16px',
         },
-      },
-    },
-    MuiSelect: {
-      styleOverrides: {
-        select: { backgroundColor: styleConfig.INPUT_BACKGROUND_COLOR },
       },
     },
     MuiFilledInput: {

@@ -1,9 +1,9 @@
 import { Container, Grid, Typography } from '@mui/material';
 import { GenericTable } from '@zero-labs/zero-ui-components';
-import PageSection from '../../components/page-section/page-section';
-import Loading from '../../components/loading/loading';
-import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
-import PurchaseBuyerInformation from '../../components/purchase-buyer-information/purchase-buyer-information';
+import { PageSection } from '../../components/PageSection';
+import { LoadingBlock } from '../../components/LoadingBlock';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
+import { PurchaseBuyerInformation } from '../../components/PurchaseBuyerInformation';
 import { purchaseInfoHeaders, usePurchasePageEffects } from './effects';
 
 export const PurchasePage = () => {
@@ -49,7 +49,7 @@ export const PurchasePage = () => {
     </Grid>
     </Container>
   ) : (
-    <Loading />
+    <LoadingBlock />
   );
 };
 

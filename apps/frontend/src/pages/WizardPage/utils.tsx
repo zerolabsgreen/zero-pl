@@ -7,7 +7,7 @@ export const textWizardPageUp: string[][] = [
   ],
   [
     'Congratulations on wanting to help the planet by buying Renewable Energy',
-    'Add one or many of your rigs. Specifying the region   will make you more sustainable Lorem ipsum',
+    'Add one or many of your rigs. Specifying the region   will make you more sustainable',
     'Almost there! let us know the last few datapoints to send you the best proposal for your needs',
     'Last step! Double check the information and send us your request.',
   ],

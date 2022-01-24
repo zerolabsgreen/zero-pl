@@ -13,13 +13,12 @@ import { ReactComponent as EyeGreySVG } from '../../assets/svg/eye_grey.svg';
 import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
 import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 
-import PageSection from "../../components/page-section/page-section";
-import GenericSelect, { SelectOption } from "../../components/generic-select/generic-select";
+import PageSection from "../../components/PageSection";
 import { CertificateBlocksEnum } from "./effects";
-import { GenericTable, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
-import EthereumAddress from "../../components/ethereum-address/ethereum-address";
-import FuelType, { FuelTypeEnum } from "../../components/fuel-type/fuel-type";
-import { ButtonRight } from "../../components/button-right/button-right";
+import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
+import EthereumAddress from "../../components/EthereumAddress";
+import FuelType, { FuelTypeEnum } from "../../components/FuelType";
+import { ButtonRight } from "../../components/ButtonRight";
 
 
 /* YearlyCertificatesTable block */
@@ -153,22 +152,21 @@ export const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
       <Grid container>
         <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
           <Box width="30%">
-            <GenericSelect
+            <FormSelect
               value={certificateType}
               options={certificatesTypeOptions}
               handleChange={handleCertificateTypeChange}
-              bgColor={'#BEFFE9'}
             />
           </Box>
           <Box width="30%" mx={"16px"}>
-            <GenericSelect
+            <FormSelect
               value={selectedYear}
               options={yearsOptions}
               handleChange={handleYearChange}
             />
           </Box>
           <Box width="30%">
-            <GenericSelect
+            <FormSelect
               value={selectedEacType}
               options={eacTypesOptions}
               handleChange={handleEacTypeChange}

@@ -49,7 +49,7 @@ export const FormDatePicker: FC<FormDatePickerProps> = ({
             {...props}
             name={name}
             fullWidth
-            margin="normal"
+            margin="none"
             error={errorExists ?? false}
             helperText={errorText ?? ''}
             variant={variant}

@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import EthereumAddress from "../../components/ethereum-address/ethereum-address";
-import { ButtonRight } from "../../components/button-right/button-right";
+import EthereumAddress from "../../components/EthereumAddress";
+import { ButtonRight } from "../../components/ButtonRight";
 
 dayjs.extend(utc);
 

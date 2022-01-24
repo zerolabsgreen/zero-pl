@@ -2,8 +2,8 @@ import { FC } from 'react';
 import type { InputBaseProps } from '@mui/material/InputBase';
 import { styled } from '@mui/material/styles';
 import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
+import OutlinedInput, { OutlinedInputProps } from '@mui/material/OutlinedInput';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export type SelectOption = {
@@ -13,7 +13,7 @@ export type SelectOption = {
 };
 
 export interface FormSelectProps {
-  name: string;
+  name?: string;
   handleChange: (event: any) => void;
   value: string;
   options: SelectOption[];
@@ -24,8 +24,9 @@ export interface FormSelectProps {
   placeholder?: string;
   label?: string;
   inputProps?: InputBaseProps['inputProps'];
+  CustomMenuItem?: FC<MenuItemProps>;
+  CustomInput?: FC<OutlinedInputProps>;
 }
-
 
 export const FormSelect: FC<FormSelectProps> = ({
   name,
@@ -33,7 +34,10 @@ export const FormSelect: FC<FormSelectProps> = ({
   value,
   options,
   placeholder,
+  CustomMenuItem,
+  CustomInput,
 }) => {
+  const MenuItemToDisplay = CustomMenuItem ?? StyledMenuItem;
   return (
     <StyledSelect
       fullWidth
@@ -43,7 +47,7 @@ export const FormSelect: FC<FormSelectProps> = ({
       onChange={handleChange}
       IconComponent={KeyboardArrowDownIcon}
       MenuProps={{ disablePortal: true }}
-      input={<StyledInput />}
+      input={CustomInput ? <CustomInput /> : <StyledInput />}
       renderValue={(value: any) => (
         <ValueRenderer
           value={value}
@@ -54,10 +58,13 @@ export const FormSelect: FC<FormSelectProps> = ({
     >
       {options.map(option => {
         return (
-          <MenuItem key={option.label} value={option.value}>
-            <img src={option.img} />
+          <MenuItemToDisplay key={option.label} value={option.value}>
+            {option.img &&
+            <StyledImgSpan>
+              <img src={option.img} />
+            </StyledImgSpan>}
             {option.label}
-          </MenuItem>
+          </MenuItemToDisplay>
         )
       })}
     </StyledSelect>
@@ -71,37 +78,51 @@ const ValueRenderer = ({ value, placeholder, options }: { value: string, placeho
   return (<span>{label || ''}</span>)
 }
 
-const StyledSelect = styled(Select)(({ theme }) => `
+const StyledSelect = styled(Select)`
   & span {
     font-size: 18px;
     font-weight: 600;
     line-height: 23px;
-  }
+  };
   & .placeholder {
     color: #6A658A;
     margin-left: 8px;
-  }
-  & .MuiMenuItem-root {
-    font-weight: 600;
-    line-height: 20px;
-    font-size: 16px;
-    padding: 6px 16px 6px 20px;
-    line-height: 1.5;
-    &:hover {
-      background-color: ${theme.palette.primary.main};
-      font-weight: 700;
-      color: ${theme.palette.text.primary}
-    },
-  }
+  };
   & .MuiMenuItem-root svg {
     margin-right: 8px;
     width: 20px;
     height: 20px;
-  }
+  };
+`;
+
+const StyledMenuItem = styled(MenuItem)(({ theme }) => `
+  font-weight: 600;
+  line-height: 20px;
+  font-size: 16px;
+  padding: 6px 16px 6px 20px;
+  line-height: 1.5;
+  &:hover {
+    background-color: ${theme.palette.primary.main};
+    font-weight: 700;
+    color: ${theme.palette.text.primary}
+  };
 `);
 
 const StyledInput = styled(OutlinedInput)`
+  background-color: #F6F3F9;
   svg {
     margin-right: 16px;
-  }
-`
+  };
+`;
+
+const StyledImgSpan = styled('span')(({ theme }) => `
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  background-color: ${theme.palette.background.paper}
+`)
+

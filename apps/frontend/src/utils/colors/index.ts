@@ -11,5 +11,5 @@ export const FilecoinColors: ProtocolColorScheme = {
   primaryLight: '#E5F4FF',
   background: '#F9F9F9',
   text: '#5CB8FF',
-  simpleText: '#000'
+  simpleText: '#000000'
 }

@@ -1,14 +1,17 @@
-import { FC } from 'react';
-import { Container, Grid, Typography, Box } from '@mui/material';
+import type { FC } from 'react';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { GenericTable } from '@zero-labs/zero-ui-components';
-import BuyerSellerInformation from '../../components/buyer-seller-information/buyer-seller-information';
-import PageSection from '../../components/page-section/page-section';
-import DownloadSection from '../../components/download-section/download-section';
-import TableListProofs from '../../components/table-list-proofs/TableListProofs';
-import Loading from '../../components/loading/loading';
-import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
+import { BuyerSellerInformation } from '../../components/BuyerSellerInformation';
+import { PageSection } from '../../components/PageSection';
+import { DownloadSection } from '../../components/DownloadSection';
+import { TableListProofs } from '../../components/TableListProofs';
+import { LoadingBlock } from '../../components/LoadingBlock';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
+import { shortifyEthAddr } from '../../components/EthereumAddress';
 import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
-import { shortifyEthAddr } from '../../components/ethereum-address/ethereum-address';
 
 export const ProductPage = () => {
   const { certificateInfoTableData, data, isLoading, isFetched, purchaseId } = useProductPageEffects();
@@ -73,7 +76,7 @@ export const ProductPage = () => {
       </Grid>
     </Container>
   ) : (
-    <Loading />
+    <LoadingBlock />
   );
 };
 

@@ -10,11 +10,26 @@ import { ReactComponent as RightArrowIcon } from '../../assets/svg/rightArrow.sv
 import { ReactComponent as LeftArrowIconFilecoin } from '../../assets/svg/leftArrowFilecoin.svg';
 import { ReactComponent as RightArrowIconFilecoin } from '../../assets/svg/rightArrowFilecoin.svg';
 import { ReactComponent as SencIcon } from '../../assets/svg/sendIcon.svg';
-import CardReadMore from '../../components/CardReadMore/CardReadMore';
+import {
+  WizardPageStepSelector,
+  CardReadMore,
+  CardReadMoreTablet,
+  BelowFormText,
+  BelowFormTextWrapper,
+  BelowFormTitle,
+  BoxWrapper,
+  ButtonsWrapper,
+  GridWrapper,
+  ReadMoreSpan,
+  ResponsiveGrid,
+  StepSubtitle,
+  StepTitle,
+  StyledForm,
+  StyledLabel,
+  StyledStep
+} from '../../components/WizardPage';
 import { textWizardPageDown, textWizardPageUp } from './utils';
 import { initialValues, useWizardPageEffects } from './effects';
-import { WizardPageStepSelector, BelowFormText, BelowFormTextWrapper, BelowFormTitle, BoxWrapper, ButtonsWrapper, GridWrapper, ReadMoreSpan, ResponsiveGrid, StepSubtitle, StepTitle, StyledForm, StyledLabel, StyledStep } from '../../components/WizardPage';
-import { CardReadMoreTablet } from '../../components/CardReadMore/CardReadMoreTablet';
 
 export const WizardPage = () => {
   const {

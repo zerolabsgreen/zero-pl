@@ -1,9 +1,8 @@
-import styled from '@emotion/styled';
 import { Helmet } from 'react-helmet-async';
-import useTheme from '@mui/material/styles/useTheme';
+import { styled, useTheme } from '@mui/material/styles';
 import { ReactComponent as NotFoundSvg } from './not_found.svg';
 
-const StyledNotFoundPage = styled.div`
+const StyledNotFoundPage = styled('div')`
   display: flex;
   justify-content: center;
   height: calc(100vh - 88px);

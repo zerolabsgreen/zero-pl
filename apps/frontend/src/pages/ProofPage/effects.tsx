@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { CertificateDto, usePurchasesControllerFindOne } from '@energyweb/zero-protocol-labs-api-client'
 import { TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
-import EthereumAddress from "../../components/ethereum-address/ethereum-address";
-import FuelType, { FuelTypeEnum } from "../../components/fuel-type/fuel-type";
+import EthereumAddress from "../../components/EthereumAddress";
+import FuelType, { FuelTypeEnum } from "../../components/FuelType";
 
 export const certificateInfoTableHeaders: TableHeader = {
   proofId: { label: 'Proof ID', infoText: 'Proof ID represents the identifier of proof in EW Zero marketplace' },
