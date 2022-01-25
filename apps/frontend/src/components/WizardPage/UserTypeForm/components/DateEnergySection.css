@@ -1,0 +1,15 @@
+.date-energy-section-date-picker .MuiInputBase-root {
+  background-color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  height: 48px;
+}
+
+.date-energy-section-date-picker-filecoin .MuiInputBase-root {
+  background-color: #0090FF;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  height: 48px;
+  border: 1px solid #fff;
+}

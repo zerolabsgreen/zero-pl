@@ -16,9 +16,11 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import ButtonIcon from '../../../../assets/svg/whiteArrow.svg';
+import { ReactComponent as CalendarIconLight } from '../../../../assets/svg/calendarIconLight.svg';
 import type { WizardFormValues } from '../../../../pages/WizardPage/effects';
 import { FilecoinColors } from '../../../../utils'
 import { DateEnergySection } from './DateEnergySection';
+import './UserTypeBlock.css';
 
 interface UserTypeBlockProps {
   isFilecoin?: boolean;
@@ -102,7 +104,7 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
               value={values[`country_${id}`]}
               setFieldValue={setFieldValue}
               options={countriesOptions}
-              placeholder="Select country"
+              textFieldProps={{ className: isFilecoin ? 'user-type-block-select-autocomplete-filecoin' : undefined }}
             />
           </Box>
           <WrapperDate>
@@ -114,6 +116,8 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
                 name={`generalStartDate_${id}`}
                 value={values[`generalStartDate_${id}`] || ''}
                 setFieldValue={setFieldValue}
+                CustomCalendarIcon={isFilecoin ? CalendarIconLight : undefined}
+                textFieldProps={{ className: isFilecoin ? 'user-type-block-datepicker-input-filecoin' : 'user-type-block-datepicker-input' }}
               />
             </BlockDate>
             <BlockDate>
@@ -124,10 +128,12 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
                 name={`generalEndDate_${id}`}
                 value={values[`generalEndDate_${id}`] || ''}
                 setFieldValue={setFieldValue}
+                CustomCalendarIcon={isFilecoin ? CalendarIconLight : undefined}
+                textFieldProps={{ className: isFilecoin ? 'user-type-block-datepicker-input-filecoin' : 'user-type-block-datepicker-input' }}
               />
             </BlockDate>
             <ButtonBlock>
-              <StyledButton onClick={buttonClick}>
+              <StyledButton isFilecoin={isFilecoin} onClick={buttonClick}>
                 <StyledButtonImg
                   sectionOpen={sectionOpen}
                   src={ButtonIcon}
@@ -202,6 +208,7 @@ const DateInputLabel = styled(Typography)`
 `
 
 const ButtonBlock = styled(Box)(({ theme }) => `
+  height: 100%;
   ${theme.breakpoints.down('sm')} {
     display: none;
   };
@@ -227,4 +234,12 @@ const StyledButtonImg = styled('img', { shouldForwardProp: (prop) => prop !== 's
 const DateEnergySectionWrapper = styled(Box)(({ theme }) => `
   padding: 0 8px 8px 8px;
   background-color: ${theme.palette.background.paper};
-`)
+`);
+
+// const StyledSelectInput = styled(OutlinedInput, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<{isFilecoin: boolean}>(({ theme, isFilecoin }) => `
+//   background-color: ${isFilecoin && FilecoinColors.primaryLight};
+//   & span {
+//     color: ${isFilecoin ? FilecoinColors.primary : theme.palette.primary.main};
+//   };
+// `);
+

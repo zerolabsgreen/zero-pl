@@ -1,6 +1,7 @@
-import { Autocomplete, TextField } from '@mui/material';
-import { KeyboardArrowDown } from '@mui/icons-material';
-import { FC, SyntheticEvent } from 'react';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
+import { FC, memo, SyntheticEvent } from 'react';
 
 export interface AutocompleteOption {
   value: string;
@@ -14,30 +15,36 @@ export interface SelectAutocompleteProps {
   options: AutocompleteOption[];
   label?: string;
   placeholder?: string;
+  CustomTextField?: FC<TextFieldProps>;
+  textFieldProps?: TextFieldProps;
 }
 
-export const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
+export const SelectAutocomplete: FC<SelectAutocompleteProps> = memo(({
   options,
   label,
   placeholder,
   name,
   value,
   setFieldValue,
+  CustomTextField,
+  textFieldProps
 }) => {
   const handleChange = (event: SyntheticEvent, value: string | null) => setFieldValue(name, value ?? '');
+  const TextFieldToRender = CustomTextField ?? TextField
   return (
     <Autocomplete
-      value={value}
+      value={value ?? null}
       onChange={handleChange}
       options={options.map((option) => option.title)}
       popupIcon={<KeyboardArrowDown />}
       renderInput={(params) => (
-        <TextField
+        <TextFieldToRender
           {...params}
           label={label ?? ''}
           placeholder={placeholder ?? ''}
+          {...textFieldProps}
         />
       )}
     />
   );
-};
+});

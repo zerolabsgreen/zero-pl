@@ -14,6 +14,7 @@ import { FilecoinColors } from '../../../utils';
 import { UserTypeBlock } from './components/UserTypeBlock';
 import { RemoveMinerIdModal } from './components/RemoveMinerIdModal';
 import { useUserTypeFormEffects } from './effects';
+import OutlinedInput, { OutlinedInputProps } from '@mui/material/OutlinedInput';
 
 export interface UserTypeFormProps {
   handleFormikChange: (value: any) => void;
@@ -44,6 +45,7 @@ export const UserTypeForm: FC<UserTypeFormProps> = ({
     removeSection
   } = useUserTypeFormEffects(values, setFieldValue, setFormikValues, isFilecoin)
   const CustomMenuItem = getStyledMenuItem(isFilecoin);
+  const CustomSelectInput = getCustomSelectInput(isFilecoin);
 
   return (
     <StyledWrapper>
@@ -57,6 +59,7 @@ export const UserTypeForm: FC<UserTypeFormProps> = ({
         placeholder='I am ...'
         options={userTypesOptions}
         CustomMenuItem={CustomMenuItem}
+        CustomInput={CustomSelectInput}
       />
       {amountOfItems.map(id => (
         <UserTypeBlock
@@ -150,3 +153,14 @@ const StyledAddButton = styled(Button, { shouldForwardProp: (prop) => prop !== '
     min-width: 100%;
   };
 `);
+
+const StyledSelectInput = styled(OutlinedInput, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<{isFilecoin: boolean}>(({ theme, isFilecoin }) => `
+  background-color: ${theme.palette.background.paper};
+  & span {
+    color: ${isFilecoin ? FilecoinColors.primary : theme.palette.primary.main};
+  };
+`);
+
+const getCustomSelectInput = (isFilecoin: boolean): FC<OutlinedInputProps> => {
+  return (props: OutlinedInputProps) => (<StyledSelectInput isFilecoin={isFilecoin} {...props} />)
+}

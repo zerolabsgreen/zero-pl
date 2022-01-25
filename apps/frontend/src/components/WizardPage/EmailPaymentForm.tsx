@@ -98,12 +98,13 @@ const StyledFormControl = styled(FormControl)(({ theme }) => `
 `);
 
 const StyledTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<{isFilecoin?: boolean}>(({ theme, isFilecoin }) => `
-  background-color: ${isFilecoin ? theme.palette.background.paper : '#F6F3F9'};
+  & .MuiInputBase-root {
+    background-color: ${theme.palette.background.paper};
+  };
   border-radius: 5px;
   color: ${isFilecoin ? FilecoinColors.primary : theme.palette.primary.main};
   font-size: 18px;
   font-weight: 700;
-  padding: 14px;
   box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
 `);
 

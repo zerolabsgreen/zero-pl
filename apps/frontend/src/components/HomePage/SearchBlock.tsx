@@ -86,7 +86,7 @@ export const SearchBlock = () => {
                 placeholder="Amount"
                 InputProps={{
                   endAdornment: (
-                    <span>MWh</span>
+                    <StyledEndAdornment>MWh</StyledEndAdornment>
                   ),
                 }}
               />
@@ -101,7 +101,7 @@ export const SearchBlock = () => {
                   name="generalStartDate"
                   setFieldValue={formik.setFieldValue}
                   value={formik.values.generalStartDate}
-                  textFieldProps={{ margin: 'none' }}
+                  textFieldProps={{ margin: 'none', sx: { fontWeight: 700 } }}
                 />
               </Box>
               <Box width="100%">
@@ -164,9 +164,6 @@ const FormBlock = styled(Box)`
         padding: 12px 0 12px 14px;
       }
     }
-    & .MuiSvgIcon-root {
-      margin-right: 20px;
-    }
 `
 
 const InputLabel = styled(Typography)`
@@ -195,4 +192,9 @@ const SubmitBtn = styled(Button)(({ theme }) => `
       color: ${theme.palette.primary.main}
     }
   },
-`)
+`);
+
+const StyledEndAdornment = styled('span')`
+  font-weight: 600;
+  font-size: 18px;
+`;

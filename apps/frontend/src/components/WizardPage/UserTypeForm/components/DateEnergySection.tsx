@@ -6,8 +6,10 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { FormDatePicker } from '@zero-labs/zero-ui-components';
 import { useAddressMappingSetState } from '../../../../context';
+import { ReactComponent as CalendarIconWhite } from '../../../../assets/svg/calendarIconWhite.svg';
 import type { WizardFormValues } from '../../../../pages/WizardPage/effects';
 import { FilecoinColors } from '../../../../utils';
+import './DateEnergySection.css';
 
 export interface DateEnergySectionProps {
   isFilecoin?: boolean;
@@ -53,6 +55,8 @@ export const DateEnergySection: FC<DateEnergySectionProps> = ({
                       setFieldValue={setFieldValue}
                       value={values[`startDate_${id}_${nestedId}`]}
                       name={`startDate_${id}_${nestedId}`}
+                      CustomCalendarIcon={isFilecoin ? CalendarIconWhite : undefined}
+                      textFieldProps={{ className: isFilecoin ? 'date-energy-section-date-picker-filecoin' : 'date-energy-section-date-picker' }}
                     />
                   </Box>
                   <EndDateWrapper>
@@ -63,6 +67,8 @@ export const DateEnergySection: FC<DateEnergySectionProps> = ({
                       value={values[`endDate_${id}_${nestedId}`] || ''}
                       setFieldValue={setFieldValue}
                       name={`endDate_${id}_${nestedId}`}
+                      CustomCalendarIcon={isFilecoin ? CalendarIconWhite : undefined}
+                      textFieldProps={{ className: isFilecoin ? 'date-energy-section-date-picker-filecoin' : 'date-energy-section-date-picker' }}
                     />
                   </EndDateWrapper>
                 </Box>
@@ -72,6 +78,7 @@ export const DateEnergySection: FC<DateEnergySectionProps> = ({
                   </InputLabel>
                   <TextFieldWrapper>
                     <StyledTextField
+                      isFilecoin={isFilecoin}
                       name={`energy_${id}_${nestedId}`}
                       onChange={handleFormikChange}
                       value={values[`energy_${id}_${nestedId}`] || ''}
@@ -131,10 +138,11 @@ const TextFieldWrapper = styled(Box)(({ theme }) => `
 
 const StyledTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<{isFilecoin?: boolean}>(({ theme, isFilecoin }) => `
   & input {
-    padding: 12px;
+    padding: 14px 0 14px 14px;
     font-weight: 700;
     border-radius: 5px;
     background-color: ${isFilecoin ? FilecoinColors.primary : theme.palette.background.paper};
-    color: ${isFilecoin ? FilecoinColors.simpleText : theme.palette.primary.main}
+    color: ${isFilecoin ? theme.palette.text.primary : theme.palette.primary.main};
+    border: ${isFilecoin && `1px solid ${theme.palette.background.paper}`}
   }
 `)
