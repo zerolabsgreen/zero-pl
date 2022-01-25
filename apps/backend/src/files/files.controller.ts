@@ -44,6 +44,7 @@ export class FilesController {
       type: 'object',
       properties: {
         purchaseId: { type: 'string' },
+        fileType: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',
@@ -59,11 +60,11 @@ export class FilesController {
     }
   }))
   create(
-    @Body() { purchaseId }: UploadFileDto,
+    @Body() { purchaseId, fileType }: UploadFileDto,
     @UploadedFile() file: Express.Multer.File
   ) {
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
-    return this.filesService.create(file, purchaseId);
+    return this.filesService.create(file, purchaseId, fileType);
   }
 
   @Get()
