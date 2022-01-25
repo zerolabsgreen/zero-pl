@@ -79,7 +79,7 @@ const StyledBtnGroup = styled(Box)`
   };
 `;
 
-const StyledButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'isFilecoin' })<{isFilecoin?: boolean, cancelBtn?: boolean}>(({ theme, isFilecoin, cancelBtn }) => `
+const StyledButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'isFilecoin' && prop !== 'cancelBtn' })<{isFilecoin?: boolean, cancelBtn?: boolean}>(({ theme, isFilecoin, cancelBtn }) => `
   color: ${theme.palette.background.paper};
   background-color: ${isFilecoin && FilecoinColors.primary};
   &:hover {

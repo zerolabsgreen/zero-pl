@@ -6,6 +6,7 @@ import { Dayjs } from "dayjs";
 import { useNavigate } from "react-router";
 import { Countries } from "@energyweb/utils-general";
 import { useAddressMappingState, useSelectedProtocolStore } from "../../context";
+import { useFormik } from "formik";
 
 export interface WizardFormValues {
   userType: UserTypeEnumType | null;
@@ -49,7 +50,7 @@ export const useWizardPageEffects = () => {
 
   const addressMapping = useAddressMappingState();
 
-  const handleSubmit = async (values: WizardFormValues, mapping: Map<number, number[]>) => {
+  const submitHandler = async (values: WizardFormValues) => {
     if (isLastStep) {
       const mappingArrIterator = Array.from(Array(addressMapping?.size).keys());
       const preparedValues: CreateOrderDto = {
@@ -72,7 +73,7 @@ export const useWizardPageEffects = () => {
             // @ts-ignore
             // for some reason throws an error that mapping can be null even though
             // it is null checked
-            timeFrames: mapping.get(key) ? mapping.get(key).map(nestedId => ({
+            timeFrames: addressMapping.get(key) ? addressMapping.get(key).map(nestedId => ({
               start: (values[`startDate_${key}_${nestedId}`] as Dayjs).startOf('day').toISOString(),
               end: (values[`endDate_${key}_${nestedId}`] as Dayjs).endOf('day').toISOString(),
               energy: BigNumber.from(values[`energy_${key}_${nestedId}`]).mul(BigNumber.from(10).pow(6)).toNumber()
@@ -86,15 +87,25 @@ export const useWizardPageEffects = () => {
     }
   };
 
+  const formik = useFormik({ initialValues, onSubmit: submitHandler });
+  const submitButtonEnabled = step === 0
+    ? !!selectedProtocol
+    : step === 1
+      ? formik.values.userType && addressMapping && addressMapping.size > 0
+      : step === 2
+        ? formik.values.emailAddress && (formik.values.cryptoPayment || formik.values.wirePayment)
+        : true;
+
   return {
     addressMapping,
-    handleSubmit,
+    formik,
     handleBackStep,
     isFilecoin,
     isLoading,
     step,
     stepLabels,
     isLastStep,
-    selectedProtocol
+    selectedProtocol,
+    submitButtonEnabled
   }
 }
