@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-import { Formik } from 'formik';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -29,18 +28,18 @@ import {
   StyledStep
 } from '../../components/WizardPage';
 import { textWizardPageDown, textWizardPageUp } from './utils';
-import { initialValues, useWizardPageEffects } from './effects';
+import { useWizardPageEffects } from './effects';
 
 export const WizardPage = () => {
   const {
-    handleSubmit,
+    formik,
     handleBackStep,
     isFilecoin,
     step,
     stepLabels,
     isLastStep,
-    addressMapping,
-    selectedProtocol
+    selectedProtocol,
+    submitButtonEnabled
   } = useWizardPageEffects();
   const lgUpScreen = useMediaQuery<Theme>((theme) => theme.breakpoints.up('lg'));
   const lgDownScreen = useMediaQuery<Theme>((theme) => theme.breakpoints.down('lg'));
@@ -63,87 +62,72 @@ export const WizardPage = () => {
               {textWizardPageUp[1][step]}
             </StepSubtitle>
           </BoxWrapper>
-          <Formik
-            initialValues={initialValues}
-            onSubmit={(values) =>
-              handleSubmit(values, addressMapping ?? new Map())
-            }
-          >
-            {({
-              isSubmitting,
-              handleChange,
-              setFieldValue,
-              values,
-              setValues,
-            }) => (
-              <StyledForm autoComplete="off">
-                <Box display='flex' justifyContent='center' mb='50px'>
-                  <Stepper
-                    alternativeLabel
-                    nonLinear
-                    connector={<></>}
-                    activeStep={step}
-                  >
-                    {stepLabels.map((label, index) => (
-                      <StyledStep
-                        isFilecoin={isFilecoin}
-                        active={step >= index}
-                        key={label}
-                      >
-                        <StyledLabel>
-                          {smUpScreen && label}
-                        </StyledLabel>
-                      </StyledStep>
-                    ))}
-                  </Stepper>
-                </Box>
-                <WizardPageStepSelector
-                  step={step}
-                  handleFormikChange={handleChange}
-                  setFieldValue={setFieldValue}
-                  values={values}
-                  setFormikValues={setValues}
-                />
-                <ButtonsWrapper>
-                    <Button
-                      sx={{ height: '48px' }}
-                      variant="contained"
-                      onClick={handleBackStep}
-                      startIcon={
-                        isFilecoin ? (
-                          <LeftArrowIconFilecoin />
-                        ) : (
-                          <LeftArrowIcon />
-                        )
-                      }
+            <StyledForm autoComplete="off">
+              <Box display='flex' justifyContent='center' mb='50px'>
+                <Stepper
+                  alternativeLabel
+                  nonLinear
+                  connector={<></>}
+                  activeStep={step}
+                >
+                  {stepLabels.map((label, index) => (
+                    <StyledStep
+                      isFilecoin={isFilecoin}
+                      active={step >= index}
+                      key={label}
                     >
-                      Back
-                    </Button>
+                      <StyledLabel>
+                        {smUpScreen && label}
+                      </StyledLabel>
+                    </StyledStep>
+                  ))}
+                </Stepper>
+              </Box>
+              <WizardPageStepSelector
+                step={step}
+                handleFormikChange={formik.handleChange}
+                setFieldValue={formik.setFieldValue}
+                values={formik.values}
+                setFormikValues={formik.setValues}
+              />
+              <ButtonsWrapper>
                   <Button
                     sx={{ height: '48px' }}
-                    disabled={isSubmitting}
                     variant="contained"
-                    type="submit"
-                    endIcon={
-                      isLastStep ? (
-                        <SencIcon />
-                      ) : isFilecoin ? (
-                        <RightArrowIconFilecoin />
+                    onClick={handleBackStep}
+                    startIcon={
+                      isFilecoin ? (
+                        <LeftArrowIconFilecoin />
                       ) : (
-                        <RightArrowIcon />
+                        <LeftArrowIcon />
                       )
                     }
                   >
-                    {isSubmitting
-                      ? 'Submiting'
-                      : isLastStep
-                      ? 'Send Request'
-                      : 'Next'}
+                    Back
                   </Button>
-                </ButtonsWrapper>
-              </StyledForm>
-            )}
-          </Formik>
+                <Button
+                  sx={{ height: '48px' }}
+                  disabled={formik.isSubmitting || !submitButtonEnabled}
+                  variant="contained"
+                  onClick={() => formik.handleSubmit()}
+                  endIcon={
+                    isLastStep ? (
+                      <SencIcon />
+                    ) : isFilecoin ? (
+                      <RightArrowIconFilecoin />
+                    ) : (
+                      <RightArrowIcon />
+                    )
+                  }
+                >
+                  {formik.isSubmitting
+                    ? 'Submiting'
+                    : isLastStep
+                    ? 'Send Request'
+                    : 'Next'}
+                </Button>
+              </ButtonsWrapper>
+            </StyledForm>
           <BelowFormTextWrapper>
             <BelowFormTitle isFilecoin={isFilecoin}>
               {isFilecoin

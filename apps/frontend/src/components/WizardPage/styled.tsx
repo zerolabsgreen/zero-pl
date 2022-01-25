@@ -5,7 +5,6 @@ import { styled, Theme } from "@mui/material/styles";
 import { FilecoinColors } from "../../utils";
 import BitcoinGlobusImg from '../../assets/svg/globus.svg';
 import FilecoinGlobusImg from '../../assets/svg/filecoinGlobus.svg';
-import { Form } from "formik";
 import Step, { StepProps } from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 
@@ -63,7 +62,7 @@ export const StepSubtitle = styled(Typography, { shouldForwardProp: (prop) => pr
   color: ${isFilecoin ? FilecoinColors.simpleText : theme.palette.text.primary};
 `)
 
-export const StyledForm = styled(Form)(({ theme }) => `
+export const StyledForm = styled('form')(({ theme }) => `
   display: flex;
   flex-direction: column;
   width: 488px;

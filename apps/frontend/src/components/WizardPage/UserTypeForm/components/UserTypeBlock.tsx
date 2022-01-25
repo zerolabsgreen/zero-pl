@@ -50,8 +50,10 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
       ? (values[`generalEndDate_${id}`] as Dayjs).year() -
         (values[`generalStartDate_${id}`] as Dayjs).year()
       : -1;
+
+  const minerIdAndCountryAdded = values[`minerId_${id}`] && values[`country_${id}`];;
   const buttonClick = () => {
-    if (amountOfEnergyFields >= 0) return setSectionOpen(!sectionOpen);
+    if (amountOfEnergyFields >= 0 && minerIdAndCountryAdded) return setSectionOpen(!sectionOpen);
     return;
   };
 
