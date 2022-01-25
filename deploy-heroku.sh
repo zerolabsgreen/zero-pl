@@ -1,3 +1,4 @@
+#!/bin/bash
 rm -Rf dist
 yarn build:docker
 

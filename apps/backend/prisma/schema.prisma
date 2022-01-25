@@ -16,7 +16,7 @@ model File {
   content    Bytes
   purchase   Purchase @relation(fields: [purchaseId], references: [id])
   purchaseId String
-  fileType   FileType
+  fileType   FileType @default(ATTESTATION)
 
   @@unique([purchaseId, fileType])
   @@index([createdAt])
