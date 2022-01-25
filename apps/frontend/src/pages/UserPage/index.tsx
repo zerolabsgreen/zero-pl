@@ -4,11 +4,11 @@ import Box from '@mui/system/Box';
 import Typography from '@mui/material/Typography';
 import useTheme from '@mui/material/styles/useTheme';
 import { BreadcrumbsLinks } from '../../components';
-import { PaperBox } from '../../components/paper-box/paper-box';
-import PageSection from '../../components/page-section/page-section';
+import { PaperBox } from '../../components/PaperBox';
+import PageSection from '../../components/PageSection';
 import { CertificateBlocksEnum, useUserPageEffects } from './effects';
-import FieldLabel from '../../components/field-label/field-label';
-import FieldValue from '../../components/field-value/field-value';
+import FieldLabel from '../../components/FieldLabel';
+import FieldValue from '../../components/FieldValue';
 import { ReactComponent as ZeroLabsLogo } from '../../assets/svg/zero-labs-logo.svg'
 import { ReactComponent as RedeemedCertificateSVG } from '../../assets/svg/certificate_locked.svg';
 import { ReactComponent as TransferableCertificateSVG } from '../../assets/svg/user_income.svg';

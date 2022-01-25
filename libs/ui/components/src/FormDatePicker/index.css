@@ -1,0 +1,20 @@
+.paper {
+  background-color: #19355E;
+}
+
+.paper .MuiCalendarPicker-root div {
+  color: #fff;
+}
+
+.paper .MuiIconButton-root {
+  color: #fff;
+}
+
+.paper .MuiPickersDay-dayWithMargin {
+  background-color: #19355E;
+}
+
+.paper .Mui-selected {
+  background-color: #fff !important;
+  color: #19355E !important;
+}

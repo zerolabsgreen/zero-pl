@@ -264,7 +264,7 @@
             "project": "libs/ui/components/package.json",
             "entryFile": "libs/ui/components/src/index.ts",
             "external": ["react/jsx-runtime", "@emotion/styled/base"],
-            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "rollupConfig": "rollup.config.js",
             "compiler": "babel",
             "assets": [
               {
