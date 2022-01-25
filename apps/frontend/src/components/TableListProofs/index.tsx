@@ -30,6 +30,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
 
   return (
     <Box mb={4}>
+      {blockchainEvents &&
       <Box display="flex" alignItems="center">
         <Typography
           mt={'30px'}
@@ -41,7 +42,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
         >
           BLOCKCHAIN PROOFS {'&'} HISTORY
         </Typography>
-      </Box>
+      </Box>}
         <TableWrapper>
           <StyledTable>
             <TableBody>
