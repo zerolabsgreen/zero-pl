@@ -44,7 +44,7 @@ export class FilesController {
       type: 'object',
       properties: {
         purchaseId: { type: 'string' },
-        type: { type: 'string' },
+        fileType: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',

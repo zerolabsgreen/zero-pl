@@ -31,7 +31,8 @@ export class FilesService {
         fileName: true,
         mimeType: true,
         createdAt: true,
-        purchaseId: true
+        purchaseId: true,
+        fileType: true
       }
     });
 
