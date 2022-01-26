@@ -15,7 +15,7 @@ const getDBConnectionOptions = (): ConnectionOptions => {
     username: url.username,
     password: url.password,
     database: url.pathname.replace('/', ''),
-    ssl: Boolean(process.env.DB_SSL_OFF)
+    ssl: process.env.DB_SSL_OFF
       ? false
       : { rejectUnauthorized: false },
   };

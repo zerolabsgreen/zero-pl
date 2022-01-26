@@ -29,7 +29,7 @@ const OriginAppTypeOrmModule = () => {
     url: process.env.DATABASE_URL,
     entities,
     logging: ['info'],
-    ssl: Boolean(process.env.DB_SSL_OFF)
+    ssl: process.env.DB_SSL_OFF
       ? false
       : { rejectUnauthorized: false },
   });

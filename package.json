@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "nx": "nx",
-    "clean": "rm -rf node_modules dist",
+    "clean": "rm -rf node_modules dist tmp",
     "start": "concurrently --names 'FRONTEND,BACKEND,ISSUER_API' -c 'yellow,cyan'  'yarn serve:frontend' 'yarn serve:backend' 'yarn serve:issuer-api'",
     "serve:backend": "nx serve backend",
     "serve:issuer-api": "PORT=$(grep ISSUER_API_PORT .env | cut -d \"=\" -f2 | tr -d '\"') DATABASE_URL=$(grep ISSUER_DATABASE_URL .env | cut -d \"=\" -f2 | tr -d '\"') nx serve issuer-api",
@@ -117,6 +117,7 @@
     "@nrwl/web": "13.4.2",
     "@nrwl/workspace": "13.4.2",
     "@t00nday/nestjs-pdf": "^2.0.6",
+    "@svgr/rollup": "5.5.0",
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
     "@types/cache-manager": "^3.4.2",

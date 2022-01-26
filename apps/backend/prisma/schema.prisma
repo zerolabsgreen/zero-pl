@@ -9,14 +9,16 @@ generator client {
 }
 
 model File {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   fileName   String
   mimeType   String
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime @default(now())
   content    Bytes
-  purchase   Purchase? @relation(fields: [purchaseId], references: [id])
-  purchaseId String?
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId String
+  fileType   FileType @default(ATTESTATION)
 
+  @@unique([purchaseId, fileType])
   @@index([createdAt])
 }
 
@@ -44,13 +46,13 @@ model Seller {
 }
 
 model Certificate {
-  id                            String     @id @default(uuid())
-  energy                        BigInt     @default(0)
+  id                            String               @id @default(uuid())
+  energy                        BigInt               @default(0)
   generatorName                 String?
   generatorId                   String?
   region                        String?
   country                       CountryEnumType
-  productType                   ProductEnumType @default(IREC)
+  productType                   ProductEnumType      @default(IREC)
   energySource                  EnergySourceEnumType @default(SOLAR)
   generationStart               DateTime?
   generationStartTimezoneOffset Int?
@@ -58,7 +60,7 @@ model Certificate {
   generationEndTimezoneOffset   Int?
   txHash                        String?
   purchase                      Purchase[]
-  seller                        Seller     @relation(fields: [initialSellerId], references: [id])
+  seller                        Seller               @relation(fields: [initialSellerId], references: [id])
   initialSellerId               String
   beneficiary                   String?
   redemptionDate                DateTime?
@@ -195,8 +197,13 @@ enum LabelEnumType {
   GRUENER_STROM
 }
 
+enum FileType {
+  ATTESTATION
+  REDEMPTION_STATEMENT
+}
+
 // Taken from https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
-enum CountryEnumType { 
+enum CountryEnumType {
   AF
   AX
   AL

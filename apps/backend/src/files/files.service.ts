@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { FileType } from '@prisma/client';
 // This is a hack to make Multer available in the Express namespace
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PrismaService } from "../prisma/prisma.service";
@@ -8,13 +9,14 @@ import { FileMetadataDto } from "./dto/file-metadata.dto";
 export class FilesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(filename: string, buffer: Buffer, purchaseId: string, mimeType = 'application/pdf') {
+  async create(filename: string, buffer: Buffer, purchaseId: string, fileType: FileType, mimeType = 'application/pdf') {
     const newRecord = await this.prisma.file.create({
       data: {
         content: buffer,
         fileName: filename,
         mimeType: mimeType,
-        purchaseId: purchaseId
+        purchaseId: purchaseId,
+        fileType
       }
     })
 
@@ -29,7 +31,8 @@ export class FilesService {
         fileName: true,
         mimeType: true,
         createdAt: true,
-        purchaseId: true
+        purchaseId: true,
+        fileType: true
       }
     });
 

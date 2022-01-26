@@ -4,8 +4,8 @@ import {
   Theme,
   ThemeOptions,
 } from '@mui/material/styles';
-import { variables } from './variables';
 import { enUS, plPL } from '@mui/material/locale';
+import { variables } from './variables';
 import { IStyleConfig } from '../utils/makeThemeConfig';
 
 const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
@@ -99,11 +99,6 @@ const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
         },
       },
     },
-    MuiSelect: {
-      styleOverrides: {
-        select: { backgroundColor: styleConfig.INPUT_BACKGROUND_COLOR },
-      },
-    },
     MuiFilledInput: {
       styleOverrides: {
         root: {
@@ -153,6 +148,25 @@ const getThemeConfig = (styleConfig: IStyleConfig): ThemeOptions => ({
     },
     MuiButton: {
       styleOverrides: {
+        root: {
+          color: styleConfig.PRIMARY_COLOR,
+          '& .MuiButton-endIcon': {
+            color: styleConfig.SECONDARY_COLOR
+          },
+          '& .MuiButton-startIcon': {
+            color: styleConfig.SECONDARY_COLOR
+          },
+          '&:hover':{
+            backgroundColor: styleConfig.SECONDARY_COLOR,
+            color: styleConfig.WHITE,
+            '& .MuiButton-endIcon': {
+              color: styleConfig.PRIMARY_COLOR,
+            },
+            '& .MuiButton-startIcon': {
+              color: styleConfig.PRIMARY_COLOR,
+            },
+          }
+        },
         contained: {
           '&.Mui-disabled': {
             color: styleConfig.TEXT_COLOR_DEFAULT,

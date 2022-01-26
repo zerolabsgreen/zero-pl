@@ -1,12 +1,5 @@
 const $blueExtraDark = '#19355E';
 const $blueLight = '#4480DB';
-const $purpleDark = '#421D77';
-const $purple = '#362c45';
-const $purpleLight = '#703CBB';
-const $purpleExtraLight = '#9B95BD';
-const $purpleText = '#6A658A';
-const $purpleFooterText = '#CDABFF';
-const $purpleExtraLightSecondary = '#F6EFFF';
 
 const $green = '#00D08A';
 const $greenLight = '#b1ebcd';
@@ -79,8 +72,8 @@ export type UiThemeVariables = {
 export const variables: UiThemeVariables = {
   primaryColor: $blueExtraDark,
   primaryColorLight: $blueLight,
-  primaryColorDark: $purpleDark,
-  primaryColorDim: $purple,
+  primaryColorDark: $blueExtraDark,
+  primaryColorDim: $blueExtraDark,
   secondaryColor: $green,
   secondaryColorLight: $greenLight,
   textColorDefault: $textColorDefault,
@@ -99,16 +92,16 @@ export const variables: UiThemeVariables = {
   filcoinColor: $filcoinColor,
   black: $black,
   graphite: $graphite,
-  purpleLight: $purpleLight,
+  purpleLight: $blueLight,
   filcoinBackgroundColor: $filcoinBackgroundColor,
   filcoinColorLight: $filcoinColorLight,
   filcoinText:$filcoinText,
   switchGrayColor:$switchGrayColor,
   switchBgColorBlue:$switchBgColorBlue,
   switchBgColorGray:$switchBgColorGray,
-  purpleExtraLight:$purpleExtraLight,
-  purpleText:$purpleText,
-  purpleFooterText:$purpleFooterText,
-  purpleExtraLightSecondary: $purpleExtraLightSecondary,
+  purpleExtraLight:$blueLight,
+  purpleText:$blueLight,
+  purpleFooterText:$blueLight,
+  purpleExtraLightSecondary: $blueLight,
   boxShadowColor: $boxShadowColor,
 };
