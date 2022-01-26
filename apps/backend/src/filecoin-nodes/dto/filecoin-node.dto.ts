@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { FilecoinNode } from "@prisma/client"
 
-export class FilecoinNodeDto implements FilecoinNode{
+export class FilecoinNodeDto implements FilecoinNode {
   @ApiProperty({ example: "f0112027" })
   id: string;
 

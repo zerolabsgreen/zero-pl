@@ -12,12 +12,9 @@ import { DateTime, Duration } from "luxon";
 export class FilecoinNodesService {
   private readonly logger = new Logger(FilecoinNodesService.name, { timestamp: true });
 
-  constructor(
-    private prisma: PrismaService,
-    private issuerService: IssuerService
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createFilecoinNodeDto: CreateFilecoinNodeDto) {
+  async create(createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     let newFilecoinNode: FilecoinNode;
     await this.prisma.$transaction(async (prisma) => {
       try {
@@ -54,14 +51,14 @@ export class FilecoinNodesService {
       throw err;
     });
 
-    return new FilecoinNodeDto(await this.prisma.filecoinNode.findUnique({ where: { id: newFilecoinNode.id } }));
+    return new FilecoinNodeDto(newFilecoinNode);
   }
 
-  async findAll() {
+  async findAll(): Promise<FilecoinNodeDto[]> {
     return (await this.prisma.filecoinNode.findMany()).map((r) => new FilecoinNodeDto(r));
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<FilecoinNodeDto> {
     const record = await this.prisma.filecoinNode.findUnique({ where: { id } });
 
     if (!record) {
@@ -71,12 +68,14 @@ export class FilecoinNodesService {
     return new FilecoinNodeDto(record);
   }
 
-  async update(id: string, updateFilecoinNodeDto: UpdateFilecoinNodeDto) {
+  async update(id: string, updateFilecoinNodeDto: UpdateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     return new FilecoinNodeDto(await this.prisma.filecoinNode.update({ where: { id }, data: updateFilecoinNodeDto }));
   }
 
-  async remove(id: string) {
-    return new FilecoinNodeDto(await this.prisma.filecoinNode.delete({ where: { id } }));
+  async remove(id: string): Promise<boolean> {
+    await this.prisma.filecoinNode.delete({ where: { id } });
+
+    return true;
   }
 
   async getTransactions(id: string) {

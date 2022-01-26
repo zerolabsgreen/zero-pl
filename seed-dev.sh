@@ -104,3 +104,27 @@ curl -w "\n" -s -X 'POST' \
   "reportingEndTimezoneOffset": 180,
   "filecoinNodes": [{"id": "f00002"}]
 }]'
+
+echo
+echo "creating a contract"
+curl -w "\n" -s -X 'POST' \
+  "http://localhost:$PORT/api/partners/filecoin/contracts" \
+  -H "X-API-KEY: $X_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '[{
+  "id": "04a7155d-ced1-4981-8660-48670a0735dd",
+  "productType": "IREC",
+  "energySources": [
+    "SOLAR",
+    "WIND"
+  ],
+  "region": "NE",
+  "country": "DE",
+  "generationStart": "2020-11-01T00:00:00.000Z",
+  "generationEnd": "2021-06-01T23:59:59.999Z",
+  "timezoneOffset": 180,
+  "openVolume": "4000000000000",
+  "buyerId": "00000000-0000-0000-0000-000000000002",
+  "sellerId": "00000000-0000-0000-0000-000000000001",
+  "filecoinNodeId": "f00001"
+}]'

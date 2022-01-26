@@ -30,7 +30,7 @@ export class SellersController {
   @Post()
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  create(@Body() createSellerDto: CreateSellerDto) {
+  create(@Body() createSellerDto: CreateSellerDto): Promise<SellerDto> {
     return this.sellersService.create(createSellerDto);
   }
 
@@ -38,28 +38,28 @@ export class SellersController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: [SellerDto] })
-  findAll() {
+  findAll(): Promise<SellerDto[]> {
     return this.sellersService.findAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: SellerDto })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<SellerDto> {
     return this.sellersService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  update(@Param('id') id: string, @Body() updateSellerDto: UpdateSellerDto) {
+  update(@Param('id') id: string, @Body() updateSellerDto: UpdateSellerDto): Promise<SellerDto> {
     return this.sellersService.update(id, updateSellerDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  @ApiOkResponse({ type: SellerDto })
-  remove(@Param('id') id: string) {
+  @ApiOkResponse({ type: Boolean })
+  remove(@Param('id') id: string): Promise<boolean> {
     return this.sellersService.remove(id);
   }
 }

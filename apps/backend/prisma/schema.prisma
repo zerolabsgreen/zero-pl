@@ -28,6 +28,7 @@ model Buyer {
   blockchainAddress String?
   purchase          Purchase[]
   filecoinNodes     FilecoinNode[]
+  contracts         Contract[]
 
   @@unique([blockchainAddress])
 }
@@ -41,6 +42,7 @@ model Seller {
   blockchainAddress String?
   purchase          Purchase[]
   certificates      Certificate[]
+  contracts         Contract[]
 
   @@unique([blockchainAddress])
 }
@@ -67,6 +69,8 @@ model Certificate {
   capacity                      Int?
   commissioningDate             DateTime?
   label                         LabelEnumType?
+  Contract                      Contract?            @relation(fields: [contractId], references: [id])
+  contractId                    String?
 }
 
 model FilecoinNode {
@@ -75,6 +79,7 @@ model FilecoinNode {
   buyerId           String
   blockchainAddress String?
   purchases         FilecoinNodesOnPurchases[]
+  contracts         Contract[]
 
   @@unique([id, buyerId])
 }
@@ -143,6 +148,27 @@ model OrderItemTimeFrame {
   start       DateTime
   end         DateTime
   energy      BigInt
+}
+
+model Contract {
+  id              String                 @id @default(uuid())
+  buyer           Buyer                  @relation(fields: [buyerId], references: [id])
+  buyerId         String
+  seller          Seller                 @relation(fields: [sellerId], references: [id])
+  sellerId        String
+  filecoinNode    FilecoinNode?          @relation(fields: [filecoinNodeId], references: [id])
+  filecoinNodeId  String?
+  productType     ProductEnumType
+  energySources   EnergySourceEnumType[]
+  region          String?
+  country         CountryEnumType
+  generationStart DateTime
+  generationEnd   DateTime
+  timezoneOffset  Int
+  openVolume      BigInt
+  deliveredVolume BigInt
+
+  certificates Certificate[]
 }
 
 enum PaymentPreferencesEnumType {
