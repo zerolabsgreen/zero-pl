@@ -3,7 +3,7 @@ import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { CertificateDto } from '../../certificates/dto/certificate.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
-import { CountryEnumType, EnergySourceEnumType, ProductEnumType } from '@prisma/client';
+import { Buyer, Certificate, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Seller } from '@prisma/client';
 import { IsEnum, IsInt, IsISO8601, IsOptional, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
@@ -72,5 +72,23 @@ export class ContractDto {
 
   constructor(partial: Partial<ContractDto>) {
     Object.assign(this, partial);
+  }
+
+  static toDto(dbEntity: Contract & {
+    seller: Seller,
+    buyer: Buyer,
+    filecoinNode: FilecoinNode;
+    certificates: Certificate[];
+  }): ContractDto {
+    return {
+      ...dbEntity,
+      generationStart: dbEntity.generationStart.toISOString(),
+      generationEnd: dbEntity.generationEnd.toISOString(),
+      buyer: BuyerDto.toDto(dbEntity.buyer),
+      seller: new SellerDto(dbEntity.seller),
+      openVolume: dbEntity.openVolume.toString(),
+      deliveredVolume: dbEntity.deliveredVolume.toString(),
+      certificates: dbEntity.certificates.map(cert => CertificateDto.toDto(cert))
+    }
   }
 }

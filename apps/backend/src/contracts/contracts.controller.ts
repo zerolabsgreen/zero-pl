@@ -35,7 +35,7 @@ export class ContractsController {
       type: [ContractDto],
       description: 'Creates contracts'
   })
-  create(@Body() createContractDtos: [CreateContractDto]) {
+  create(@Body() createContractDtos: [CreateContractDto]): Promise<ContractDto[]> {
     return this.contractsService.create(createContractDtos);
   }
 
@@ -43,14 +43,14 @@ export class ContractsController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({type: [ContractDto]})
-  findAll() {
+  findAll(): Promise<ContractDto[]> {
     return this.contractsService.findAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: ContractDto })
   @ApiParam({ name: 'id', type: String })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<ContractDto> {
     return this.contractsService.findOne(id)
   }
 
@@ -59,15 +59,15 @@ export class ContractsController {
   @ApiSecurity('api-key', ['api-key'])
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateContractDto })
-  update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto) {
+  update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto): Promise<ContractDto> {
     return this.contractsService.update(id, updateContractDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  @ApiParam({ name: 'id', type: String })
-  remove(@Param('id') id: string) {
+  @ApiParam({ name: 'id', type: Boolean })
+  remove(@Param('id') id: string): Promise<boolean> {
     return this.contractsService.remove(id);
   }
 }

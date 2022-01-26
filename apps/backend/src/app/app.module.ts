@@ -16,6 +16,7 @@ import { OrdersModule } from "../orders/orders.module";
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 import { EmailModule } from '../email/email.module';
 import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
+import { ContractsModule } from '../contracts/contracts.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middlewar
     CertificatesModule,
     FilecoinNodesModule,
     OrdersModule,
+    ContractsModule,
     EmailModule
   ],
   controllers: [AppController],

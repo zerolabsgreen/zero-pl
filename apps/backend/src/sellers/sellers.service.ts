@@ -17,7 +17,7 @@ export class SellersService {
     private readonly configService: ConfigService
   ) {}
 
-  async create(createSellerDto: CreateSellerDto) {
+  async create(createSellerDto: CreateSellerDto): Promise<SellerDto> {
     let newSeller: Seller;
 
     await this.prisma.$transaction(async (prisma) => {
@@ -58,11 +58,11 @@ export class SellersService {
     return new SellerDto(await this.prisma.seller.findUnique({ where: { id: newSeller.id } }));
   }
 
-  async findAll() {
+  async findAll(): Promise<SellerDto[]> {
     return (await this.prisma.seller.findMany()).map(r => new SellerDto(r));
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<SellerDto> {
     const row = await this.prisma.seller.findUnique({ where: { id } });
 
     if (!row) {
@@ -72,14 +72,16 @@ export class SellersService {
     return new SellerDto(row);
   }
 
-  async update(id: string, updateSellerDto: UpdateSellerDto) {
+  async update(id: string, updateSellerDto: UpdateSellerDto): Promise<SellerDto> {
     return new SellerDto(await this.prisma.seller.update({
       where: { id },
       data: updateSellerDto
     }));
   }
 
-  async remove(id: string) {
-    return new SellerDto(await this.prisma.seller.delete({ where: { id } }));
+  async remove(id: string): Promise<boolean> {
+    await this.prisma.seller.delete({ where: { id } });
+
+    return true;
   }
 }

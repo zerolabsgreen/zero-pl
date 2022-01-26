@@ -8,6 +8,9 @@ import { BuyersService } from '../buyers/buyers.service';
 import { Contract } from '@prisma/client';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
+import { ContractDto } from './dto/contract.dto';
+import { CertificateDto } from '../certificates/dto/certificate.dto';
+import { BuyerDto } from '../buyers/dto/buyer.dto';
 
 @Injectable()
 export class ContractsService {
@@ -23,10 +26,10 @@ export class ContractsService {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
 
-  async create(createContractDtos: CreateContractDto[]) {
+  async create(createContractDtos: CreateContractDto[]): Promise<ContractDto[]> {
     this.logger.log(`received request to create Contracts: ${JSON.stringify(createContractDtos)}`);
 
-    const contracts: Contract[] = [];
+    const contracts: ContractDto[] = [];
 
     await this.prisma.$transaction(async (prisma) => {
       for (const createContractDto of createContractDtos) {
@@ -67,13 +70,19 @@ export class ContractsService {
             country: createContractDto.country,
             region: createContractDto.region ?? '',
             deliveredVolume: BigInt(0)
-          } 
+          },
+          include: {
+            seller: true,
+            buyer: true,
+            filecoinNode: true,
+            certificates: true
+          }
         }).catch(err => {
           this.logger.error(`error creating a new Contract: ${err}`);
           throw err;
         });
 
-        contracts.push(newRecord);
+        contracts.push(ContractDto.toDto(newRecord));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
@@ -83,11 +92,20 @@ export class ContractsService {
     return contracts;
   }
 
-  async findAll() {
-    return this.prisma.contract.findMany({ select: { id: true } });
+  async findAll(): Promise<ContractDto[]> {
+    const contracts = await this.prisma.contract.findMany({
+      include: {
+        seller: true,
+        buyer: true,
+        filecoinNode: true,
+        certificates: true
+      }
+    });
+
+    return contracts.map(contract => ContractDto.toDto(contract));
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ContractDto> {
     const data = await this.prisma.contract.findUnique({
       where: {
         id
@@ -95,21 +113,19 @@ export class ContractsService {
       include: {
         seller: true,
         buyer: true,
+        filecoinNode: true,
         certificates: true
       }
-    })
+    });
 
     if (!data) {
       return null;
     }
 
-    return {
-      ...data,
-      certificates: data.certificates.map(cert => ({ ...cert, energy: cert.energy.toString() }))
-    };
+    return ContractDto.toDto(data);
   }
 
-  async update(id: string, updateContractDto: UpdateContractDto) {
+  async update(id: string, updateContractDto: UpdateContractDto): Promise<ContractDto> {
     return await this.prisma.$transaction(async () => {
       const newContract = await this.prisma.contract.update({
         where: { id },
@@ -124,19 +140,25 @@ export class ContractsService {
           country: updateContractDto.country,
           region: updateContractDto.region ?? '',
           deliveredVolume: BigInt(0)
+        },
+        include: {
+          seller: true,
+          buyer: true,
+          filecoinNode: true,
+          certificates: true
         }
       });
 
-      return newContract;
+      return ContractDto.toDto(newContract);
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<boolean> {
     await this.prisma.$transaction([
       this.prisma.contract.delete({ where: { id } })
     ]);
 
-    return { status: "OK" };
+    return true;
   }
 
 }
