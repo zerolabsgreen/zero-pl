@@ -1,10 +1,167 @@
 <!doctype html>
 <html>
   <head>
-    <title>{{purchaseId}}</title>
-    <meta name="description" content="{{purchaseId}}">
+    <title>Attestation form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        width: 800px;
+        margin: auto;
+        font-family: 'Roboto', sans-serif;
+      }
+      p {
+        font-size: 12px;
+        line-height: 1.15;
+      }
+      .table-title {
+        font-size: 11px;
+        color: #274e13;
+      }
+      table {
+        margin-top: 8px;
+        border-collapse: collapse;
+      }
+      table th {
+        color: #19355e;
+        background-color: #7fd9a2;
+        text-align: center;
+        font-size: 9px;
+        padding: 5px 10px;
+        border: 1px solid #7fd9a2;
+      }
+      table td {
+        font-size: 9px;
+        text-align: center;
+        padding: 5px;
+        border: 1px solid #7fd9a2;
+      }
+      .wrapper {
+        padding: 40px;
+      }
+    </style>
   </head>
   <body>
-    <h1>{{purchaseId}}</h1>
+    <div class="wrapper">
+      <img src="zero-labs-logo.png" style="width: 87px; height: 94px"  />
+      <p>
+        This Attestation Form is provided by Zero Labs for the Filecoin Storage Provider (SP)
+        owner with the Miner ID {{buyerId}}. This document confirms and guarantees that the
+        SP has purchased and claimed {{orderQuantity}} renewable energy certificate (REC),
+        representing {{orderQuantity}} MWh of electricity generated and consumed by this
+        SP from renewable sources, with the characteristics detailed below.
+      </p>
+      <p style="margin-bottom: 20px;">
+        This Attestation Form describes renewable electricity consumption and generation
+        located in {{country}} in respect of the period between {{generationPeriod}}.
+      </p>
+      <p>
+        The SP’s renewable electricity purchase is detailed in the following table:
+      </p>
+      <span class="table-title">
+        Generator details
+      </span>
+      <table class="generation-details-table">
+        <tr>
+          <th>
+            Provider Reference Number
+          </th>
+          <th>
+            Generator Name
+          </th>
+          <th>
+            Generator ID (EIA or QF)
+          </th>
+          <th>
+            Nameplate Capacity (MW)
+          </th>
+          <th>
+            Fuel Type
+          </th>
+          <th>
+            First Date of Generation Operation
+          </th>
+          <th>
+            Label
+          </th>
+        </tr>
+        <tr>
+          <td>
+            {{providerId}}
+          </td>
+          <td>
+            {{generatorName}}
+          </td>
+          <td>
+            {{generatorId}}
+          </td>
+          <td>
+            {{nameplate}}
+          </td>
+          <td>
+            {{fuelType}}
+          </td>
+          <td>
+            {{operationStart}}
+          </td>
+          <td>
+            {{greenECertified}}
+          </td>
+        </tr>
+      </table>
+      <br />
+      <span class="table-title">
+        EAC Redemption details
+      </span>
+      <table style="width: 100%;">
+        <tr>
+          <th>
+            Total of # MWhs RECs canceled
+          </th>
+          <th>
+            Period of Generation
+          </th>
+        </tr>
+        <tr>
+          <td>
+            {{orderQuantity}}
+          </td>
+          <td>
+            {{generationPeriod}}
+          </td>
+        </tr>
+      </table>
+      <p>
+        The original attestation form is attached as Annex 1. Zero Labs guarantees that these EACs belong to the indicated SP and cannot be resold or transferred to anyone else than this SP.
+      </p>
+      <p>
+        The breakdown allocation of RECs to Miner ID {{buyerId}}, based on the total RECs purchased by Energy Web, is attached in the following table:
+      </p>
+      <table style="width: 100%;">
+        <tr>
+          <th>
+            Miner ID
+          </th>
+          <th>
+            Location
+          </th>
+          <th>
+            MWh-2021
+          </th>
+        </tr>
+        <tr>
+          <td>
+            {{buyerId}}
+          </td>
+          <td>
+            {{country}}  {{state}}
+          </td>
+          <td>
+            {{eacs2021}}
+          </td>
+        </tr>
+      </table>
+    </div>
   </body>
 </html>
