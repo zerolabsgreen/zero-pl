@@ -9,16 +9,14 @@ generator client {
 }
 
 model File {
-  id         String   @id @default(uuid())
-  fileName   String
-  mimeType   String
-  createdAt  DateTime @default(now())
-  content    Bytes
-  purchase   Purchase @relation(fields: [purchaseId], references: [id])
-  purchaseId String
-  fileType   FileType @default(ATTESTATION)
+  id        String             @id @default(uuid())
+  fileName  String
+  mimeType  String
+  createdAt DateTime           @default(now())
+  content   Bytes
+  fileType  FileType           @default(ATTESTATION)
+  purchases FilesOnPurchases[]
 
-  @@unique([purchaseId, fileType])
   @@index([createdAt])
 }
 
@@ -94,7 +92,7 @@ model Purchase {
   buyerId                      String?
   seller                       Seller?                    @relation(fields: [sellerId], references: [id])
   sellerId                     String?
-  files                        File[]
+  files                        FilesOnPurchases[]
   recsSold                     Int
   reportingStart               DateTime?
   reportingStartTimezoneOffset Int?
@@ -115,6 +113,15 @@ model FilecoinNodesOnPurchases {
 
   @@id([purchaseId, filecoinNodeId, buyerId])
   @@unique([purchaseId, filecoinNodeId])
+}
+
+model FilesOnPurchases {
+  file       File     @relation(fields: [fileId], references: [id])
+  fileId     String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId String // relation scalar field (used in the `@relation` attribute above)
+
+  @@id([fileId, purchaseId])
 }
 
 model Order {

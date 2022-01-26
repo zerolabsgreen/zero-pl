@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from "class-transformer";
-import { File, FileType } from '@prisma/client'
+import { File, FilesOnPurchases, FileType } from '@prisma/client'
+
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 
 @Exclude()
 export class FileMetadataDto implements File {
@@ -20,9 +22,9 @@ export class FileMetadataDto implements File {
   @Expose()
   createdAt: Date;
 
-  @ApiProperty( { example: "3fc9c8da-4b6f-4976-be25-facfd13c5787" })
+  @ApiProperty()
   @Expose()
-  purchaseId: string;
+  purchases: string[];
 
   @ApiProperty( { example: FileType.ATTESTATION })
   @Expose()
@@ -32,5 +34,13 @@ export class FileMetadataDto implements File {
 
   constructor(partial: Partial<FileMetadataDto>) {
     Object.assign(this, partial);
+  }
+
+  static toDto(dbEntity: PartialBy<File, 'content'> & { purchases: FilesOnPurchases[] }): FileMetadataDto {
+    return {
+      ...dbEntity,
+      purchases: dbEntity.purchases.map(p => p.purchaseId),
+      content: dbEntity.content ?? undefined
+    };
   }
 }

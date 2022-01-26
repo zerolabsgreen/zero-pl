@@ -7,7 +7,6 @@ import {
   Logger,
   NotFoundException,
   Param,
-  Patch,
   Post,
   Res,
   UploadedFile,
@@ -18,13 +17,13 @@ import {
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
-import { UploadFileDto } from "./dto/upload-file.dto";
 import { FileMetadataDto } from "./dto/file-metadata.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express, Response } from 'express';
 import * as multer from 'multer';
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
+import { FileType } from '@prisma/client';
 
 @Controller('files')
 @ApiTags('files')
@@ -43,7 +42,7 @@ export class FilesController {
     schema: {
       type: 'object',
       properties: {
-        purchaseId: { type: 'string' },
+        purchaseIds: { type: 'array', items: { type: 'string' } },
         fileType: { type: 'string' },
         file: {
           type: 'string',
@@ -60,11 +59,12 @@ export class FilesController {
     }
   }))
   create(
-    @Body() { purchaseId, fileType }: UploadFileDto,
+    @Body() dto: { fileType: string, purchaseIds: string },
     @UploadedFile() file: Express.Multer.File
-  ) {
+  ): Promise<FileMetadataDto> {
+    console.log({ dto })
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
-    return this.filesService.create(file, purchaseId, fileType);
+    return this.filesService.create(file, dto.purchaseIds.split(','), dto.fileType as FileType);
   }
 
   @Get()
@@ -72,7 +72,7 @@ export class FilesController {
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: [FileMetadataDto] })
   @UseInterceptors(NoDataInterceptor)
-  findAll() {
+  findAll(): Promise<FileMetadataDto[]> {
     return this.filesService.findAll();
   }
 
@@ -99,7 +99,7 @@ export class FilesController {
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: FileMetadataDto })
   @UseInterceptors(NoDataInterceptor)
-  async getFileMetadata(@Param('id') id: string) {
+  async getFileMetadata(@Param('id') id: string): Promise<FileMetadataDto> {
     const file = await this.filesService.findOne(id);
 
     if (!file) {
@@ -112,9 +112,9 @@ export class FilesController {
   @Delete(':id')
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  @ApiOkResponse({ type: FileMetadataDto })
+  @ApiOkResponse({ type: Boolean })
   @UseInterceptors(NoDataInterceptor)
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<boolean> {
     return this.filesService.remove(id);
   }
 }
