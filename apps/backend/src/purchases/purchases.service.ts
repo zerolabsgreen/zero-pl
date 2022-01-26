@@ -1,7 +1,7 @@
 import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { pick } from 'lodash';
 import { Cache } from 'cache-manager';
-import { Purchase } from '@prisma/client';
+import { FileType, Purchase } from '@prisma/client';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
 
@@ -113,7 +113,7 @@ export class PurchasesService {
         const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
             locals: { purchaseId: newRecord.id },
         }));
-        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, newRecord.id);
+        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, newRecord.id, FileType.ATTESTATION);
 
         let accountToRedeemFrom: string;
 
