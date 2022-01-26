@@ -16,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
 import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
+import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
 
 const OriginAppTypeOrmModule = () => {
   const entities = [
@@ -29,7 +30,7 @@ const OriginAppTypeOrmModule = () => {
     url: process.env.DATABASE_URL,
     entities,
     logging: ['info'],
-    ssl: Boolean(process.env.DB_SSL_OFF)
+    ssl: process.env.DB_SSL_OFF
       ? false
       : { rejectUnauthorized: false },
   });
@@ -66,6 +67,6 @@ const OriginAppTypeOrmModule = () => {
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HttpLoggerMiddleware).forRoutes('*');
+    consumer.apply(HttpLoggerMiddleware, HttpsRedirectMiddleware).forRoutes('*');
   }
 }

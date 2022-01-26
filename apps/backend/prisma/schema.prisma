@@ -9,14 +9,16 @@ generator client {
 }
 
 model File {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   fileName   String
   mimeType   String
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime @default(now())
   content    Bytes
-  purchase   Purchase? @relation(fields: [purchaseId], references: [id])
-  purchaseId String?   @unique
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId String
+  fileType   FileType @default(ATTESTATION)
 
+  @@unique([purchaseId, fileType])
   @@index([createdAt])
 }
 
@@ -219,6 +221,11 @@ enum LabelEnumType {
   ENERGIA_VERDE_100
   BRA_MILJOVAL
   GRUENER_STROM
+}
+
+enum FileType {
+  ATTESTATION
+  REDEMPTION_STATEMENT
 }
 
 // Taken from https://gist.github.com/ssskip/5a94bfcd2835bf1dea52

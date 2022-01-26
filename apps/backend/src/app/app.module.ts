@@ -15,6 +15,7 @@ import { FilecoinNodesModule } from "../filecoin-nodes/filecoin-nodes.module";
 import { OrdersModule } from "../orders/orders.module";
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 import { EmailModule } from '../email/email.module';
+import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
 
 @Module({
   imports: [
@@ -65,7 +66,7 @@ import { EmailModule } from '../email/email.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(HttpLoggerMiddleware)
+      .apply(HttpLoggerMiddleware, HttpsRedirectMiddleware)
       .forRoutes('*');
   }
 }

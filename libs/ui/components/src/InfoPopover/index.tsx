@@ -10,7 +10,6 @@ interface InfoPopoverProps {
   popoverContent?: string;
   children: ReactNode;
   hideTimeout?: number;
-  isFilecoin?: boolean;
   boxProps?: BoxProps;
 }
 
