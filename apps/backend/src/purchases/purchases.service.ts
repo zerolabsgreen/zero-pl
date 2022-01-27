@@ -130,13 +130,12 @@ export class PurchasesService {
                 id: savedPurchase.certificate.generatorId,
                 providerId: savedPurchase.sellerId,
                 name: savedPurchase.certificate.generatorName,
-                capacity: savedPurchase.certificate.capacity,
+                capacity: savedPurchase.certificate.capacity?.toString() ?? 'N/A',
                 fuelType: savedPurchase.certificate.energySource.toString(),
-                operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? '',
-                greenECertified: savedPurchase.certificate.label === LabelEnumType.GREEN_E_ENERGY ? 'Yes' : 'No'
+                operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? 'N/A',
+                label: savedPurchase.certificate.label?.toString() ?? 'N/A'
               },
-// hard-coded link for now, because UI_BASE_URL env variable should be here, but we are using redirect
-              purchaseUiLink: `http://proofs.zerolabs.green/partners/filecoin/purchases/${savedPurchase.id}`
+              purchaseUiLink: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${savedPurchase.id}`
             },
         }));
         await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, [newRecord.id], FileType.ATTESTATION);

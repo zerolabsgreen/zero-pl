@@ -144,7 +144,7 @@
             {{generator.name}}
           </td>
           <td>
-            {{generator.Id}}
+            {{generator.id}}
           </td>
           <td>
             {{generator.capacity}}
@@ -156,7 +156,7 @@
             {{generator.operationStart}}
           </td>
           <td>
-            {{generator.greenECertified}}
+            {{generator.label}}
           </td>
         </tr>
       </table>
