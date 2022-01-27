@@ -76,7 +76,7 @@ import { ContractsModule } from '../contracts/contracts.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(HttpLoggerMiddleware, HttpsRedirectMiddleware)
+      .apply(HttpLoggerMiddleware) //, HttpsRedirectMiddleware) - Disabling for now, doesn't work as expected
       .forRoutes('*');
   }
 }

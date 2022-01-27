@@ -67,6 +67,7 @@ const OriginAppTypeOrmModule = () => {
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HttpLoggerMiddleware, HttpsRedirectMiddleware).forRoutes('*');
+    consumer.apply(HttpLoggerMiddleware) //, HttpsRedirectMiddleware) - Disabling for now, doesn't work as expected
+    .forRoutes('*');
   }
 }
