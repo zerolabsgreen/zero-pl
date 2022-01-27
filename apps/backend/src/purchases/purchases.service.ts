@@ -113,7 +113,7 @@ export class PurchasesService {
         const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
             locals: { purchaseId: newRecord.id },
         }));
-        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, newRecord.id, FileType.ATTESTATION);
+        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, [newRecord.id], FileType.ATTESTATION);
 
         let accountToRedeemFrom: string;
 
