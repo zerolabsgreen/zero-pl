@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
+import { Certificate, CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
 
 export class CertificateDto {
   @ApiProperty({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
@@ -61,5 +61,16 @@ export class CertificateDto {
 
   constructor(partial: Partial<CertificateDto>) {
     Object.assign(this, partial);
+  }
+
+  static toDto(dbEntity: Certificate): CertificateDto {
+    return {
+      ...dbEntity,
+      generationStart: dbEntity.generationStart.toISOString(),
+      generationEnd: dbEntity.generationEnd.toISOString(),
+      redemptionDate: dbEntity.redemptionDate?.toISOString(),
+      energy: dbEntity.energy.toString(),
+      commissioningDate: dbEntity.commissioningDate?.toISOString(),
+    }
   }
 }

@@ -8,6 +8,8 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators'
 import { CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
@@ -56,6 +58,8 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
 
   @ApiPropertyOptional({ example: 180 })
   @IsInt()
+  @Min(-780)
+  @Max(780)
   @IsOptional()
   generationStartTimezoneOffset: number;
 
@@ -66,6 +70,8 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
 
   @ApiPropertyOptional({ example: 180 })
   @IsInt()
+  @Min(-780)
+  @Max(780)
   @IsOptional()
   generationEndTimezoneOffset: number;
 

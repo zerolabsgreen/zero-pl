@@ -6,6 +6,7 @@ import { IssuerModule } from '../issuer/issuer.module';
 @Module({
   imports: [IssuerModule],
   controllers: [FilecoinNodesController],
-  providers: [FilecoinNodesService]
+  providers: [FilecoinNodesService],
+  exports: [FilecoinNodesService]
 })
 export class FilecoinNodesModule {}

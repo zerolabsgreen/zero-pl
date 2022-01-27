@@ -3,7 +3,6 @@ import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 import { BuyerDto } from './dto/buyer.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { FilecoinNodeDto } from '../filecoin-nodes/dto/filecoin-node.dto';
 import { IssuerService } from '../issuer/issuer.service';
 import { Buyer } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
@@ -18,7 +17,7 @@ export class BuyersService {
     private readonly configService: ConfigService
   ) {}
 
-  async create(createBuyerDto: CreateBuyerDto) {
+  async create(createBuyerDto: CreateBuyerDto): Promise<BuyerDto> {
     let newBuyer: Buyer;
 
     this.logger.debug(`payload: ${JSON.stringify(createBuyerDto)}`);
@@ -62,11 +61,16 @@ export class BuyersService {
     return new BuyerDto(await this.prisma.buyer.findUnique({ where: { id: newBuyer.id } }));
   }
 
-  async findAll() {
-    return (await this.prisma.buyer.findMany()).map((r) => new BuyerDto(r));
+  async findAll(): Promise<BuyerDto[]> {
+    return (await this.prisma.buyer.findMany(
+      {
+        include: {
+          filecoinNodes: true
+        } 
+      })).map((r) => BuyerDto.toDto(r));
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<BuyerDto> {
     const row = await this.prisma.buyer.findUnique({
       where: { id },
       include: { filecoinNodes: true }
@@ -76,14 +80,17 @@ export class BuyersService {
       return null;
     }
 
-    return new BuyerDto({ ...row, filecoinNodes: row.filecoinNodes.map((r) => new FilecoinNodeDto(r)) });
+    return BuyerDto.toDto(row);
   }
 
-  async update(id: string, updateBuyerDto: UpdateBuyerDto) {
-    return new BuyerDto(await this.prisma.buyer.update({ where: { id }, data: updateBuyerDto }));
+  async update(id: string, updateBuyerDto: UpdateBuyerDto): Promise<BuyerDto> {
+    const updated = await this.prisma.buyer.update({ where: { id }, data: updateBuyerDto, include: { filecoinNodes: true } });
+    return BuyerDto.toDto(updated);
   }
 
-  async remove(id: string) {
-    return new BuyerDto(await this.prisma.buyer.delete({ where: { id } }));
+  async remove(id: string): Promise<boolean> {
+    await this.prisma.buyer.delete({ where: { id } });
+
+    return true;
   }
 }

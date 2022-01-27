@@ -43,14 +43,7 @@ export class CertificatesService {
 
         // TODO: we need criteria to know it is possible to go to a next cert. issuance
 
-        certificates.push(new CertificateDto({
-          ...newCertificate,
-          generationStart: newCertificate.generationStart.toISOString(),
-          generationEnd: newCertificate.generationEnd.toISOString(), 
-          redemptionDate: newCertificate.redemptionDate?.toISOString(),
-          energy: newCertificate.energy.toString(),
-          commissioningDate: newCertificate.commissioningDate?.toISOString(),
-        }));
+        certificates.push(CertificateDto.toDto(newCertificate));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
@@ -60,15 +53,8 @@ export class CertificatesService {
     return certificates;
   }
 
-  async findAll() {
-    return (await this.prisma.certificate.findMany()).map((dbRecord) => new CertificateDto({
-      ...dbRecord,
-      generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString(),
-      commissioningDate: dbRecord.commissioningDate?.toISOString(),
-    }));
+  async findAll(): Promise<CertificateDto[]> {
+    return (await this.prisma.certificate.findMany()).map((dbRecord) => CertificateDto.toDto(dbRecord));
   }
 
   async findOne(id: string): Promise<CertificateDto | null> {
@@ -77,27 +63,13 @@ export class CertificatesService {
       rejectOnNotFound: () => new NotFoundException(`certificateId=${id} not found`)
     });
 
-    return new CertificateDto({
-      ...dbRecord,
-      generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString(),
-      commissioningDate: dbRecord.commissioningDate?.toISOString(),
-    });
+    return CertificateDto.toDto(dbRecord);
   }
 
-  async update(id: string, updateCertificateDto: UpdateCertificateDto) {
+  async update(id: string, updateCertificateDto: UpdateCertificateDto): Promise<CertificateDto> {
     const dbRecord = await this.prisma.certificate.update({ where: { id }, data: updateCertificateDto });
 
-    return new CertificateDto({
-      ...dbRecord,
-      generationStart: dbRecord.generationStart.toISOString(),
-      generationEnd: dbRecord.generationEnd.toISOString(),
-      redemptionDate: dbRecord.redemptionDate?.toISOString(),
-      energy: dbRecord.energy.toString(),
-      commissioningDate: dbRecord.commissioningDate?.toISOString(),
-    });
+    return CertificateDto.toDto(dbRecord);
   }
 
   remove(id: string) {

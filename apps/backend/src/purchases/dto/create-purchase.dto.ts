@@ -9,6 +9,7 @@ import {
   IsPositive,
   IsString,
   IsUUID,
+  Max,
   Min,
   ValidateNested
 } from 'class-validator';
@@ -63,6 +64,8 @@ export class CreatePurchaseDto {
 
   @ApiPropertyOptional({ example: 180 })
   @IsInt()
+  @Min(-780)
+  @Max(780)
   @IsOptional()
   reportingStartTimezoneOffset;
 
@@ -74,6 +77,8 @@ export class CreatePurchaseDto {
 
   @ApiPropertyOptional({ example: 180 })
   @IsInt()
+  @Min(-780)
+  @Max(780)
   @IsOptional()
   reportingEndTimezoneOffset;
 

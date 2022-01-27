@@ -31,19 +31,19 @@ export class FilecoinNodesController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiCreatedResponse({ type: FilecoinNodeDto })
-  create(@Body() createFilecoinNodeDto: CreateFilecoinNodeDto) {
+  create(@Body() createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     return this.filecoinNodesService.create(createFilecoinNodeDto);
   }
 
   @Get()
   @ApiOkResponse({ type: [FilecoinNodeDto] })
-  findAll() {
+  findAll(): Promise<FilecoinNodeDto[]> {
     return this.filecoinNodesService.findAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: FilecoinNodeDto })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<FilecoinNodeDto> {
     return this.filecoinNodesService.findOne(id);
   }
 
@@ -51,15 +51,15 @@ export class FilecoinNodesController {
   @ApiOkResponse({ type: FilecoinNodeDto })
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  update(@Param('id') id: string, @Body() updateFilecoinNodeDto: UpdateFilecoinNodeDto) {
+  update(@Param('id') id: string, @Body() updateFilecoinNodeDto: UpdateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     return this.filecoinNodesService.update(id, updateFilecoinNodeDto);
   }
 
   @Delete(':id')
-  @ApiOkResponse({ type: FilecoinNodeDto })
+  @ApiOkResponse({ type: Boolean })
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<boolean> {
     return this.filecoinNodesService.remove(id);
   }
 

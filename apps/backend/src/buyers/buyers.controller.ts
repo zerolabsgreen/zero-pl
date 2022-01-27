@@ -31,7 +31,7 @@ export class BuyersController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiCreatedResponse({ type: BuyerDto })
-  create(@Body() createBuyerDto: CreateBuyerDto) {
+  create(@Body() createBuyerDto: CreateBuyerDto): Promise<BuyerDto> {
     return this.buyersService.create(createBuyerDto);
   }
 
@@ -39,13 +39,13 @@ export class BuyersController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: [BuyerDto] })
-  findAll() {
+  findAll(): Promise<BuyerDto[]> {
     return this.buyersService.findAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: BuyerDto })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<BuyerDto> {
     return this.buyersService.findOne(id);
   }
 
@@ -53,15 +53,15 @@ export class BuyersController {
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: BuyerDto })
-  update(@Param('id') id: string, @Body() updateBuyerDto: UpdateBuyerDto) {
+  update(@Param('id') id: string, @Body() updateBuyerDto: UpdateBuyerDto): Promise<BuyerDto> {
     return this.buyersService.update(id, updateBuyerDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('api-key'))
   @ApiSecurity('api-key', ['api-key'])
-  @ApiOkResponse({ type: BuyerDto })
-  remove(@Param('id') id: string) {
+  @ApiOkResponse({ type: Boolean })
+  remove(@Param('id') id: string): Promise<boolean> {
     return this.buyersService.remove(id);
   }
 }

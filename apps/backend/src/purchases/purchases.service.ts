@@ -183,7 +183,18 @@ export class PurchasesService {
         buyer: { include: { filecoinNodes: true } },
         filecoinNodes: { include: { filecoinNode: true } },
         certificate: true,
-        files: { select: { id: true, fileName: true, mimeType: true } }
+        files: {
+          select: {
+            file: {
+              select: {
+                id: true,
+                fileName: true,
+                mimeType: true,
+                fileType: true
+              }
+            }
+          }
+        }
       }
     })
 
@@ -195,7 +206,7 @@ export class PurchasesService {
       ...data,
       certificate: { ...data.certificate, energy: data.certificate.energy.toString() },
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${data.id}`,
-      files: data.files.map(f => ({ ...f, url: `${process.env.FILES_BASE_URL}/${f.id}` })),
+      files: data.files.map(f => ({ ...f.file, url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
       filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode)
     };
   }
