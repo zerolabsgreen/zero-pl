@@ -1,7 +1,7 @@
 import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { pick } from 'lodash';
 import { Cache } from 'cache-manager';
-import { FileType, Purchase } from '@prisma/client';
+import { FileType, LabelEnumType, Purchase } from '@prisma/client';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
 
@@ -91,7 +91,7 @@ export class PurchasesService {
           data: {
             ...purchase,
             createdOn: new Date()
-          } 
+          }
         }).catch(err => {
           this.logger.error(`error creating a new purchase: ${err}`);
           throw err;
@@ -110,8 +110,32 @@ export class PurchasesService {
           });
         }
 
+        const savedPurchase = await this.prisma.purchase.findUnique({
+          where: {
+            id: newRecord.id
+          },
+          include: {
+            certificate: true,
+            filecoinNodes: true
+          }});
+
         const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
-            locals: { purchaseId: newRecord.id },
+            locals: { 
+              minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
+              orderQuantity: savedPurchase.recsSold.toString(),
+              country: savedPurchase.certificate.country.toString(),
+              state: savedPurchase.certificate.region,
+              generationPeriod: `${savedPurchase.certificate.generationStart.toDateString()} - ${savedPurchase.certificate.generationEnd.toDateString()}`,
+              generator: {
+                id: savedPurchase.certificate.generatorId,
+                providerId: savedPurchase.sellerId,
+                name: savedPurchase.certificate.generatorName,
+                capacity: savedPurchase.certificate.capacity,
+                fuelType: savedPurchase.certificate.energySource.toString(),
+                operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? '',
+                greenECertified: savedPurchase.certificate.label === LabelEnumType.GREEN_E_ENERGY ? 'Yes' : 'No'
+              }
+            },
         }));
         await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, [newRecord.id], FileType.ATTESTATION);
 
