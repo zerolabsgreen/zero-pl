@@ -120,7 +120,7 @@ export class PurchasesService {
           }});
 
         const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
-            locals: { 
+            locals: {
               minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
               orderQuantity: savedPurchase.recsSold.toString(),
               country: savedPurchase.certificate.country.toString(),
@@ -134,7 +134,9 @@ export class PurchasesService {
                 fuelType: savedPurchase.certificate.energySource.toString(),
                 operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? '',
                 greenECertified: savedPurchase.certificate.label === LabelEnumType.GREEN_E_ENERGY ? 'Yes' : 'No'
-              }
+              },
+// hard-coded link for now, because UI_BASE_URL env variable should be here, but we are using redirect
+              purchaseUiLink: `http://proofs.zerolabs.green/partners/filecoin/purchases/${savedPurchase.id}`
             },
         }));
         await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, [newRecord.id], FileType.ATTESTATION);
@@ -152,7 +154,7 @@ export class PurchasesService {
           //   throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
           // }
 
-          
+
           accountToRedeemFrom = filecoinNodeData.blockchainAddress;
         } else {
           this.logger.debug(`no fielcoin node defined for purchase`);
