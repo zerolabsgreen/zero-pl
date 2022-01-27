@@ -2,7 +2,7 @@ import { ReactElement, ReactNode } from 'react';
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import Box, { BoxProps } from '@mui/material/Box';
 import PopOver from '../PopOver';
-import useTheme from '@mui/material/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 
 interface InfoPopoverProps {
   noIcon?: boolean;

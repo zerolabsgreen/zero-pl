@@ -6,7 +6,7 @@ import DatePicker from '@mui/lab/DatePicker';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { useTheme } from '@mui/material/styles';
 import { ReactComponent as CalendarIconDefault } from './calendar-icon.svg';
-import './index.css';
+// import './index.css';
 
 export interface FormDatePickerProps {
   name: string;
