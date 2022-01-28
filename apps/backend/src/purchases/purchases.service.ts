@@ -1,15 +1,18 @@
 import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { pick } from 'lodash';
+import { Cache } from 'cache-manager';
+import { FileType, LabelEnumType, Purchase } from '@prisma/client';
+import { PDFService } from '@t00nday/nestjs-pdf';
+import { ConfigService } from '@nestjs/config';
+
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { ConfigService } from '@nestjs/config';
 import { IssuerService } from '../issuer/issuer.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
-import { pick } from 'lodash';
-import { Cache } from 'cache-manager';
-import { PurchaseDto } from './dto/purchase.dto';
-import { Purchase } from '@prisma/client';
+import { FilesService } from '../files/files.service';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PurchasesService {
@@ -21,7 +24,9 @@ export class PurchasesService {
     private certificatesService: CertificatesService,
     private issuerService: IssuerService,
     private buyersService: BuyersService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private pdfService: PDFService,
+    private filesService: FilesService
   ) {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
@@ -86,7 +91,7 @@ export class PurchasesService {
           data: {
             ...purchase,
             createdOn: new Date()
-          } 
+          }
         }).catch(err => {
           this.logger.error(`error creating a new purchase: ${err}`);
           throw err;
@@ -105,6 +110,36 @@ export class PurchasesService {
           });
         }
 
+        const savedPurchase = await this.prisma.purchase.findUnique({
+          where: {
+            id: newRecord.id
+          },
+          include: {
+            certificate: true,
+            filecoinNodes: true
+          }});
+
+        const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
+            locals: {
+              minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
+              orderQuantity: savedPurchase.recsSold.toString(),
+              country: savedPurchase.certificate.country.toString(),
+              state: savedPurchase.certificate.region,
+              generationPeriod: `${savedPurchase.certificate.generationStart.toDateString()} - ${savedPurchase.certificate.generationEnd.toDateString()}`,
+              generator: {
+                id: savedPurchase.certificate.generatorId,
+                providerId: savedPurchase.sellerId,
+                name: savedPurchase.certificate.generatorName,
+                capacity: savedPurchase.certificate.capacity?.toString() ?? 'N/A',
+                fuelType: savedPurchase.certificate.energySource.toString(),
+                operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? 'N/A',
+                label: savedPurchase.certificate.label?.toString() ?? 'N/A'
+              },
+              purchaseUiLink: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${savedPurchase.id}`
+            },
+        }));
+        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, [newRecord.id], FileType.ATTESTATION);
+
         let accountToRedeemFrom: string;
 
         if (filecoinNodes && filecoinNodes[0]) {
@@ -118,7 +153,7 @@ export class PurchasesService {
           //   throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
           // }
 
-          
+
           accountToRedeemFrom = filecoinNodeData.blockchainAddress;
         } else {
           this.logger.debug(`no fielcoin node defined for purchase`);

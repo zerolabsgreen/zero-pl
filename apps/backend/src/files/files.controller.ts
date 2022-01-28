@@ -64,7 +64,7 @@ export class FilesController {
   ): Promise<FileMetadataDto> {
     console.log({ dto })
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
-    return this.filesService.create(file, dto.purchaseIds.split(','), dto.fileType as FileType);
+    return this.filesService.create(file.originalname, file.buffer, dto.purchaseIds.split(','), dto.fileType as FileType, file.mimetype);
   }
 
   @Get()
