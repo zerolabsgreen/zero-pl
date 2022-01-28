@@ -1,9 +1,9 @@
 import { Box, Container, useTheme } from '@mui/material';
 import { ProtocolTypeEnumType } from '@energyweb/zero-protocol-labs-api-client';
-import { ReactComponent as LogoFilecoin } from '../../assets/filecoin-logo.svg';
-import { ReactComponent as ZeroLogo } from '../../assets/zero-labs-logo.svg';
-import { FilecoinColors } from '../../utils';
-import { useSelectedProtocolStore } from '../../context';
+import { ReactComponent as LogoFilecoin } from '../../../assets/filecoin-logo.svg';
+import { ReactComponent as ZeroLogo } from '../../../assets/zero-labs-logo.svg';
+import { FilecoinColors } from '../../../utils';
+import { useSelectedProtocolStore } from '../../../context';
 
 export const Header = () => {
   const selectedProtocol = useSelectedProtocolStore();

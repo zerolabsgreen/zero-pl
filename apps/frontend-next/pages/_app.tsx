@@ -5,6 +5,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { createEmotionCache, materialTheme } from '../utils';
+import { useAxiosDefaults } from '../hooks/useAxiosDefaults';
+import Header from '../components/common/Header';
 
 const clientSideEmotionCache = createEmotionCache();
 const queryClient = new QueryClient({
@@ -23,6 +25,7 @@ interface ZeroAppProps extends AppProps {
 
 function ZeroApp(props: ZeroAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  useAxiosDefaults();
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -31,6 +34,7 @@ function ZeroApp(props: ZeroAppProps) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={materialTheme}>
           <CssBaseline />
+          <Header />
           <Component {...pageProps} />
         </ThemeProvider>
       </QueryClientProvider>

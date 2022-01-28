@@ -1,17 +1,11 @@
 import Head from "next/head";
-import { Header } from "../components/Header";
-import {
-  AdvisorsBlock,
-  FirstQuestionsBlock,
-  Footer,
-  SearchBlock,
-  SecondQuestionsBlock,
-  TabsSection,
-  WelcomeBlock,
-  WelcomeSubtitle,
-  WelcomeTitle,
-  Wrapper
-} from "../components/HomePage";
+import { AdvisorsBlock } from "../components/HomePage/AdvisorsBlock";
+import { FirstQuestionsBlock } from "../components/HomePage/FirstQuestionsBlock";
+import { Footer } from "../components/HomePage/Footer";
+import { SearchBlock } from "../components/HomePage/SearchBlock";
+import { SecondQuestionsBlock } from "../components/HomePage/SecondQuestionsBlock";
+import { WelcomeBlock, WelcomeSubtitle, WelcomeTitle, Wrapper } from "../components/HomePage/styled";
+import { TabsSection } from "../components/HomePage/TabsSection";
 
 export function Index() {
   return (
@@ -20,7 +14,6 @@ export function Index() {
       <title>Zero | Welcome</title>
     </Head>
     <main>
-      <Header />
       <WelcomeBlock>
         <WelcomeTitle color="secondary">
           Welcome to Zero

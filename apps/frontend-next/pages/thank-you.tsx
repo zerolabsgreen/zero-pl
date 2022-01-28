@@ -2,13 +2,11 @@ import type { NextPage } from 'next';
 import { styled, useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Header from '../components/Header';
 
 const ThankYou: NextPage = () => {
   const theme = useTheme();
   return (
     <>
-      <Header />
       <StyledGrid
         bgcolor={theme.palette.primary.main}
         style={bgStyle}
