@@ -49,7 +49,7 @@ import { ContractsModule } from '../contracts/contracts.module';
         SMTP_URL: Joi.string()
           .uri({ allowRelative: false, scheme: 'smtp' })
           .default('smtp://localhost:1025'),
-        SMTP_FROM: Joi.string().default('"EW Zero" <notification@energyweb.org>'),
+        SMTP_FROM: Joi.string().default('"Zero" <notification@zerolabs.green>'),
       })
     }),
     PDFModule.register({

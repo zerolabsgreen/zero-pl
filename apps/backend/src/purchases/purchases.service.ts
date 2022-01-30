@@ -1,7 +1,7 @@
-import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
 import { pick } from 'lodash';
 import { Cache } from 'cache-manager';
-import { FileType, LabelEnumType, Purchase } from '@prisma/client';
+import { FileType } from '@prisma/client';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
 
@@ -13,6 +13,9 @@ import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
 import { FilesService } from '../files/files.service';
 import { firstValueFrom } from 'rxjs';
+import { FileMetadataDto } from '../files/dto/file-metadata.dto';
+import { ShortPurchaseDto } from './dto/short-purchase.dto';
+import { FullPurchaseDto } from './dto/full-purchase.dto';
 
 @Injectable()
 export class PurchasesService {
@@ -31,10 +34,10 @@ export class PurchasesService {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
 
-  async create(createPurchaseDtos: CreatePurchaseDto[]) {
+  async create(createPurchaseDtos: CreatePurchaseDto[]): Promise<FullPurchaseDto[]> {
     this.logger.log(`received request to create purchases: ${JSON.stringify(createPurchaseDtos)}`);
 
-    const purchases: Purchase[] = [];
+    const purchases: FullPurchaseDto[] = [];
 
     await this.prisma.$transaction(async (prisma) => {
       for (const createPurchaseDto of createPurchaseDtos) {
@@ -110,35 +113,7 @@ export class PurchasesService {
           });
         }
 
-        const savedPurchase = await this.prisma.purchase.findUnique({
-          where: {
-            id: newRecord.id
-          },
-          include: {
-            certificate: true,
-            filecoinNodes: true
-          }});
-
-        const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
-            locals: {
-              minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
-              orderQuantity: savedPurchase.recsSold.toString(),
-              country: savedPurchase.certificate.country.toString(),
-              state: savedPurchase.certificate.region,
-              generationPeriod: `${savedPurchase.certificate.generationStart.toDateString()} - ${savedPurchase.certificate.generationEnd.toDateString()}`,
-              generator: {
-                id: savedPurchase.certificate.generatorId,
-                providerId: savedPurchase.sellerId,
-                name: savedPurchase.certificate.generatorName,
-                capacity: savedPurchase.certificate.capacity?.toString() ?? 'N/A',
-                fuelType: savedPurchase.certificate.energySource.toString(),
-                operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? 'N/A',
-                label: savedPurchase.certificate.label?.toString() ?? 'N/A'
-              },
-              purchaseUiLink: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${savedPurchase.id}`
-            },
-        }));
-        await this.filesService.create(`Zero_EAC-Attestation_${newRecord.id}.pdf`, fileBuffer, [newRecord.id], FileType.ATTESTATION);
+        await this.createAttestationForPurchases([newRecord.id]);
 
         let accountToRedeemFrom: string;
 
@@ -178,7 +153,7 @@ export class PurchasesService {
           throw err;
         }
 
-        purchases.push(newRecord);
+        purchases.push(await this.findOne(newRecord.id));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
@@ -188,9 +163,10 @@ export class PurchasesService {
     return purchases;
   }
 
-  async findAll() {
+  async findAll(): Promise<ShortPurchaseDto[]> {
     const apiBaseUrl = this.configService.get('API_BASE_URL');
     const uiBaseURL = this.configService.get('UI_BASE_URL');
+
     return (await this.prisma.purchase.findMany({ select: { id: true } })).map((i) => ({
       ...i,
       pageUrl: `${uiBaseURL}/partners/filecoin/purchases/${i.id}`,
@@ -198,7 +174,7 @@ export class PurchasesService {
     }));
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<FullPurchaseDto> {
     const data = await this.prisma.purchase.findUnique({
       where: {
         id
@@ -227,13 +203,7 @@ export class PurchasesService {
       return null;
     }
 
-    return {
-      ...data,
-      certificate: { ...data.certificate, energy: data.certificate.energy.toString() },
-      pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${data.id}`,
-      files: data.files.map(f => ({ ...f.file, url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
-      filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode)
-    };
+    return FullPurchaseDto.toDto({ ...data, filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode) });
   }
 
   async update(id: string, updatePurchaseDto: UpdatePurchaseDto) {
@@ -274,13 +244,66 @@ export class PurchasesService {
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<boolean> {
     await this.prisma.$transaction([
       this.prisma.filecoinNodesOnPurchases.deleteMany({ where: { purchaseId: id } }),
       this.prisma.purchase.delete({ where: { id } })
     ]);
 
-    return { status: "OK" };
+    return true;
+  }
+
+  async createAttestationForPurchases(ids: string[]): Promise<FileMetadataDto[]> {
+    this.logger.debug(`Generating an attestation for purchases ${ids.join(', ')}`);
+
+    const dtos: FileMetadataDto[] = [];
+
+    for (const id of ids) {
+      const savedPurchase = await this.prisma.purchase.findUnique({
+        where: { id },
+        include: {
+          certificate: true,
+          filecoinNodes: true,
+          files: true
+        }
+      });
+
+      if (savedPurchase.files.length > 0 && savedPurchase.files.some(file => file.fileId)) {
+        for (const fileOnPurchase of savedPurchase.files) {
+          const file = await this.filesService.findOne(fileOnPurchase.fileId);
+
+          if (file.fileType === FileType.ATTESTATION) {
+            throw new ConflictException(`Attestation already exists for purchase ${savedPurchase.id}`);
+          }
+        }
+      } 
+
+      const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
+        locals: {
+          minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
+          orderQuantity: savedPurchase.recsSold.toString(),
+          country: savedPurchase.certificate.country.toString(),
+          state: savedPurchase.certificate.region,
+          generationPeriod: `${savedPurchase.certificate.generationStart.toDateString()} - ${savedPurchase.certificate.generationEnd.toDateString()}`,
+          generator: {
+            id: savedPurchase.certificate.generatorId,
+            providerId: savedPurchase.sellerId,
+            name: savedPurchase.certificate.generatorName,
+            capacity: savedPurchase.certificate.capacity?.toString() ?? 'N/A',
+            fuelType: savedPurchase.certificate.energySource.toString(),
+            operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? 'N/A',
+            label: savedPurchase.certificate.label?.toString() ?? 'N/A'
+          },
+          purchaseUiLink: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${savedPurchase.id}`
+        },
+      }));
+
+      const dto = await this.filesService.create(`Zero_EAC-Attestation_${id}.pdf`, fileBuffer, [id], FileType.ATTESTATION);
+
+      dtos.push(dto);
+    }
+
+    return dtos;
   }
 
   async getChainEvents(id: string) {

@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import {
   FilecoinNodesControllerGetTransactions200TransactionsItem,
-  PurchaseDto,
+  FullPurchaseDto,
   purchasesControllerFindOne,
   useFilecoinNodesControllerGetTransactions
 } from '@energyweb/zero-protocol-labs-api-client';
@@ -26,7 +26,7 @@ export const purchaseInfoHeaders: TableHeader = {
 }
 
 export const usePurchasePageEffects = () => {
-  const [transactionsData, setTransactionsData] = useState<PurchaseDto[]>([]);
+  const [transactionsData, setTransactionsData] = useState<FullPurchaseDto[]>([]);
   const { productId } = useParams();
 
   const { data, isLoading, isFetched } = useFilecoinNodesControllerGetTransactions(productId ?? '');
@@ -47,7 +47,7 @@ export const usePurchasePageEffects = () => {
     }
   }, [transactions])
 
-  const purchaseInfoTableData: TableRowData<PurchaseDto['id']>[] = transactionsData.map(tx => ({
+  const purchaseInfoTableData: TableRowData<FullPurchaseDto['id']>[] = transactionsData.map(tx => ({
     id: tx.id,
     purchaseId: <EthereumAddress shortify clipboard address={tx.id} />,
     sellerName: tx.seller.name,
