@@ -10,15 +10,15 @@ export function FieldValueList({ valueList = [] }: FieldValueListProps) {
   return (
     <StyledFieldValueList>
       {valueList.map((value, index) => (
-        <StyledLink
+        <Link
           key={value}
-          href={`/partners/filecoin/nodes/${value}/transactions`}
+          href={`/buyer/${value}`}
         >
-          <Box component={'span'}>
+          <StyledBox component={'span'}>
             {value}
             {index < valueList.length - 1 && ', '}
-          </Box>
-        </StyledLink>
+          </StyledBox>
+        </Link>
       ))}
     </StyledFieldValueList>
   );
@@ -33,8 +33,12 @@ const StyledFieldValueList = styled(Box)(({ theme }) => `
   font-weight: 700;
 `);
 
-const StyledLink = styled(Link)(({ theme }) => `
-  text-decoration: none;
-  color: ${theme.palette.primary.main}
+const StyledBox = styled(Box)(({ theme }) => `
+  color: ${theme.palette.primary.main};
+  cursor: pointer;
+  transition: all .2s ease-in;
+  &:hover {
+    color: ${theme.palette.secondary.main}
+  };
 `)
 
