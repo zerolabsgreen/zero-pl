@@ -7,6 +7,8 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import { createEmotionCache, materialTheme } from '../utils';
 import { useAxiosDefaults } from '../hooks/useAxiosDefaults';
 import Header from '../components/common/Header';
+import { useRouter } from 'next/router';
+import { SelectedProtocolProvider } from '../context';
 
 const clientSideEmotionCache = createEmotionCache();
 const queryClient = new QueryClient({
@@ -24,8 +26,16 @@ interface ZeroAppProps extends AppProps {
 }
 
 function ZeroApp(props: ZeroAppProps) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   useAxiosDefaults();
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const router = useRouter();
+  const isWizardRoute = router.pathname.includes('wizard');
+  const wrappedComponent = isWizardRoute ? (
+    <SelectedProtocolProvider>
+      <Component {...pageProps} />
+    </SelectedProtocolProvider>
+  ) : (<Component {...pageProps} />);
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -35,7 +45,7 @@ function ZeroApp(props: ZeroAppProps) {
         <ThemeProvider theme={materialTheme}>
           <CssBaseline />
           <Header />
-          <Component {...pageProps} />
+          {wrappedComponent}
         </ThemeProvider>
       </QueryClientProvider>
     </CacheProvider>

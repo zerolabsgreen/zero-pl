@@ -1,4 +1,4 @@
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
@@ -8,7 +8,7 @@ export const Wrapper = styled(Grid)(({ theme }) => `
 
 export const WelcomeBlock = styled(Grid)`
   padding: 0 41px 0 40px;
-  background-image: url('./welcome-bg.svg');
+  background-image: url('/svg/welcome-bg.svg');
   background-size: cover;
   background-repeat: round;
 `;

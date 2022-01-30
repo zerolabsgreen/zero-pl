@@ -38,7 +38,7 @@ const ThankYou: NextPage = () => {
 };
 
 const bgStyle = {
-  backgroundImage: "url(./globus.svg)",
+  backgroundImage: "url(/svg/globus.svg)",
 }
 
 const StyledGrid = styled(Grid)`
