@@ -45,12 +45,22 @@ export class ContractDto {
   @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  generationStart: string;
+  contractDate: string;
 
   @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  generationEnd: string;
+  deliveryDate: string;
+
+  @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
+  @IsISO8601({ strict: true })
+  @IsDatetimePrismaCompatible()
+  reportingStart: string;
+
+  @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
+  @IsISO8601({ strict: true })
+  @IsDatetimePrismaCompatible()
+  reportingEnd: string;
 
   @ApiProperty({ example: 180 })
   @IsInt()
@@ -70,6 +80,11 @@ export class ContractDto {
   @ValidateNested({ each: true })
   certificates: CertificateDto[];
 
+  @ApiPropertyOptional({ example: 123456 })
+  @IsOptional()
+  @IsInt()
+  externalId?: number;
+
   constructor(partial: Partial<ContractDto>) {
     Object.assign(this, partial);
   }
@@ -82,13 +97,16 @@ export class ContractDto {
   }): ContractDto {
     return {
       ...dbEntity,
-      generationStart: dbEntity.generationStart.toISOString(),
-      generationEnd: dbEntity.generationEnd.toISOString(),
+      contractDate: dbEntity.contractDate.toISOString(),
+      deliveryDate: dbEntity.deliveryDate.toISOString(),
+      reportingStart: dbEntity.reportingStart.toISOString(),
+      reportingEnd: dbEntity.reportingEnd.toISOString(),
       buyer: BuyerDto.toDto(dbEntity.buyer),
       seller: new SellerDto(dbEntity.seller),
       openVolume: dbEntity.openVolume.toString(),
       deliveredVolume: dbEntity.deliveredVolume.toString(),
-      certificates: dbEntity.certificates.map(cert => CertificateDto.toDto(cert))
+      certificates: dbEntity.certificates.map(cert => CertificateDto.toDto(cert)),
+      externalId: dbEntity.externalId
     }
   }
 }

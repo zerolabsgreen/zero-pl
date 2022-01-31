@@ -169,11 +169,14 @@ model Contract {
   energySources   EnergySourceEnumType[]
   region          String?
   country         CountryEnumType
-  generationStart DateTime
-  generationEnd   DateTime
+  contractDate    DateTime
+  deliveryDate    DateTime
+  reportingStart  DateTime
+  reportingEnd    DateTime
   timezoneOffset  Int
   openVolume      BigInt
   deliveredVolume BigInt
+  externalId      Int?
 
   certificates Certificate[]
 }

@@ -2,7 +2,18 @@ import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@nestjs
 import { IsOptional, IsUUID } from 'class-validator';
 import { ContractDto } from './contract.dto';
 
-export class CreateContractDto extends PartialType(PickType(ContractDto, ['productType', 'energySources', 'region', 'country', 'generationStart', 'generationEnd', 'timezoneOffset', 'openVolume'])) {
+export class CreateContractDto extends PartialType(PickType(ContractDto, [
+  'productType',
+  'energySources',
+  'region',
+  'country',
+  'contractDate',
+  'deliveryDate',
+  'reportingStart',
+  'reportingEnd',
+  'timezoneOffset',
+  'openVolume'
+])) {
   @ApiPropertyOptional({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
   @IsOptional()
