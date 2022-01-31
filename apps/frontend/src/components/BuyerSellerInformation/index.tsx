@@ -13,6 +13,8 @@ export interface BuyerSellerInformationProps {
   seller: SellerDto;
   filecoinMinerIdList: FilecoinNodeDto[];
   generationPeriod: { fromDate: string; toDate: string };
+  // temporary for example purpose
+  disableMinerIdLink?: boolean;
 }
 
 export const BuyerSellerInformation = ({
@@ -20,6 +22,7 @@ export const BuyerSellerInformation = ({
   seller,
   filecoinMinerIdList,
   generationPeriod,
+  disableMinerIdLink = false
 }: BuyerSellerInformationProps) => {
   return (
     <ResponsiveGrid
@@ -33,6 +36,7 @@ export const BuyerSellerInformation = ({
           buyerId={buyer.id}
           buyerName={buyer.name}
           filecoinMinerIdList={filecoinMinerIdList}
+          disableMinerIdLink={disableMinerIdLink}
         />
       </Grid>
       <Grid item sm={6}>

@@ -18,6 +18,7 @@ export const certificateInfoTableHeaders: TableHeader = {
   seller: { label: 'Seller', infoText: 'ID of the EAC seller' }
 }
 
+
 export const useProductPageEffects = () => {
   const { productId: purchaseId } = useParams();
 
