@@ -176,7 +176,7 @@ model Contract {
   timezoneOffset  Int
   openVolume      BigInt
   deliveredVolume BigInt
-  externalId      Int?
+  externalId      String?
 
   certificates Certificate[]
 }
