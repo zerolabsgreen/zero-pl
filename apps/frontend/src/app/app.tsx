@@ -10,6 +10,7 @@ import { ThankYouPage } from '../pages/ThankYouPage';
 import { AddressMappingProvider, SelectedProtocolProvider } from '../context';
 import WizardThankPage from '../pages/WizardThankYouPage';
 import { useAxiosDefaults } from '../hooks';
+import ProofExamplePage from '../pages/ProofExamplePage';
 
 const StyledDiv = styled.div`
   background-color: #f6f3f9;
@@ -49,6 +50,10 @@ export const App = () => {
               <WizardThankPage />
             </SelectedProtocolProvider>
             }
+            />
+            <Route
+              path={'proof/example'}
+              element={<ProofExamplePage />}
             />
             <Route path={'/thank-you'} element={<ThankYouPage />} />
             <Route path={'/404'} element={<NotFoundPage />} />
