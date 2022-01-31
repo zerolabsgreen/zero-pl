@@ -80,10 +80,10 @@ export class ContractDto {
   @ValidateNested({ each: true })
   certificates: CertificateDto[];
 
-  @ApiPropertyOptional({ example: 123456 })
+  @ApiPropertyOptional({ type: String, example: "ID_123456" })
   @IsOptional()
-  @IsInt()
-  externalId?: number;
+  @IsString()
+  externalId?: string;
 
   constructor(partial: Partial<ContractDto>) {
     Object.assign(this, partial);
