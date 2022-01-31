@@ -20,7 +20,11 @@ import { ReactComponent as CalendarIconLight } from '../../../../assets/calendar
 import { FilecoinColors } from '../../../../utils'
 import { WizardFormValues } from '../../WizardPageStepSelector';
 import { DateEnergySection } from './DateEnergySection';
-import classes from './UserTypeBlock.module.css';
+import {
+  datePickerInputStyles,
+  datePickerInputFilecoinStyles,
+  autocompleteInputFilecoin
+} from './UserTypeBlock.styles';
 
 interface UserTypeBlockProps {
   isFilecoin?: boolean;
@@ -106,7 +110,7 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
               value={values[`country_${id}`]}
               setFieldValue={setFieldValue}
               options={countriesOptions}
-              textFieldProps={{ className: isFilecoin ? classes.autocompleteInputFilecoin : undefined }}
+              textFieldProps={{ className: isFilecoin ? autocompleteInputFilecoin : undefined }}
             />
           </Box>
           <WrapperDate>
@@ -119,7 +123,7 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
                 value={values[`generalStartDate_${id}`] || ''}
                 setFieldValue={setFieldValue}
                 CustomCalendarIcon={isFilecoin ? CalendarIconLight : undefined}
-                textFieldProps={{ className: isFilecoin ? classes.datePickerInputFilecoin : classes.datePickerInput }}
+                textFieldProps={{ className: isFilecoin ? datePickerInputFilecoinStyles : datePickerInputStyles }}
               />
             </BlockDate>
             <BlockDate>
@@ -131,7 +135,7 @@ export const UserTypeBlock: FC<UserTypeBlockProps> = ({
                 value={values[`generalEndDate_${id}`] || ''}
                 setFieldValue={setFieldValue}
                 CustomCalendarIcon={isFilecoin ? CalendarIconLight : undefined}
-                textFieldProps={{ className: isFilecoin ? classes.datePickerInputFilecoin : classes.datePickerInput }}
+                textFieldProps={{ className: isFilecoin ? datePickerInputFilecoinStyles : datePickerInputStyles }}
               />
             </BlockDate>
             <ButtonBlock>

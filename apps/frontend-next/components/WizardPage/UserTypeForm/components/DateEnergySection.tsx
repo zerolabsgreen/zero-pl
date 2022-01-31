@@ -8,7 +8,7 @@ import { FormDatePicker } from '@zero-labs/zero-ui-components';
 import { useAddressMappingSetState } from '../../../../context';
 import { ReactComponent as CalendarIconWhite } from '../../../../assets/calendarIconWhite.svg';
 import { FilecoinColors } from '../../../../utils';
-import classes from './DateEnergySection.module.css';
+import { datePickerStyles, filecoinDatePickerStyles } from './DateEnergySection.styles';
 import { WizardFormValues } from '../../WizardPageStepSelector';
 
 export interface DateEnergySectionProps {
@@ -56,7 +56,7 @@ export const DateEnergySection: FC<DateEnergySectionProps> = ({
                       value={values[`startDate_${id}_${nestedId}`]}
                       name={`startDate_${id}_${nestedId}`}
                       CustomCalendarIcon={isFilecoin ? CalendarIconWhite : undefined}
-                      textFieldProps={{ className: isFilecoin ? classes.filecoinDatePicker : classes.datePicker }}
+                      textFieldProps={{ className: isFilecoin ? filecoinDatePickerStyles : datePickerStyles }}
                     />
                   </Box>
                   <EndDateWrapper>
@@ -68,7 +68,7 @@ export const DateEnergySection: FC<DateEnergySectionProps> = ({
                       setFieldValue={setFieldValue}
                       name={`endDate_${id}_${nestedId}`}
                       CustomCalendarIcon={isFilecoin ? CalendarIconWhite : undefined}
-                      textFieldProps={{ className: isFilecoin ? classes.filecoinDatePicker : classes.datePicker }}
+                      textFieldProps={{ className: isFilecoin ? filecoinDatePickerStyles : datePickerStyles }}
                     />
                   </EndDateWrapper>
                 </Box>
