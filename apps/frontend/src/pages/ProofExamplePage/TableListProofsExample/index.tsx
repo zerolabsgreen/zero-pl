@@ -78,11 +78,11 @@ export const TableListProofsExample: FC = () => {
                         <StyledThCell sx={{ width: '130px' }}>
                           From Address
                         </StyledThCell>
-                        <EthereumAddress shortify address={event.from ?? ''} />
+                        <EthereumAddress popover shortify address={event.from ?? ''} />
                       </StyledTableCell>
                       <StyledTableCell sx={{ display: 'flex', flexDirection: 'column' }}>
                         <StyledThCell>To Address</StyledThCell>
-                        <EthereumAddress shortify address={event.to ?? ''} />
+                        <EthereumAddress popover shortify address={event.to ?? ''} />
                       </StyledTableCell>
                       <StyledTableCell sx={{ marginRight: '22px' }}>
                         <span>

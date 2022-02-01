@@ -18,7 +18,8 @@
     <link rel="icon" type="image/x-icon" href="favicon.png" />
     <script>
       window.config = {
-        API_BASE_URL: '$API_BASE_URL'
+        API_BASE_URL: '$API_BASE_URL',
+        BLOCK_EXPLORER: '$BLOCK_EXPLORER'
       };
     </script>
   </head>
