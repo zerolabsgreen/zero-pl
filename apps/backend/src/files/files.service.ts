@@ -11,12 +11,12 @@ export class FilesService {
   
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(file: Express.Multer.File, purchaseIds: string[], fileType: FileType): Promise<FileMetadataDto> {
+  async create(filename: string, buffer: Buffer, purchaseIds: string[], fileType: FileType, mimeType = 'application/pdf'): Promise<FileMetadataDto> {
     const newRecord = await this.prisma.file.create({
       data: {
-        content: file.buffer,
-        fileName: file.originalname,
-        mimeType: file.mimetype,
+        content: buffer,
+        fileName: filename,
+        mimeType: mimeType,
         fileType,
         purchases: {
           create: purchaseIds.map((id) => ({

@@ -12,6 +12,7 @@ import { LoadingBlock } from '../../components/LoadingBlock';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { shortifyEthAddr } from '../../components/EthereumAddress';
 import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
+import { formatPower, Unit } from '../../utils';
 
 export const ProductPage = () => {
   const { certificateInfoTableData, data, isLoading, isFetched, purchaseId } = useProductPageEffects();
@@ -33,7 +34,7 @@ export const ProductPage = () => {
               sectionHelpText={
                 <div>
                   This page is a summary of the proof that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{data.recsSold} Mwh</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  bought <b>{formatPower(data.certificate.energy, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
                   and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
                 </div>
               }

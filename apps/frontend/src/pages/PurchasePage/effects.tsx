@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import {
   FilecoinNodesControllerGetTransactions200TransactionsItem,
-  PurchaseDto,
+  FullPurchaseDto,
   purchasesControllerFindOne,
   useFilecoinNodesControllerGetTransactions
 } from '@energyweb/zero-protocol-labs-api-client';
@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import EthereumAddress from "../../components/EthereumAddress";
 import { ButtonRight } from "../../components/ButtonRight";
+import { formatPower, Unit } from "../../utils";
 
 dayjs.extend(utc);
 
@@ -26,7 +27,7 @@ export const purchaseInfoHeaders: TableHeader = {
 }
 
 export const usePurchasePageEffects = () => {
-  const [transactionsData, setTransactionsData] = useState<PurchaseDto[]>([]);
+  const [transactionsData, setTransactionsData] = useState<FullPurchaseDto[]>([]);
   const { productId } = useParams();
 
   const { data, isLoading, isFetched } = useFilecoinNodesControllerGetTransactions(productId ?? '');
@@ -47,14 +48,17 @@ export const usePurchasePageEffects = () => {
     }
   }, [transactions])
 
-  const purchaseInfoTableData: TableRowData<PurchaseDto['id']>[] = transactionsData.map(tx => ({
+  const purchaseInfoTableData: TableRowData<FullPurchaseDto['id']>[] = transactionsData.map(tx => ({
     id: tx.id,
     purchaseId: <EthereumAddress shortify clipboard address={tx.id} />,
     sellerName: tx.seller.name,
     generatorId: tx.certificate.generatorId,
     country: tx.certificate.country,
     energySource: tx.certificate.energySource,
-    amountPurchased: `${tx.recsSold} MWh`,
+    amountPurchased: formatPower(tx.certificate.energy, {
+      unit: Unit.MWh,
+      includeUnit: true,
+    }),
     generationPeriod: `${dayjs(tx.certificate.generationStart).isValid()
       ? dayjs(tx.certificate.generationStart)
           .utc()

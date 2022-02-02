@@ -7,6 +7,7 @@ import { FilecoinNode } from '@prisma/client';
 import { IssuerService } from '../issuer/issuer.service';
 import { pick } from 'lodash';
 import { DateTime, Duration } from "luxon";
+import { BigNumber } from 'ethers';
 
 @Injectable()
 export class FilecoinNodesService {
@@ -103,7 +104,12 @@ export class FilecoinNodesService {
       buyerId: data.buyerId,
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/nodes/${data.id}/transactions`,
       dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/nodes/${data.id}/transactions`,
-      recsTotal: data.purchases.reduce((total, transaction) => (total + transaction.purchase.recsSold), 0),
+      recsTotal: data.purchases.reduce(
+        (total, transaction) => 
+          total.add(
+            BigNumber.from(transaction.purchase.certificate.energy)
+          ), BigNumber.from(0)
+        ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
         return {
           id: p.purchase.id,
@@ -111,7 +117,6 @@ export class FilecoinNodesService {
           dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.purchase.id}`,
           ...pick(p.purchase, [
             'sellerId',
-            'recsSold',
             'annually',
             'reportingStart',
             'reportingStartTimezoneOffset',
@@ -150,8 +155,8 @@ export const transactionsSchema = {
   properties: {
     minerId: { type: "string", example: "f0112027" },
     buyerId: { type: "string", example: "29e25d61-103a-4710-b03d-ee12df765066" },
-    pageUrl: { type: "string", example: "https://zero.energyweb.org/partners/filecoin/nodes/f0112027/transactions" },
-    dataUrl: { type: "string", example: "https://zero.energyweb.org/api/partners/filecoin/nodes/f0112027/transactions" },
+    pageUrl: { type: "string", example: `${process.env.UI_BASE_URL}/partners/filecoin/nodes/f0112027/transactions` },
+    dataUrl: { type: "string", example: `${process.env.API_BASE_URL}/api/partners/filecoin/nodes/f0112027/transactions` },
     recsTotal: { type: "number", example: 3 },
     transactions: {
       type: "array",
@@ -161,14 +166,13 @@ export const transactionsSchema = {
           id: { type: "string", example: "04a7155d-ced1-4981-8660-48670a0735dd" },
           pageUrl: {
             type: "string",
-            example: "https://zero.energyweb.org/partners/filecoin/purchases/04a7155d-ced1-4981-8660-48670a0735dd"
+            example: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/04a7155d-ced1-4981-8660-48670a0735dd`
           },
           dataUrl: {
             type: "string",
-            example: "https://zero.energyweb.org/api/partners/filecoin/purchases/04a7155d-ced1-4981-8660-48670a0735dd"
+            example: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/04a7155d-ced1-4981-8660-48670a0735dd`
           },
           sellerId: { type: "string", example: "68926364-a0ba-4160-b3ea-1ee70c2690dd" },
-          recsSold: { type: "number", example: 3 },
           annually: {
             type: "array",
             items: {

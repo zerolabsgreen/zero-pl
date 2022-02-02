@@ -1,12 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
+import { Purchase } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsInt,
   IsISO8601,
-  IsNotEmpty,
   IsOptional,
-  IsPositive,
   IsString,
   IsUUID,
   Max,
@@ -33,7 +31,7 @@ class RecsAnnuallyDTO {
   amount: number;
 }
 
-export class CreatePurchaseDto {
+export class CreatePurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd' | 'createdOn' | 'txHash'> {
   @ApiProperty({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
   @IsOptional()
@@ -50,11 +48,6 @@ export class CreatePurchaseDto {
   @ApiProperty({ example: '68926364-a0ba-4160-b3ea-1ee70c2690dd' })
   @IsUUID()
   sellerId: string;
-
-  @ApiProperty({ example: 3 })
-  @IsInt()
-  @IsPositive()
-  recsSold: number;
 
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
@@ -86,4 +79,9 @@ export class CreatePurchaseDto {
   @ValidateNested()
   @Type(() => FilecoinNodeSimple)
   filecoinNodes: FilecoinNodeSimple[];
+
+  @ApiPropertyOptional({ type: String })
+  @IsOptional()
+  @IsUUID()
+  contractId: string;
 }

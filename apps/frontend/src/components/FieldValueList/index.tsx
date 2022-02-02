@@ -4,12 +4,19 @@ import { Link } from 'react-router-dom';
 
 export interface FieldValueListProps {
   valueList: Array<string>;
+  // temporary for example purpose
+  disableLink?: boolean;
 }
 
-export function FieldValueList({ valueList = [] }: FieldValueListProps) {
+export function FieldValueList({ valueList = [], disableLink = false }: FieldValueListProps) {
   return (
     <StyledFieldValueList>
-      {valueList.map((value, index) => (
+      {valueList.map((value, index) => disableLink ? (
+        <Box component={'span'}>
+          {value}
+          {index < valueList.length - 1 && ', '}
+        </Box>
+      ) : (
         <StyledLink
           key={value}
           to={`/partners/filecoin/nodes/${value}/transactions`}

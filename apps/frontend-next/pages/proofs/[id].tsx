@@ -16,6 +16,7 @@ import Breadcrumbs from '../../components/common/Breadcrumbs';
 import EthereumAddress, { shortifyEthAddr } from '../../components/common/EthereumAddress';
 import FuelType, { FuelTypeEnum } from '../../components/common/FuelType';
 import TableListProofs from '../../components/ProofPage/TableListProofs';
+import { DisplayUnit, formatPower } from '../../utils';
 
 
 const ProofPage: NextPage = () => {
@@ -28,7 +29,7 @@ const ProofPage: NextPage = () => {
     proofId: <EthereumAddress shortify clipboard address={data?.certificate?.id ?? ''} />,
     product: data?.certificate?.productType ?? '',
     beneficiary: data?.certificate?.beneficiary ?? '',
-    amount: data?.recsSold ? `${data.recsSold} MWh` : '',
+    amount: data?.certificate?.energy ? formatPower(data.certificate.energy, { unit: DisplayUnit.MWh, includeUnit: true }) : '',
     period: (
     <>{dayjs(data?.certificate?.generationStart).isValid()
       ? dayjs(data?.certificate?.generationStart).utc().format('YYYY-MM-DD')
@@ -63,7 +64,7 @@ const ProofPage: NextPage = () => {
               sectionHelpText={
                 <div>
                   This page is a summary of the proof that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{data.recsSold} Mwh</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  bought <b>{formatPower(data.certificate.energy, { unit: DisplayUnit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
                   and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
                 </div>
               }

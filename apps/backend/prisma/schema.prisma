@@ -67,8 +67,6 @@ model Certificate {
   capacity                      Int?
   commissioningDate             DateTime?
   label                         LabelEnumType?
-  Contract                      Contract?            @relation(fields: [contractId], references: [id])
-  contractId                    String?
 }
 
 model FilecoinNode {
@@ -87,18 +85,19 @@ model Purchase {
   createdOn                    DateTime                   @default(now())
   txHash                       String?
   certificate                  Certificate                @relation(fields: [certificateId], references: [id])
-  certificateId                String
+  certificateId                String                     @unique
   buyer                        Buyer?                     @relation(fields: [buyerId], references: [id])
   buyerId                      String?
   seller                       Seller?                    @relation(fields: [sellerId], references: [id])
   sellerId                     String?
   files                        FilesOnPurchases[]
-  recsSold                     Int
   reportingStart               DateTime?
   reportingStartTimezoneOffset Int?
   reportingEnd                 DateTime?
   reportingEndTimezoneOffset   Int?
   filecoinNodes                FilecoinNodesOnPurchases[]
+  Contract                     Contract?                  @relation(fields: [contractId], references: [id])
+  contractId                   String?
 
   @@unique([id, buyerId])
 }
@@ -158,24 +157,26 @@ model OrderItemTimeFrame {
 }
 
 model Contract {
-  id              String                 @id @default(uuid())
-  buyer           Buyer                  @relation(fields: [buyerId], references: [id])
-  buyerId         String
-  seller          Seller                 @relation(fields: [sellerId], references: [id])
-  sellerId        String
-  filecoinNode    FilecoinNode?          @relation(fields: [filecoinNodeId], references: [id])
-  filecoinNodeId  String?
-  productType     ProductEnumType
-  energySources   EnergySourceEnumType[]
-  region          String?
-  country         CountryEnumType
-  generationStart DateTime
-  generationEnd   DateTime
-  timezoneOffset  Int
-  openVolume      BigInt
-  deliveredVolume BigInt
+  id             String                 @id @default(uuid())
+  buyer          Buyer                  @relation(fields: [buyerId], references: [id])
+  buyerId        String
+  seller         Seller                 @relation(fields: [sellerId], references: [id])
+  sellerId       String
+  filecoinNode   FilecoinNode?          @relation(fields: [filecoinNodeId], references: [id])
+  filecoinNodeId String?
+  productType    ProductEnumType
+  energySources  EnergySourceEnumType[]
+  region         String?
+  country        CountryEnumType
+  contractDate   DateTime
+  deliveryDate   DateTime
+  reportingStart DateTime
+  reportingEnd   DateTime
+  timezoneOffset Int
+  volume         BigInt                 @default(0)
+  externalId     String?
 
-  certificates Certificate[]
+  purchases Purchase[]
 }
 
 enum PaymentPreferencesEnumType {

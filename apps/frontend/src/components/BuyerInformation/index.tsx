@@ -12,12 +12,15 @@ export interface BuyerInformationProps {
   buyerId: string;
   filecoinMinerIdList: FilecoinNodeDto[];
   generationPeriod: { fromDate: string; toDate: string };
+  // temporary for example purpose
+  disableMinerIdLink?: boolean;
 }
 
 export const BuyerInformation = ({
   buyerName,
   buyerId,
   filecoinMinerIdList = [],
+  disableMinerIdLink = false
 }: BuyerInformationProps) => {
   const theme = useTheme();
 
@@ -43,7 +46,7 @@ export const BuyerInformation = ({
         </FlexColumn>
         <FlexColumn>
           <FieldLabel width={'200px'} labelText={'Filecoin Miner IDs'} />
-          <FieldValueList valueList={filecoinMinerIdList.map((el) => el.id)} />
+          <FieldValueList disableLink={disableMinerIdLink} valueList={filecoinMinerIdList.map((el) => el.id)} />
         </FlexColumn>
       </PaperBox>
     </Box>

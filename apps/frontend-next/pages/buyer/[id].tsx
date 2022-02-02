@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import {
   FilecoinNodesControllerGetTransactions200TransactionsItem,
-  PurchaseDto,
+  FullPurchaseDto,
   purchasesControllerFindOne,
   useFilecoinNodesControllerGetTransactions
 } from '@energyweb/zero-protocol-labs-api-client';
@@ -19,11 +19,12 @@ import Breadcrumbs from '../../components/common/Breadcrumbs';
 import PageSection from '../../components/common/PageSection';
 import PurchaseBuyerInformation from '../../components/BuyerPage/PurchaseBuyerInformation';
 import ButtonRight from '../../components/BuyerPage/ButtonRight';
+import { formatPower, DisplayUnit } from '../../utils';
 
 dayjs.extend(utc);
 
 const BuyerPage: NextPage = () => {
-  const [transactionsData, setTransactionsData] = useState<PurchaseDto[]>([]);
+  const [transactionsData, setTransactionsData] = useState<FullPurchaseDto[]>([]);
   const router = useRouter();
   const { id } = router.query;
 
@@ -45,14 +46,14 @@ const BuyerPage: NextPage = () => {
     }
   }, [transactions])
 
-  const purchaseInfoTableData: TableRowData<PurchaseDto['id']>[] = transactionsData.map(tx => ({
+  const purchaseInfoTableData: TableRowData<FullPurchaseDto['id']>[] = transactionsData.map(tx => ({
     id: tx.id,
     purchaseId: <EthereumAddress shortify clipboard address={tx.id} />,
     sellerName: tx.seller.name,
     generatorId: tx.certificate.generatorId,
     country: tx.certificate.country,
     energySource: tx.certificate.energySource,
-    amountPurchased: `${tx.recsSold} MWh`,
+    amountPurchased: tx.certificate.energy ? formatPower(tx.certificate.energy, { unit: DisplayUnit.MWh, includeUnit: true }) : '',
     generationPeriod: `${dayjs(tx.certificate.generationStart).isValid()
       ? dayjs(tx.certificate.generationStart)
           .utc()

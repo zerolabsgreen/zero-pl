@@ -5,12 +5,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
-import { Contract } from '@prisma/client';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
 import { ContractDto } from './dto/contract.dto';
-import { CertificateDto } from '../certificates/dto/certificate.dto';
-import { BuyerDto } from '../buyers/dto/buyer.dto';
 
 @Injectable()
 export class ContractsService {
@@ -60,22 +57,25 @@ export class ContractsService {
 
         const newRecord = await prisma.contract.create({
           data: {
+            id: createContractDto.id,
             buyer: { connect: { id: createContractDto.buyerId }},
             seller: { connect: { id: createContractDto.sellerId }},
-            generationStart:  createContractDto.generationStart,
-            generationEnd: createContractDto.generationEnd,
+            contractDate: createContractDto.contractDate,
+            deliveryDate: createContractDto.deliveryDate,
+            reportingStart:  createContractDto.reportingStart,
+            reportingEnd: createContractDto.reportingEnd,
             timezoneOffset: createContractDto.timezoneOffset,
-            openVolume: BigInt(createContractDto.openVolume),
+            volume: BigInt(createContractDto.volume),
             productType: createContractDto.productType,
             country: createContractDto.country,
             region: createContractDto.region ?? '',
-            deliveredVolume: BigInt(0)
+            externalId: createContractDto.externalId
           },
           include: {
             seller: true,
             buyer: true,
             filecoinNode: true,
-            certificates: true
+            purchases: { include: { certificate: true } }
           }
         }).catch(err => {
           this.logger.error(`error creating a new Contract: ${err}`);
@@ -98,7 +98,7 @@ export class ContractsService {
         seller: true,
         buyer: true,
         filecoinNode: true,
-        certificates: true
+        purchases: { include: { certificate: true } }
       }
     });
 
@@ -114,7 +114,7 @@ export class ContractsService {
         seller: true,
         buyer: true,
         filecoinNode: true,
-        certificates: true
+        purchases: { include: { certificate: true } }
       }
     });
 
@@ -132,20 +132,22 @@ export class ContractsService {
         data: {
           buyer: { connect: { id: updateContractDto.buyerId }},
           seller: { connect: { id: updateContractDto.sellerId }},
-          generationStart:  updateContractDto.generationStart,
-          generationEnd: updateContractDto.generationEnd,
+          contractDate: updateContractDto.contractDate,
+          deliveryDate: updateContractDto.deliveryDate,
+          reportingStart:  updateContractDto.reportingStart,
+          reportingEnd: updateContractDto.reportingEnd,
           timezoneOffset: updateContractDto.timezoneOffset,
-          openVolume: BigInt(updateContractDto.openVolume),
+          volume: BigInt(updateContractDto.volume),
           productType: updateContractDto.productType,
           country: updateContractDto.country,
           region: updateContractDto.region ?? '',
-          deliveredVolume: BigInt(0)
+          externalId: updateContractDto.externalId
         },
         include: {
           seller: true,
           buyer: true,
           filecoinNode: true,
-          certificates: true
+          purchases: { include: { certificate: true } }
         }
       });
 
