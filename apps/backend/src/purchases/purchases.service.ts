@@ -16,6 +16,7 @@ import { firstValueFrom } from 'rxjs';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
+import { BigNumber } from 'ethers';
 
 @Injectable()
 export class PurchasesService {
@@ -281,7 +282,7 @@ export class PurchasesService {
       const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
         locals: {
           minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
-          orderQuantity: savedPurchase.recsSold.toString(),
+          orderQuantity: BigNumber.from(savedPurchase.certificate.energy).div(1e6).toString(),
           country: savedPurchase.certificate.country.toString(),
           state: savedPurchase.certificate.region,
           generationPeriod: `${savedPurchase.certificate.generationStart.toDateString()} - ${savedPurchase.certificate.generationEnd.toDateString()}`,
@@ -289,7 +290,7 @@ export class PurchasesService {
             id: savedPurchase.certificate.generatorId,
             providerId: savedPurchase.sellerId,
             name: savedPurchase.certificate.generatorName,
-            capacity: savedPurchase.certificate.capacity?.toString() ?? 'N/A',
+            capacity: savedPurchase.certificate.capacity ? savedPurchase.certificate.capacity / 1e6 : 'N/A',
             fuelType: savedPurchase.certificate.energySource.toString(),
             operationStart: savedPurchase.certificate.commissioningDate?.toDateString() ?? 'N/A',
             label: savedPurchase.certificate.label?.toString() ?? 'N/A'

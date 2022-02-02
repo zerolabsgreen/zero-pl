@@ -30,9 +30,6 @@ export class FullPurchaseDto {
   @ApiProperty({ type: CertificateDto })
   certificate: CertificateDto;
 
-  @ApiProperty({ example: 2 })
-  recsSold: number;
-
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
   reportingStart: string;
 

@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import EthereumAddress from "../../components/EthereumAddress";
 import { ButtonRight } from "../../components/ButtonRight";
+import { formatPower, Unit } from "../../utils";
 
 dayjs.extend(utc);
 
@@ -54,7 +55,10 @@ export const usePurchasePageEffects = () => {
     generatorId: tx.certificate.generatorId,
     country: tx.certificate.country,
     energySource: tx.certificate.energySource,
-    amountPurchased: `${tx.recsSold} MWh`,
+    amountPurchased: formatPower(tx.certificate.energy, {
+      unit: Unit.MWh,
+      includeUnit: true,
+    }),
     generationPeriod: `${dayjs(tx.certificate.generationStart).isValid()
       ? dayjs(tx.certificate.generationStart)
           .utc()

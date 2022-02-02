@@ -4,6 +4,7 @@ import { CertificateDto, usePurchasesControllerFindOne } from '@energyweb/zero-p
 import { TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import EthereumAddress from "../../components/EthereumAddress";
 import FuelType, { FuelTypeEnum } from "../../components/FuelType";
+import { formatPower, Unit } from "../../utils";
 
 export const certificateInfoTableHeaders: TableHeader = {
   proofId: { label: 'Proof ID', infoText: 'Proof ID represents the identifier of proof in EW Zero marketplace' },
@@ -29,7 +30,7 @@ export const useProductPageEffects = () => {
     proofId: <EthereumAddress shortify clipboard address={data?.certificate?.id ?? ''} />,
     product: data?.certificate?.productType ?? '',
     beneficiary: data?.certificate?.beneficiary ?? '',
-    amount: data?.recsSold ? `${data.recsSold} MWh` : '',
+    amount: data?.certificate?.energy ? formatPower(data.certificate.energy, { unit: Unit.MWh, includeUnit: true }) : '',
     period: (
     <>{dayjs(data?.certificate?.generationStart).isValid()
       ? dayjs(data?.certificate?.generationStart).utc().format('YYYY-MM-DD')
