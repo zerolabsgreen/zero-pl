@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import Container from '@mui/material/Container';
@@ -63,11 +62,7 @@ const BuyerPage: NextPage = () => {
           .utc()
           .format('YYYY-MM-DD')
       : '-'}`,
-    action: (
-      <Link href={`/partners/filecoin/purchases/${tx.id}`}>
-        <ButtonRight />
-      </Link>
-    )
+    action: (<ButtonRight onClick={() => router.push(`/proofs/${tx.id}`)} />)
   }))
 
   return !isLoading && transactionsData.length > 0 && isFetched ? (

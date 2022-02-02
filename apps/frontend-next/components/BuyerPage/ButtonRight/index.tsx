@@ -2,9 +2,9 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { ReactComponent as RightArrowSvg } from './arrow.svg';
 
-const ButtonRight = () => {
+const ButtonRight = ({ onClick }: { onClick: () => void }) => {
   return (
-    <StyledButton>
+    <StyledButton onClick={onClick}>
       <RightArrowSvg />
     </StyledButton>
   );
