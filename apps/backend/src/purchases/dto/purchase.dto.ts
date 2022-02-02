@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Purchase } from '@prisma/client';
 
-export class PurchaseDto implements Purchase {
+export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd'> {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
   id: string;
 
@@ -17,17 +17,14 @@ export class PurchaseDto implements Purchase {
   @ApiProperty({ type: String, example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
   certificateId: string;
 
-  @ApiProperty({ example: 2 })
-  recsSold: number;
-
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
-  reportingStart: Date;
+  reportingStart: string;
 
   @ApiPropertyOptional({ example: 180 })
   reportingStartTimezoneOffset;
 
   @ApiPropertyOptional({ example: '2020-12-31T23:59:59.999Z' })
-  reportingEnd: Date;
+  reportingEnd: string;
 
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset;
@@ -35,7 +32,18 @@ export class PurchaseDto implements Purchase {
   @ApiProperty()
   createdOn: Date;
 
+  @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
+  contractId: string
+
   constructor(partial: Partial<PurchaseDto>) {
     Object.assign(this, partial);
+  }
+
+  static toDto(p: Purchase): PurchaseDto {
+    return {
+      ...p,
+      reportingStart: p.reportingStart.toISOString(), 
+      reportingEnd: p.reportingEnd.toISOString(), 
+    };
   }
 }

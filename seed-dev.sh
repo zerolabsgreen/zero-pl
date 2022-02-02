@@ -60,7 +60,7 @@ curl -w "\n" -s -X 'POST' \
 }'
 
 echo
-echo "creating certificateId=00000000-0000-0000-0000-000000000333"
+echo "creating certificates"
 curl -w "\n" -s -X 'POST' \
   "http://localhost:$PORT/api/partners/filecoin/certificates" \
   -H "X-API-KEY: $X_API_KEY" \
@@ -76,7 +76,47 @@ curl -w "\n" -s -X 'POST' \
   "productType": "IREC",
   "generationStart": "2020-11-01T00:00:00.000Z",
   "generationEnd": "2021-06-01T23:59:59.999Z",
-  "energy": "10000"
+  "energy": "3000000",
+  "capacity": 12000
+},{
+  "id": "00000000-0000-0000-0000-000000000777",
+  "generatorName": "Solar 1 - Non Bua Lampon",
+  "generatorId": "NA",
+  "initialSellerId": "00000000-0000-0000-0000-000000000001",
+  "region": "north_china",
+  "country": "CN",
+  "energySource": "WIND",
+  "productType": "IREC",
+  "generationStart": "2021-06-02T00:00:00.000Z",
+  "generationEnd": "2021-06-30T23:59:59.999Z",
+  "energy": "7000000",
+  "capacity": 400000000
+}]'
+
+echo
+echo "creating a contract"
+curl -w "\n" -s -X 'POST' \
+  "http://localhost:$PORT/api/partners/filecoin/contracts" \
+  -H "X-API-KEY: $X_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '[{
+  "id": "00000000-0000-0000-0000-000000666666",
+  "productType": "IREC",
+  "energySources": [
+    "SOLAR",
+    "WIND"
+  ],
+  "region": "NE",
+  "country": "DE",
+  "contractDate": "2020-11-01T00:00:00.000Z",
+  "deliveryDate": "2021-06-01T23:59:59.999Z",
+  "reportingStart": "2020-11-01T00:00:00.000Z",
+  "reportingEnd": "2021-06-01T23:59:59.999Z",
+  "timezoneOffset": 180,
+  "volume": "4000000000000",
+  "buyerId": "00000000-0000-0000-0000-000000000002",
+  "sellerId": "00000000-0000-0000-0000-000000000001",
+  "filecoinNodeId": "f00001"
 }]'
 
 echo
@@ -90,43 +130,16 @@ curl -w "\n" -s -X 'POST' \
   "certificateId": "00000000-0000-0000-0000-000000000333",
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000002",
-  "recsSold": 3,
-  "filecoinNodes": [{"id": "f00001"}]
+  "filecoinNodes": [{"id": "f00001"}],
+  "contractId": "00000000-0000-0000-0000-000000666666"
 },{
   "id": "00000000-0000-0000-0000-000000555555",
-  "certificateId": "00000000-0000-0000-0000-000000000333",
+  "certificateId": "00000000-0000-0000-0000-000000000777",
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000003",
-  "recsSold": 7,
   "reportingStart": "2020-11-01T00:00:00.000+03:00",
   "reportingStartTimezoneOffset": 180,
   "reportingEnd": "2021-06-01T23:59:59.999+03:00",
   "reportingEndTimezoneOffset": 180,
   "filecoinNodes": [{"id": "f00002"}]
-}]'
-
-echo
-echo "creating a contract"
-curl -w "\n" -s -X 'POST' \
-  "http://localhost:$PORT/api/partners/filecoin/contracts" \
-  -H "X-API-KEY: $X_API_KEY" \
-  -H 'Content-Type: application/json' \
-  -d '[{
-  "id": "04a7155d-ced1-4981-8660-48670a0735dd",
-  "productType": "IREC",
-  "energySources": [
-    "SOLAR",
-    "WIND"
-  ],
-  "region": "NE",
-  "country": "DE",
-  "contractDate": "2020-11-01T00:00:00.000Z",
-  "deliveryDate": "2021-06-01T23:59:59.999Z",
-  "reportingStart": "2020-11-01T00:00:00.000Z",
-  "reportingEnd": "2021-06-01T23:59:59.999Z",
-  "timezoneOffset": 180,
-  "openVolume": "4000000000000",
-  "buyerId": "00000000-0000-0000-0000-000000000002",
-  "sellerId": "00000000-0000-0000-0000-000000000001",
-  "filecoinNodeId": "f00001"
 }]'

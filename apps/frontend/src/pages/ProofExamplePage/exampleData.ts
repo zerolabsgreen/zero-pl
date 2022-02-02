@@ -7,7 +7,6 @@ export const exampleData = {
     "certificateId": "55a057a4-8955-4d5b-96df-3ac0d56aa197",
     "buyerId": "53fb6148-eb21-42de-91d6-f6195d028520",
     "sellerId": "8c0a45ce-1594-4107-baf0-ce8846b34afd",
-    "recsSold": 108,
     "reportingStart": "2021-01-01T00:00:00.000Z",
     "reportingStartTimezoneOffset": -360,
     "reportingEnd": "2021-12-31T23:59:59.999Z",

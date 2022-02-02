@@ -1,12 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
-import { CertificateDto } from '../../certificates/dto/certificate.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
-import { Buyer, Certificate, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Seller } from '@prisma/client';
+import { Buyer, Certificate, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Purchase, Seller } from '@prisma/client';
 import { IsEnum, IsInt, IsISO8601, IsOptional, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
+import { PurchaseDto } from '../../purchases/dto/purchase.dto';
 
 export class ContractDto {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
@@ -68,17 +68,17 @@ export class ContractDto {
   @Max(780)
   timezoneOffset: number;
 
-  @ApiProperty({ example: 4e12.toString() })
+  @ApiProperty({ description: 'Volume in Wh', example: 4e12.toString() })
   @Validate(PositiveBNStringValidator)
   openVolume: string;
 
-  @ApiProperty({ example: 6e12.toString() })
+  @ApiProperty({ description: 'Volume in Wh', example: 6e12.toString() })
   @Validate(PositiveBNStringValidator)
   deliveredVolume: string;
 
-  @ApiProperty({ type: [CertificateDto] })
+  @ApiProperty({ type: [PurchaseDto] })
   @ValidateNested({ each: true })
-  certificates: CertificateDto[];
+  purchases: PurchaseDto[];
 
   @ApiPropertyOptional({ type: String, example: "ID_123456" })
   @IsOptional()
@@ -93,19 +93,31 @@ export class ContractDto {
     seller: Seller,
     buyer: Buyer,
     filecoinNode: FilecoinNode;
-    certificates: Certificate[];
+    purchases: (Purchase & {
+      certificate: Certificate;
+    })[];
   }): ContractDto {
+    const deliveredVolumeMwh = dbEntity.purchases
+      .map(p => p.certificate.energy)
+      .reduce((partialSum, purchaseVolume) => BigInt(partialSum) + BigInt(purchaseVolume), BigInt(0));
+    const openVolume = BigInt(dbEntity.volume) - deliveredVolumeMwh;
+    
     return {
-      ...dbEntity,
+      id: dbEntity.id,
+      productType: dbEntity.productType,
+      energySources: dbEntity.energySources,
       contractDate: dbEntity.contractDate.toISOString(),
       deliveryDate: dbEntity.deliveryDate.toISOString(),
       reportingStart: dbEntity.reportingStart.toISOString(),
       reportingEnd: dbEntity.reportingEnd.toISOString(),
       buyer: BuyerDto.toDto(dbEntity.buyer),
       seller: new SellerDto(dbEntity.seller),
-      openVolume: dbEntity.openVolume.toString(),
-      deliveredVolume: dbEntity.deliveredVolume.toString(),
-      certificates: dbEntity.certificates.map(cert => CertificateDto.toDto(cert)),
+      openVolume: openVolume.toString(),
+      deliveredVolume: deliveredVolumeMwh.toString(),
+      purchases: dbEntity.purchases.map(p => PurchaseDto.toDto(p)),
+      timezoneOffset: dbEntity.timezoneOffset,
+      filecoinNode: dbEntity.filecoinNode,
+      country: dbEntity.country,
       externalId: dbEntity.externalId
     }
   }

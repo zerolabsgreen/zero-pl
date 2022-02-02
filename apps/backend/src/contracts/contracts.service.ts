@@ -57,6 +57,7 @@ export class ContractsService {
 
         const newRecord = await prisma.contract.create({
           data: {
+            id: createContractDto.id,
             buyer: { connect: { id: createContractDto.buyerId }},
             seller: { connect: { id: createContractDto.sellerId }},
             contractDate: createContractDto.contractDate,
@@ -64,18 +65,17 @@ export class ContractsService {
             reportingStart:  createContractDto.reportingStart,
             reportingEnd: createContractDto.reportingEnd,
             timezoneOffset: createContractDto.timezoneOffset,
-            openVolume: BigInt(createContractDto.openVolume),
+            volume: BigInt(createContractDto.volume),
             productType: createContractDto.productType,
             country: createContractDto.country,
             region: createContractDto.region ?? '',
-            deliveredVolume: BigInt(0),
             externalId: createContractDto.externalId
           },
           include: {
             seller: true,
             buyer: true,
             filecoinNode: true,
-            certificates: true
+            purchases: { include: { certificate: true } }
           }
         }).catch(err => {
           this.logger.error(`error creating a new Contract: ${err}`);
@@ -98,7 +98,7 @@ export class ContractsService {
         seller: true,
         buyer: true,
         filecoinNode: true,
-        certificates: true
+        purchases: { include: { certificate: true } }
       }
     });
 
@@ -114,7 +114,7 @@ export class ContractsService {
         seller: true,
         buyer: true,
         filecoinNode: true,
-        certificates: true
+        purchases: { include: { certificate: true } }
       }
     });
 
@@ -137,18 +137,17 @@ export class ContractsService {
           reportingStart:  updateContractDto.reportingStart,
           reportingEnd: updateContractDto.reportingEnd,
           timezoneOffset: updateContractDto.timezoneOffset,
-          openVolume: BigInt(updateContractDto.openVolume),
+          volume: BigInt(updateContractDto.volume),
           productType: updateContractDto.productType,
           country: updateContractDto.country,
           region: updateContractDto.region ?? '',
-          deliveredVolume: BigInt(0),
           externalId: updateContractDto.externalId
         },
         include: {
           seller: true,
           buyer: true,
           filecoinNode: true,
-          certificates: true
+          purchases: { include: { certificate: true } }
         }
       });
 
