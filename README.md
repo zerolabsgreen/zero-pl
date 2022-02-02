@@ -75,12 +75,34 @@ no data persistence, so you will lose all the email messages when it is restarte
 
 Requires `heroku` command line tool
 
+---
+
 One time action:
 
 ```
 heroku login
 ```
+---
+0. Make sure the latest `master` branch is built
+```
+yarn clean && yarn && yarn build
+```
 
+1. Turn on maintenance on Heroku
+```
+heroku maintenance:on -a zero-ui-app
+heroku maintenance:on -a zero-api-app
+heroku maintenance:on -a zero-issuer-api-app
+```
+
+2. Deploy
 ```
 bash deploy-heroku.sh
+```
+
+3. Turn maintenance off
+```
+heroku maintenance:off -a zero-issuer-api-app
+heroku maintenance:off -a zero-api-app
+heroku maintenance:off -a zero-ui-app
 ```
