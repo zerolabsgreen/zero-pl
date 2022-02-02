@@ -104,7 +104,12 @@ export class FilecoinNodesService {
       buyerId: data.buyerId,
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/nodes/${data.id}/transactions`,
       dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/nodes/${data.id}/transactions`,
-      recsTotal: data.purchases.reduce((total, transaction) => (total.add(BigNumber.from(transaction.purchase.certificate.energy))), BigNumber.from(0)),
+      recsTotal: data.purchases.reduce(
+        (total, transaction) => 
+          total.add(
+            BigNumber.from(transaction.purchase.certificate.energy)
+          ), BigNumber.from(0)
+        ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
         return {
           id: p.purchase.id,
