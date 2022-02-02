@@ -1,12 +1,30 @@
 import { FC } from 'react';
 import { Dayjs } from 'dayjs';
+import { css } from '@emotion/css'
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDayJs from '@mui/lab/AdapterDayjs';
 import DatePicker from '@mui/lab/DatePicker';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { useTheme } from '@mui/material/styles';
 import { ReactComponent as CalendarIconDefault } from './calendar-icon.svg';
-import './index.css';
+
+const paperClass = css`
+  & .MuiCalendarPicker-root {
+    & div {
+      color: #fff;
+    };
+  };
+  & .MuiIconButton-root {
+    color: #fff;
+  };
+  & .MuiPickersDay-dayWithMargin {
+    background-color: #19355E;
+  };
+  & .Mui-selected {
+    background-color: #fff !important;
+    color: #19355E !important;
+  };
+`
 
 export interface FormDatePickerProps {
   name: string;
@@ -49,7 +67,7 @@ export const FormDatePicker: FC<FormDatePickerProps> = ({
         showToolbar={false}
         disabled={disabled}
         onChange={handleChange}
-        PaperProps={{ classes: { root: 'paper' }, style: { backgroundColor: theme.palette.primary.main } }}
+        PaperProps={{ classes: { root: paperClass }, style: { backgroundColor: theme.palette.primary.main } }}
         value={value ?? null}
         inputFormat={'MMM DD, YYYY'}
         components={{ OpenPickerIcon: CalendarIcon }}

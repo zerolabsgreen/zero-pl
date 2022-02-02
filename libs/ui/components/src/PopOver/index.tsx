@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import styled from '@mui/material/styles/styled';
+import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import { FC, ReactElement } from 'react';
 

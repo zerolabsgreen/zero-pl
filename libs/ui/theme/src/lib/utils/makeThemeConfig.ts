@@ -51,7 +51,7 @@ export function createStyleConfig(
   };
 }
 
-const makeThemeConfig = (configuration: Partial<IThemeConfiguration> = {}) => {
+export const makeThemeConfig = (configuration: Partial<IThemeConfiguration> = {}) => {
   const DEFAULT_STYLE_CONFIG = createStyleConfig(variables);
 
   const DEFAULT__CONFIGURATION: IThemeConfiguration = {
