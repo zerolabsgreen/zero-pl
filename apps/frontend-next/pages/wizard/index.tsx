@@ -32,10 +32,12 @@ import {
   StyledLabel,
   StyledStep
 } from '../../components/WizardPage/styled';
-import WizardPageStepSelector, { WizardFormValues } from '../../components/WizardPage/WizardPageStepSelector';
+import dynamic from 'next/dynamic';
+import type { WizardFormValues } from '../../components/WizardPage/WizardPageStepSelector';
 import CardReadMoreTablet from '../../components/WizardPage/CardReadMoreTablet';
 import CardReadMore from '../../components/WizardPage/CardReadMore';
 import { useAddressMappingState, useSelectedProtocolStore } from '../../context';
+const WizardPageStepSelector = dynamic(() => import('../../components/WizardPage/WizardPageStepSelector'));
 
 const initialValues: WizardFormValues = {
   userType: null,
