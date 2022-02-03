@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
-import { IsOptional, IsUUID, Validate } from 'class-validator';
+import { IsOptional, IsString, IsUUID, Validate } from 'class-validator';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
 import { ContractDto } from './contract.dto';
 
@@ -31,8 +31,8 @@ export class CreateContractDto extends PartialType(PickType(ContractDto, [
   @IsUUID()
   sellerId: string;
 
-  @ApiPropertyOptional({ example: '68926364-a0ba-4160-b3ea-1ee70c2690dd' })
+  @ApiPropertyOptional({ example: 'f00001' })
   @IsOptional()
-  @IsUUID()
+  @IsString()
   filecoinNodeId?: string;
 }

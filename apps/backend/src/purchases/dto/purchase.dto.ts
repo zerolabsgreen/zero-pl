@@ -41,9 +41,17 @@ export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reporting
 
   static toDto(p: Purchase): PurchaseDto {
     return {
-      ...p,
-      reportingStart: p.reportingStart.toISOString(), 
-      reportingEnd: p.reportingEnd.toISOString(), 
+      id: p.id,
+      txHash: p.txHash,
+      sellerId: p.sellerId,
+      buyerId: p.buyerId,
+      certificateId: p.certificateId,
+      reportingStart: p.reportingStart?.toISOString(), 
+      reportingStartTimezoneOffset: p.reportingStartTimezoneOffset,
+      reportingEnd: p.reportingEnd?.toISOString(), 
+      reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
+      createdOn: p.createdOn,
+      contractId: p.contractId,
     };
   }
 }

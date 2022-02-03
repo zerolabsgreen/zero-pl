@@ -2,11 +2,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
-import { Buyer, Certificate, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Purchase, Seller } from '@prisma/client';
+import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Seller } from '@prisma/client';
 import { IsEnum, IsInt, IsISO8601, IsOptional, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
-import { PurchaseDto } from '../../purchases/dto/purchase.dto';
+import { PurchaseWithCertificateDto, PurchaseWithCertificateEntity } from '../../purchases/dto/purchase-with-certificate.dto';
+
+export type ContractEntityWithRelations = Contract & {
+  seller: Seller,
+  buyer: Buyer,
+  filecoinNode: FilecoinNode;
+  purchases: PurchaseWithCertificateEntity[];
+};
 
 export class ContractDto {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
@@ -76,9 +83,9 @@ export class ContractDto {
   @Validate(PositiveBNStringValidator)
   deliveredVolume: string;
 
-  @ApiProperty({ type: [PurchaseDto] })
+  @ApiProperty({ type: [PurchaseWithCertificateDto] })
   @ValidateNested({ each: true })
-  purchases: PurchaseDto[];
+  purchases: PurchaseWithCertificateDto[];
 
   @ApiPropertyOptional({ type: String, example: "ID_123456" })
   @IsOptional()
@@ -89,14 +96,7 @@ export class ContractDto {
     Object.assign(this, partial);
   }
 
-  static toDto(dbEntity: Contract & {
-    seller: Seller,
-    buyer: Buyer,
-    filecoinNode: FilecoinNode;
-    purchases: (Purchase & {
-      certificate: Certificate;
-    })[];
-  }): ContractDto {
+  static toDto(dbEntity: ContractEntityWithRelations): ContractDto {
     const deliveredVolumeMwh = dbEntity.purchases
       .map(p => p.certificate.energy)
       .reduce((partialSum, purchaseVolume) => BigInt(partialSum) + BigInt(purchaseVolume), BigInt(0));
@@ -114,9 +114,9 @@ export class ContractDto {
       seller: new SellerDto(dbEntity.seller),
       openVolume: openVolume.toString(),
       deliveredVolume: deliveredVolumeMwh.toString(),
-      purchases: dbEntity.purchases.map(p => PurchaseDto.toDto(p)),
+      purchases: dbEntity.purchases.map(p => PurchaseWithCertificateDto.toDto(p)),
       timezoneOffset: dbEntity.timezoneOffset,
-      filecoinNode: dbEntity.filecoinNode,
+      filecoinNode: new FilecoinNodeDto(dbEntity.filecoinNode),
       country: dbEntity.country,
       externalId: dbEntity.externalId
     }

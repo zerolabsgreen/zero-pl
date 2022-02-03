@@ -60,6 +60,7 @@ export class ContractsService {
             id: createContractDto.id,
             buyer: { connect: { id: createContractDto.buyerId }},
             seller: { connect: { id: createContractDto.sellerId }},
+            filecoinNode: { connect: { id: createContractDto.filecoinNodeId }},
             contractDate: createContractDto.contractDate,
             deliveryDate: createContractDto.deliveryDate,
             reportingStart:  createContractDto.reportingStart,

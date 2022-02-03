@@ -19,6 +19,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { FilecoinNodeDto } from "./dto/filecoin-node.dto";
 import { AuthGuard } from "@nestjs/passport";
+import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 
 @Controller('/partners/filecoin/nodes')
 @ApiTags('Filecoin nodes')
@@ -45,6 +46,12 @@ export class FilecoinNodesController {
   @ApiOkResponse({ type: FilecoinNodeDto })
   findOne(@Param('id') id: string): Promise<FilecoinNodeDto> {
     return this.filecoinNodesService.findOne(id);
+  }
+
+  @Get(':id/contracts')
+  @ApiOkResponse({ type: FilecoinNodeWithContractsDto })
+  findOneWithContracts(@Param('id') id: string): Promise<FilecoinNodeWithContractsDto> {
+    return this.filecoinNodesService.findOneWithContracts(id);
   }
 
   @Patch(':id')
