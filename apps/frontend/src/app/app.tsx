@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Header } from '../components/Header';
 import ProofPage from '../pages/ProofPage';
+import ContractPage from '../pages/ContractPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import PurchasePage from '../pages/PurchasePage';
 import { WizardPage } from '../pages/WizardPage';
@@ -28,6 +29,10 @@ export const App = () => {
             <Route
               path={'/partners/filecoin/purchases/:productId'}
               element={<ProofPage />}
+            />
+            <Route
+              path={'/partners/filecoin/contracts/:id'}
+              element={<ContractPage />}
             />
             <Route
               path={'/partners/filecoin/nodes/:productId/transactions'}
