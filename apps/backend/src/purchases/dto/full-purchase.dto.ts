@@ -11,6 +11,14 @@ class File extends PartialType(PickType(FileMetadataDto, ['id', 'fileName', 'mim
   url: string;
 }
 
+export type FullPurchaseEntity = Purchase & {
+  seller: Seller,
+  buyer: Buyer,
+  filecoinNodes: FilecoinNode[],
+  certificate: Certificate,
+  files: any
+};
+
 export class FullPurchaseDto {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
   id: string;
@@ -52,13 +60,7 @@ export class FullPurchaseDto {
     Object.assign(this, partial);
   }
 
-  static toDto(purchase: Purchase & {
-    seller: Seller,
-    buyer: Buyer,
-    filecoinNodes: FilecoinNode[],
-    certificate: Certificate,
-    files: any
-  }): FullPurchaseDto {
+  static toDto(purchase: FullPurchaseEntity): FullPurchaseDto {
     return {
       ...purchase,
       reportingStart: purchase.reportingStart?.toISOString(),

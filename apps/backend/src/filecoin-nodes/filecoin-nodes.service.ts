@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateFilecoinNodeDto } from './dto/create-filecoin-node.dto';
 import { UpdateFilecoinNodeDto } from './dto/update-filecoin-node.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilecoinNodeDto } from './dto/filecoin-node.dto';
 import { FilecoinNode } from '@prisma/client';
-import { IssuerService } from '../issuer/issuer.service';
 import { pick } from 'lodash';
 import { DateTime, Duration } from "luxon";
 import { BigNumber } from 'ethers';
+import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 
 @Injectable()
 export class FilecoinNodesService {
@@ -63,10 +63,34 @@ export class FilecoinNodesService {
     const record = await this.prisma.filecoinNode.findUnique({ where: { id } });
 
     if (!record) {
-      return null;
+      throw new NotFoundException(`Filecoin node with id ${id} doesn't exist`);
     }
 
     return new FilecoinNodeDto(record);
+  }
+
+  async findOneWithContracts(id: string): Promise<FilecoinNodeWithContractsDto> {
+    const record = await this.prisma.filecoinNode.findUnique(
+      {
+        where: { id },
+        include: {
+          contracts: { 
+            include: {
+              seller: true,
+              buyer: true,
+              filecoinNode: true,
+              purchases: { include: { certificate: true } }
+            }
+          },
+        }
+      }
+    );
+
+    if (!record) {
+      throw new NotFoundException(`Filecoin node with id ${id} doesn't exist`);
+    }
+
+    return FilecoinNodeWithContractsDto.toDto(record);
   }
 
   async update(id: string, updateFilecoinNodeDto: UpdateFilecoinNodeDto): Promise<FilecoinNodeDto> {

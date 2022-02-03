@@ -23,12 +23,10 @@ model File {
 model Buyer {
   id                String         @id @default(uuid())
   name              String?
-  blockchainAddress String?
+  blockchainAddress String?        @unique
   purchase          Purchase[]
   filecoinNodes     FilecoinNode[]
   contracts         Contract[]
-
-  @@unique([blockchainAddress])
 }
 
 model Seller {
@@ -37,12 +35,10 @@ model Seller {
   addressLine1      String
   addressLine2      String?
   contactPerson     String?
-  blockchainAddress String?
+  blockchainAddress String?       @unique
   purchase          Purchase[]
   certificates      Certificate[]
   contracts         Contract[]
-
-  @@unique([blockchainAddress])
 }
 
 model Certificate {
