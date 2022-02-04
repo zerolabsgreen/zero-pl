@@ -8,6 +8,21 @@ generator client {
   previewFeatures = ["interactiveTransactions"]
 }
 
+enum ApiKeyPermissions {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  ADMIN
+}
+
+model ApiKey {
+  id  String @id @default(uuid())
+  name String
+  expires DateTime
+  permissions ApiKeyPermissions[]
+}
+
 model File {
   id        String             @id @default(uuid())
   fileName  String

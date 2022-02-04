@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 @Injectable()
@@ -9,6 +9,6 @@ export class IssuerGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request: Request = context.switchToHttp().getRequest();
 
-    return request.headers['x-api-key'] === this.configService.get<string>('API_KEY');
+    return request.headers['x-api-key'] === this.configService.get<string>('SUPERADMIN_API_KEY');
   }
 }

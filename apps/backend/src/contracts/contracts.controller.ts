@@ -15,21 +15,24 @@ import {
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ContractDto } from './dto/contract.dto';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
+import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
+import { ApiKeyPermissions } from '@prisma/client';
 
 @Controller('/partners/filecoin/contracts')
 @ApiTags('Filecoin contracts')
+@ApiSecurity('api-key', ['api-key'])
+@UseGuards(AuthGuard('api-key'))
 @UseInterceptors(ClassSerializerInterceptor, NoDataInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
   @Post()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: [CreateContractDto] })
   @ApiCreatedResponse({
       type: [ContractDto],
@@ -40,14 +43,14 @@ export class ContractsController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({type: [ContractDto]})
   findAll(): Promise<ContractDto[]> {
     return this.contractsService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: ContractDto })
   @ApiParam({ name: 'id', type: String })
   findOne(@Param('id') id: string): Promise<ContractDto> {
@@ -55,18 +58,18 @@ export class ContractsController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateContractDto })
+  @ApiOkResponse({ type: ContractDto })
   update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto): Promise<ContractDto> {
     return this.contractsService.update(id, updateContractDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.DELETE]))
   @ApiParam({ name: 'id', type: Boolean })
+  @ApiOkResponse({ type: Boolean })
   remove(@Param('id') id: string): Promise<boolean> {
     return this.contractsService.remove(id);
   }

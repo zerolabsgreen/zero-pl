@@ -50,7 +50,7 @@ const OriginAppTypeOrmModule = () => {
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test')
           .default('development'),
-        API_KEY: Joi.string().required(),
+        SUPERADMIN_API_KEY: Joi.string().required(),
         PORT: Joi.number().default(3334),
         LOG_LEVELS: Joi.string().default('log,error,warn,debug,verbose'),
         WEB3: Joi.string().default('http://localhost:8545'),

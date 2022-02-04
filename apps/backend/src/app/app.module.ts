@@ -19,6 +19,7 @@ import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 import { EmailModule } from '../email/email.module';
 import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
 import { ContractsModule } from '../contracts/contracts.module';
+import { ApiKeysModule } from '../apikeys/apikeys.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ContractsModule } from '../contracts/contracts.module';
     }),
     PrismaModule,
     AuthModule,
+    ApiKeysModule,
     FilesModule,
     PurchasesModule,
     BuyersModule,

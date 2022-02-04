@@ -43,7 +43,7 @@ export class IssuerService {
   ) {
     this.axiosInstance = axios.create({
       baseURL: `${configService.get('ISSUER_API_BASE_URL')}/api`,
-      headers: { 'X-Api-Key': configService.get('API_KEY') }
+      headers: { 'X-Api-Key': configService.get('SUPERADMIN_API_KEY') }
     });
   }
 

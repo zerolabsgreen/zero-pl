@@ -3,7 +3,6 @@ import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
-import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
@@ -11,7 +10,7 @@ import { ContractDto } from './dto/contract.dto';
 
 @Injectable()
 export class ContractsService {
-  private readonly logger = new Logger(CertificatesService.name, { timestamp: true });
+  private readonly logger = new Logger(ContractsService.name, { timestamp: true });
 
   constructor(
     private prisma: PrismaService,

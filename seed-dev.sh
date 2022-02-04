@@ -1,4 +1,4 @@
-X_API_KEY=$(grep API_KEY .env | cut -d "=" -f2 | tr -d '"');
+X_API_KEY=$(grep SUPERADMIN_API_KEY .env | cut -d "=" -f2 | tr -d '"');
 PORT=$(grep -e "^PORT=" .env | cut -d "=" -f2 | tr -d '"');
 
 echo

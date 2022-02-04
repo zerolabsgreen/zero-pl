@@ -23,17 +23,20 @@ import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { GenerateAttestationsDto } from './dto/generate-attestations.dto';
+import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
+import { ApiKeyPermissions } from '@prisma/client';
 
 @Controller('/partners/filecoin/purchases')
 @ApiTags('Filecoin purchases')
+@UseGuards(AuthGuard('api-key'))
+@ApiSecurity('api-key', ['api-key'])
 @UseInterceptors(ClassSerializerInterceptor, NoDataInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) {}
 
   @Post()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: [CreatePurchaseDto] })
   @ApiCreatedResponse({
       type: [FullPurchaseDto],
@@ -44,15 +47,14 @@ export class PurchasesController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
-  @ApiOkResponse({ type: ShortPurchaseDto })
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: [ShortPurchaseDto] })
   findAll(): Promise<ShortPurchaseDto[]> {
     return this.purchasesService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FullPurchaseDto })
   findOne(@Param('id') id: string): Promise<FullPurchaseDto> {
@@ -60,16 +62,14 @@ export class PurchasesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   @ApiParam({ name: 'id', type: String })
   update(@Param('id') id: string, @Body() updatePurchaseDto: UpdatePurchaseDto) {
     return this.purchasesService.update(id, updatePurchaseDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.DELETE]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Boolean })
   remove(@Param('id') id: string): Promise<boolean> {
@@ -77,6 +77,7 @@ export class PurchasesController {
   }
 
   @Get(':id/blockchain-events')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ schema: purchaseEventsSchema })
   @ApiParam({ name: 'id', type: String })
   async getBlockchainEvents(@Param('id') id: string) {
@@ -84,8 +85,7 @@ export class PurchasesController {
   }
 
   @Post('/generate/attestations')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: GenerateAttestationsDto })
   @ApiCreatedResponse({ type: [FileMetadataDto] })
   generateAttestations(@Body() { purchaseIds, }: GenerateAttestationsDto): Promise<FileMetadataDto[]> {

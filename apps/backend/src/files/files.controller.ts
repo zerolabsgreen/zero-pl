@@ -16,17 +16,20 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { FileMetadataDto } from "./dto/file-metadata.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express, Response } from 'express';
 import * as multer from 'multer';
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
-import { FileType } from '@prisma/client';
+import { ApiKeyPermissions, FileType } from '@prisma/client';
+import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 
 @Controller('files')
 @ApiTags('files')
+@UseGuards(AuthGuard('api-key'))
+@ApiSecurity('api-key', ['api-key'])
 @UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class FilesController {
@@ -35,8 +38,7 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -67,8 +69,7 @@ export class FilesController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: [FileMetadataDto] })
   @UseInterceptors(NoDataInterceptor)
   findAll(): Promise<FileMetadataDto[]> {
@@ -76,7 +77,9 @@ export class FilesController {
   }
 
   @Get(':id')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ description: 'binary file content' })
+  @ApiParam({ name: 'id', type: String })
   async getFileContent(
     @Param('id') id: string,
     @Res() res: Response
@@ -94,8 +97,8 @@ export class FilesController {
   }
 
   @Get(':id/metadata')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FileMetadataDto })
   @UseInterceptors(NoDataInterceptor)
   async getFileMetadata(@Param('id') id: string): Promise<FileMetadataDto> {
@@ -109,10 +112,10 @@ export class FilesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
-  @ApiOkResponse({ type: Boolean })
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @UseInterceptors(NoDataInterceptor)
+  @ApiParam({ name: 'id', type: String })
+  @ApiOkResponse({ type: Boolean })
   remove(@Param('id') id: string): Promise<boolean> {
     return this.filesService.remove(id);
   }

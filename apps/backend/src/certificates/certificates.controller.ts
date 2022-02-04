@@ -19,17 +19,20 @@ import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from
 import { CertificateDto } from "./dto/certificate.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
+import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
+import { ApiKeyPermissions } from '@prisma/client';
 
 @Controller('/partners/filecoin/certificates')
 @ApiTags('Filecoin certificates')
+@UseGuards(AuthGuard('api-key'))
+@ApiSecurity('api-key', ['api-key'])
 @UseInterceptors(ClassSerializerInterceptor, NoDataInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class CertificatesController {
   constructor(private readonly certificatesService: CertificatesService) {}
 
   @Post()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: [CreateCertificateDto] })
   @ApiCreatedResponse({
       type: [CertificateDto],
@@ -40,36 +43,34 @@ export class CertificatesController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: [CertificateDto] })
   findAll() {
     return this.certificatesService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: CertificateDto })
   findOne(@Param('id') id: string) {
     return this.certificatesService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
-  update(@Param('id') id: string, @Body() updateCertificateDto: UpdateCertificateDto) {
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiOkResponse({ type: CertificateDto })
+  update(@Param('id') id: string, @Body() updateCertificateDto: UpdateCertificateDto): Promise<CertificateDto> {
     return this.certificatesService.update(id, updateCertificateDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.DELETE]))
   remove(@Param('id') id: string) {
     return this.certificatesService.remove(id);
   }
 
   @Post()
-  @UseGuards(AuthGuard('api-key'))
-  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   syncOnChain(@Param('id') id: string) {
     return this.certificatesService.syncOnChain(id);
   }
