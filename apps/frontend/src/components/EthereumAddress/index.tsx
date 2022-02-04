@@ -72,7 +72,7 @@ const StyledAddress = styled('span', { shouldForwardProp: prop => prop !== 'popo
 `)
 
 export const shortifyEthAddr = (str: string) => {
-  return `${str.substr(0, 4)}...${str.substr(str.length - 4, str.length - 1)}`;
+  return str ? `${str.substr(0, 4)}...${str.substr(str.length - 4, str.length - 1)}` : '';
 };
 
 export default EthereumAddress;
