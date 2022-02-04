@@ -13,7 +13,7 @@ import { formatPower, Unit } from '../../utils';
 import { useProductPageEffects, contractTableHeaders } from './effects';
 
 export const ContractPage = () => {
-  const { contractTableData, data, isLoading, isFetched, contractId } = useProductPageEffects();
+  const { contractTableData, data, isLoading, isFetched, contractId, totalAmount } = useProductPageEffects();
 
   return !isLoading && isFetched && contractTableData && data ? (
     <Container maxWidth={'xl'}>
@@ -27,12 +27,12 @@ export const ContractPage = () => {
               ]}
             />
             <PageSection
-              headingText={'Proof of Renewable Energy Consumption'}
+              headingText={'Renewable Energy Contract Receipt'}
               sectionHelpText={
                 <div>
-                  This page is a summary of the proof that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{formatPower(data.openVolume, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
-                  and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
+                  This page is a summary of the receipt that shows that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> holds
+                  a contract over the delivery of <b>{formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })}</b> of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  which will be delivered to the buyer at the specified delivery date and enables the buyer to make a preliminary sustainability claim.
                 </div>
               }
             >

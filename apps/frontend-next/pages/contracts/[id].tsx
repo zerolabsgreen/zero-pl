@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
+import { BigNumber } from '@ethersproject/bignumber';
 import { ContractDto, useContractsControllerFindOne } from '@energyweb/zero-protocol-labs-api-client';
 import { GenericTable, TableHeader, TableRowData } from '@zero-labs/zero-ui-components';
 import BuyerSellerInformation from '../../components/ProofPage/BuyerSellerInformation';
@@ -20,12 +21,12 @@ export const contractTableHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
   beneficiary: { label: 'Beneficiary' },
   product: { label: 'Product' },
-  amount: { label: 'Amount' },
+  amount: { label: 'Amount (Open | Delivered)' },
   period: { label: 'Period' },
-  generator: { label: 'Generator' },
   energySource: { label: 'Energy Source' },
   region: { label: 'Region' },
   contractDate: { label: 'Contract date' },
+  deliveryDate: { label: 'Delivery date' },
   seller: { label: 'Seller' }
 }
 
@@ -35,12 +36,19 @@ export const ContractPage: NextPage = () => {
   const contractId = id as string;
   const { data, isLoading, isFetched } = useContractsControllerFindOne(contractId ?? '');
 
+  const totalAmount = (BigNumber.from(data?.openVolume ?? 0).add(BigNumber.from(data?.deliveredVolume ?? 0))).toString();
   const contractTableData: TableRowData<ContractDto['id']>[] = [{
     id: data?.id ?? '',
     orderId: <EthereumAddress shortify clipboard address={data?.id ?? ''} />,
     product: data?.productType ?? '',
     beneficiary: data?.filecoinNode?.id ?? '',
-    amount: data?.openVolume ? formatPower(data.openVolume, { unit: DisplayUnit.MWh, includeUnit: true }) : '',
+    amount: data?.openVolume || data?.deliveredVolume
+      ? <>
+          {formatPower(totalAmount, { unit: DisplayUnit.MWh, includeUnit: true })}
+          <br />
+          ({formatPower(data.openVolume, { unit: DisplayUnit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: DisplayUnit.MWh, includeUnit: true })})
+        </>
+      : '',
     period: (
     <>{dayjs(data?.reportingStart).isValid()
       ? dayjs(data?.reportingStart).utc().format('YYYY-MM-DD')
@@ -49,7 +57,6 @@ export const ContractPage: NextPage = () => {
       ? dayjs(data?.reportingEnd).utc().format('YYYY-MM-DD')
       : '-'}
     </>),
-    generator: data?.purchases.map(purchase => purchase.certificate.generatorId).join(', ') ?? '',
     energySource: (
       <>
         {data?.energySources.map(energySource =>
@@ -63,6 +70,9 @@ export const ContractPage: NextPage = () => {
     region: `${data?.country ?? ''}${data?.region ? ', ' + data?.region : ''}`,
     contractDate: dayjs(data?.contractDate).isValid()
       ? dayjs(data?.contractDate).utc().format('YYYY-MM-DD')
+      : '-',
+    deliveryDate: dayjs(data?.deliveryDate).isValid()
+      ? dayjs(data?.deliveryDate).utc().format('YYYY-MM-DD')
       : '-',
     seller: <EthereumAddress shortify clipboard address={data?.seller.blockchainAddress ?? ''} />
   }]
@@ -79,12 +89,12 @@ export const ContractPage: NextPage = () => {
               ]}
             />
             <PageSection
-              headingText={'Proof of Renewable Energy Consumption'}
+              headingText={'Renewable Energy Contract Receipt'}
               sectionHelpText={
                 <div>
-                  This page is a summary of the proof that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{formatPower(data.openVolume, { unit: DisplayUnit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
-                  and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
+                  This page is a summary of the receipt that shows that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> holds
+                  a contract over the delivery of <b>{formatPower(totalAmount, { unit: DisplayUnit.MWh, includeUnit: true })}</b> of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  which will be delivered to the buyer at the specified delivery date and enables the buyer to make a preliminary sustainability claim.
                 </div>
               }
             >
