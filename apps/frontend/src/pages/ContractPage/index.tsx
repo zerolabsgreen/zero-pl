@@ -32,7 +32,7 @@ export const ContractPage = () => {
                 <div>
                   This page is a summary of the receipt that shows that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> holds
                   a contract over the delivery of <b>{formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })}</b> of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
-                  which will be delivered to the buyer at the specified delivery date and enables the buyer to make a preliminary sustainability claim.
+                  which will be delivered to the buyer <b>no later than</b> the specified delivery date and enables the buyer to make a preliminary sustainability claim.
                 </div>
               }
             >

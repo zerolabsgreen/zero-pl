@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 import { BigNumber } from '@ethersproject/bignumber';
+import { styled } from '@mui/material/styles';
 import { ContractDto, useContractsControllerFindOne } from '@energyweb/zero-protocol-labs-api-client';
 import { GenericTable, TableHeader, TableRowData } from '@zero-labs/zero-ui-components';
 import BuyerSellerInformation from '../../components/ProofPage/BuyerSellerInformation';
@@ -46,7 +47,9 @@ export const ContractPage: NextPage = () => {
       ? <>
           {formatPower(totalAmount, { unit: DisplayUnit.MWh, includeUnit: true })}
           <br />
-          ({formatPower(data.openVolume, { unit: DisplayUnit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: DisplayUnit.MWh, includeUnit: true })})
+          <SmallText>
+            ({formatPower(data.openVolume, { unit: DisplayUnit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: DisplayUnit.MWh, includeUnit: true })})
+          </SmallText>
         </>
       : '',
     period: (
@@ -94,7 +97,7 @@ export const ContractPage: NextPage = () => {
                 <div>
                   This page is a summary of the receipt that shows that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> holds
                   a contract over the delivery of <b>{formatPower(totalAmount, { unit: DisplayUnit.MWh, includeUnit: true })}</b> of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
-                  which will be delivered to the buyer at the specified delivery date and enables the buyer to make a preliminary sustainability claim.
+                  which will be delivered to the buyer <b>no later than</b> the specified delivery date and enables the buyer to make a preliminary sustainability claim.
                 </div>
               }
             >
@@ -141,5 +144,10 @@ const UnderlinedText: FC = ({ children }) => {
     </span>
   )
 }
+
+const SmallText = styled('span')`
+  font-size: 14px;
+  font-weight: 500;
+`;
 
 export default ContractPage;

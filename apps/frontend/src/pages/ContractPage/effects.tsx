@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { ContractDto, useContractsControllerFindOne } from '@energyweb/zero-protocol-labs-api-client'
 import { TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import { BigNumber } from '@ethersproject/bignumber';
+import { styled } from "@mui/material/styles";
 import EthereumAddress from "../../components/EthereumAddress";
 import FuelType, { FuelTypeEnum } from "../../components/FuelType";
 import { formatPower, Unit } from "../../utils";
@@ -36,7 +37,9 @@ export const useProductPageEffects = () => {
       ? <>
           {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })}
           <br />
-          ({formatPower(data.openVolume, { unit: Unit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
+          <SmallText>
+            ({formatPower(data.openVolume, { unit: Unit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
+          </SmallText>
         </>
       : '',
     period: (
@@ -69,3 +72,8 @@ export const useProductPageEffects = () => {
 
   return { contractTableData, data, isLoading, isFetched, contractId, totalAmount };
 }
+
+const SmallText = styled('span')`
+  font-size: 14px;
+  font-weight: 500;
+`;
