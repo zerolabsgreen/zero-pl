@@ -29,11 +29,14 @@ export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reporting
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset;
 
-  @ApiProperty()
-  createdOn: Date;
-
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
   contractId: string
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 
   constructor(partial: Partial<PurchaseDto>) {
     Object.assign(this, partial);
@@ -50,8 +53,9 @@ export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reporting
       reportingStartTimezoneOffset: p.reportingStartTimezoneOffset,
       reportingEnd: p.reportingEnd?.toISOString(), 
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
-      createdOn: p.createdOn,
       contractId: p.contractId,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
     };
   }
 }

@@ -29,14 +29,14 @@ export class CertificateDto {
   @ApiProperty({ example: ProductEnumType.IREC })
   productType: ProductEnumType;
 
-  @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
-  generationStart: string;
+  @ApiProperty({ example: '2020-11-01T00:00:00.000Z' })
+  generationStart: Date;
 
   @ApiPropertyOptional({ example: 180 })
   generationStartTimezoneOffset?: number;
 
-  @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
-  generationEnd: string;
+  @ApiProperty({ example: '2021-06-01T23:59:59.999Z' })
+  generationEnd: Date;
 
   @ApiPropertyOptional({ example: 180 })
   generationEndTimezoneOffset?: number;
@@ -47,17 +47,23 @@ export class CertificateDto {
   @ApiPropertyOptional({ example: 'Some Corp Ltd.' })
   beneficiary?: string;
 
-  @ApiPropertyOptional({ example: new Date('2021-06-30T23:59:59.999Z') })
-  redemptionDate?: string;
+  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
+  redemptionDate?: Date;
 
   @ApiPropertyOptional({ example: 1e9 })
   capacity?: number;
 
-  @ApiPropertyOptional({ example: new Date('2021-06-30T23:59:59.999Z') })
-  commissioningDate?: string;
+  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
+  commissioningDate?: Date;
 
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   label?: LabelEnumType;
+
+  @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 
   constructor(partial: Partial<CertificateDto>) {
     Object.assign(this, partial);
@@ -66,11 +72,7 @@ export class CertificateDto {
   static toDto(dbEntity: Certificate): CertificateDto {
     return {
       ...dbEntity,
-      generationStart: dbEntity.generationStart.toISOString(),
-      generationEnd: dbEntity.generationEnd.toISOString(),
-      redemptionDate: dbEntity.redemptionDate?.toISOString(),
       energy: dbEntity.energy.toString(),
-      commissioningDate: dbEntity.commissioningDate?.toISOString(),
     }
   }
 }

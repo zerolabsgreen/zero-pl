@@ -92,10 +92,7 @@ export class PurchasesService {
         }
 
         const newRecord = await prisma.purchase.create({
-          data: {
-            ...purchase,
-            createdOn: new Date()
-          }
+          data: purchase
         }).catch(err => {
           this.logger.error(`error creating a new purchase: ${err}`);
           throw err;

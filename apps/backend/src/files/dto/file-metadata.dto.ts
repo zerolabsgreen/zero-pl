@@ -22,6 +22,10 @@ export class FileMetadataDto implements File {
   @Expose()
   createdAt: Date;
 
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  @Expose()
+  updatedAt: Date;
+
   @ApiProperty()
   @Expose()
   purchases: string[];

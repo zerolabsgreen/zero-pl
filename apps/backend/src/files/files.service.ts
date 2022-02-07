@@ -46,6 +46,7 @@ export class FilesService {
         fileName: true,
         mimeType: true,
         createdAt: true,
+        updatedAt: true,
         purchases: true,
         fileType: true
       }

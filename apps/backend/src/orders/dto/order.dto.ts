@@ -34,4 +34,7 @@ export class OrderDto implements Order {
 
   @ApiProperty({ example: '2021-10-11T07:48:46.799Z' })
   createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 }

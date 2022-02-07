@@ -20,8 +20,9 @@ export class PurchaseWithCertificateDto extends OmitType(PurchaseDto, ['certific
       reportingStartTimezoneOffset: p.reportingStartTimezoneOffset,
       reportingEnd: p.reportingEnd?.toISOString(), 
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
-      createdOn: p.createdOn,
       contractId: p.contractId,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
     };
   }
 }

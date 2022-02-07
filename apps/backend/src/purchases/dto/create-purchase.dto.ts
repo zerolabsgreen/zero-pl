@@ -31,7 +31,8 @@ class RecsAnnuallyDTO {
   amount: number;
 }
 
-export class CreatePurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd' | 'createdOn' | 'txHash'> {
+export class 
+CreatePurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd' | 'createdAt' | 'updatedAt' | 'txHash'> {
   @ApiProperty({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
   @IsOptional()

@@ -20,6 +20,12 @@ export class SellerDto implements Seller {
   @ApiPropertyOptional({ example: '0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8' })
   blockchainAddress: string;
 
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
+
   constructor(partial: Partial<SellerDto>) {
     Object.assign(this, partial);
   }

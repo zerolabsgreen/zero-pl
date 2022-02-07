@@ -17,20 +17,25 @@ enum ApiKeyPermissions {
 }
 
 model ApiKey {
-  id  String @id @default(uuid())
-  name String
-  expires DateTime
+  id          String              @id @default(uuid())
+  name        String
+  expires     DateTime
   permissions ApiKeyPermissions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model File {
   id        String             @id @default(uuid())
   fileName  String
   mimeType  String
-  createdAt DateTime           @default(now())
   content   Bytes
   fileType  FileType           @default(ATTESTATION)
   purchases FilesOnPurchases[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([createdAt])
 }
@@ -42,6 +47,9 @@ model Buyer {
   purchase          Purchase[]
   filecoinNodes     FilecoinNode[]
   contracts         Contract[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Seller {
@@ -54,6 +62,9 @@ model Seller {
   purchase          Purchase[]
   certificates      Certificate[]
   contracts         Contract[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Certificate {
@@ -78,6 +89,9 @@ model Certificate {
   capacity                      Int?
   commissioningDate             DateTime?
   label                         LabelEnumType?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model FilecoinNode {
@@ -88,12 +102,14 @@ model FilecoinNode {
   purchases         FilecoinNodesOnPurchases[]
   contracts         Contract[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@unique([id, buyerId])
 }
 
 model Purchase {
   id                           String                     @id @default(uuid())
-  createdOn                    DateTime                   @default(now())
   txHash                       String?
   certificate                  Certificate                @relation(fields: [certificateId], references: [id])
   certificateId                String                     @unique
@@ -110,6 +126,9 @@ model Purchase {
   Contract                     Contract?                  @relation(fields: [contractId], references: [id])
   contractId                   String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@unique([id, buyerId])
 }
 
@@ -121,6 +140,9 @@ model FilecoinNodesOnPurchases {
   filecoinNodeId String
   buyerId        String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@id([purchaseId, filecoinNodeId, buyerId])
   @@unique([purchaseId, filecoinNodeId])
 }
@@ -130,6 +152,9 @@ model FilesOnPurchases {
   fileId     String
   purchase   Purchase @relation(fields: [purchaseId], references: [id])
   purchaseId String // relation scalar field (used in the `@relation` attribute above)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@id([fileId, purchaseId])
 }
@@ -143,7 +168,9 @@ model Order {
   paymentPreferences PaymentPreferencesEnumType[]
   confirmationToken  String?                      @default(uuid())
   confirmed          Boolean                      @default(false)
-  createdAt          DateTime                     @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model OrderItem {
@@ -155,6 +182,9 @@ model OrderItem {
   orderId    String
   timeFrames OrderItemTimeFrame[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@unique([orderId, minerId])
 }
 
@@ -165,6 +195,9 @@ model OrderItemTimeFrame {
   start       DateTime
   end         DateTime
   energy      BigInt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Contract {
@@ -188,6 +221,9 @@ model Contract {
   externalId     String?
 
   purchases Purchase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum PaymentPreferencesEnumType {
