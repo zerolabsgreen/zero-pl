@@ -19,7 +19,8 @@
     <script>
       window.config = {
         API_BASE_URL: '$API_BASE_URL',
-        BLOCK_EXPLORER: '$BLOCK_EXPLORER'
+        BLOCK_EXPLORER: '$BLOCK_EXPLORER',
+        UI_API_KEY: '$UI_API_KEY'
       };
     </script>
   </head>
