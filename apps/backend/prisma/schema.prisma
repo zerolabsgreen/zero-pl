@@ -219,6 +219,7 @@ model Contract {
   timezoneOffset Int
   volume         BigInt                 @default(0)
   externalId     String?
+  label          LabelEnumType?
 
   purchases Purchase[]
 

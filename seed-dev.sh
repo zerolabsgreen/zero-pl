@@ -116,7 +116,8 @@ curl -w "\n" -s -X 'POST' \
   "volume": "4000000000000",
   "buyerId": "00000000-0000-0000-0000-000000000002",
   "sellerId": "00000000-0000-0000-0000-000000000001",
-  "filecoinNodeId": "f00001"
+  "filecoinNodeId": "f00001",
+  "label": "GREEN_E_ENERGY"
 }]'
 
 echo

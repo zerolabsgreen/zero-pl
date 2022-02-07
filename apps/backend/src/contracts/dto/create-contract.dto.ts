@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
-import { IsOptional, IsString, IsUUID, Validate } from 'class-validator';
+import { LabelEnumType } from '@prisma/client';
+import { IsOptional, IsEnum, IsString, IsUUID, Validate } from 'class-validator';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
 import { ContractDto } from './contract.dto';
 
@@ -11,7 +12,7 @@ export class CreateContractDto extends PartialType(PickType(ContractDto, [
   'deliveryDate',
   'reportingStart',
   'reportingEnd',
-  'timezoneOffset',
+  'timezoneOffset'
 ])) {
   @ApiPropertyOptional({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
@@ -39,6 +40,11 @@ export class CreateContractDto extends PartialType(PickType(ContractDto, [
   @IsOptional()
   @IsString()
   region?: string;
+
+  @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
+  @IsOptional()
+  @IsEnum(LabelEnumType)
+  label?: LabelEnumType;
 
   @ApiPropertyOptional({ type: String, example: "ID_123456" })
   @IsOptional()

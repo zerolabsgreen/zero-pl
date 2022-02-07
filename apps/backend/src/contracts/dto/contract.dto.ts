@@ -1,8 +1,8 @@
-import { ApiProperty} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional} from '@nestjs/swagger';
 import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
-import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Seller } from '@prisma/client';
+import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, LabelEnumType, ProductEnumType, Seller } from '@prisma/client';
 import { ArrayMinSize, IsEnum, IsInt, IsISO8601, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
@@ -95,6 +95,10 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   @IsString()
   externalId: string;
 
+  @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
+  @IsEnum(LabelEnumType)
+  label: LabelEnumType;
+
   @ApiProperty({ example: '2021-10-11T07:48:46.799Z' })
   createdAt: Date;
 
@@ -129,6 +133,7 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
       region: dbEntity.region,
       countries: dbEntity.countries,
       externalId: dbEntity.externalId,
+      label: dbEntity.label,
       createdAt: dbEntity.createdAt,
       updatedAt: dbEntity.updatedAt
     }

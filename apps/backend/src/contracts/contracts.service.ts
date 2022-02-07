@@ -70,7 +70,8 @@ export class ContractsService {
             productType: createContractDto.productType,
             countries: createContractDto.countries,
             region: createContractDto.region ?? '',
-            externalId: createContractDto.externalId
+            externalId: createContractDto.externalId,
+            label: createContractDto.label
           },
           include: {
             seller: true,
@@ -142,7 +143,8 @@ export class ContractsService {
           productType: updateContractDto.productType,
           countries: updateContractDto.countries,
           region: updateContractDto.region ?? '',
-          externalId: updateContractDto.externalId
+          externalId: updateContractDto.externalId,
+          label: updateContractDto.label
         },
         include: {
           seller: true,

@@ -86,5 +86,7 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash', 'c
   commissioningDate?: Date;
 
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
+  @IsOptional()
+  @IsEnum(LabelEnumType)
   label?: LabelEnumType;
 }
