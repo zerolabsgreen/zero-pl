@@ -22,7 +22,7 @@ export const DownloadSection = ({ fileList = [] }: DownloadSectionProps) => {
           <FileDownloadLink
             key={file.fileName + file.url}
             downloadUrl={file.url}
-            filename={file.fileName}
+            filename={file.fileName ?? 'Official attestion'}
           />
         ))}
       </ResponsiveBox>
