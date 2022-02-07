@@ -46,7 +46,7 @@ export class BuyersController {
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: BuyerDto })
   findOne(@Param('id') id: string): Promise<BuyerDto> {
     return this.buyersService.findOne(id);

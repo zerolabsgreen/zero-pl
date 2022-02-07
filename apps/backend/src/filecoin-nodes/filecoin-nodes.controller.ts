@@ -47,7 +47,7 @@ export class FilecoinNodesController {
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FilecoinNodeDto })
   findOne(@Param('id') id: string): Promise<FilecoinNodeDto> {
@@ -55,7 +55,7 @@ export class FilecoinNodesController {
   }
 
   @Get(':id/contracts')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FilecoinNodeWithContractsDto })
   findOneWithContracts(@Param('id') id: string): Promise<FilecoinNodeWithContractsDto> {
@@ -79,7 +79,7 @@ export class FilecoinNodesController {
   }
 
   @Get(':id/transactions')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ schema: transactionsSchema })
   getTransactions(@Param('id') id: string) {

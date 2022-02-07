@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import Strategy from 'passport-headerapikey';
 import { ApiKeysService } from '../apikeys/apikeys.service';
+import { ApiKey } from '@prisma/client';
 
 @Injectable()
 export class HeaderApiKeyStrategy extends PassportStrategy(Strategy, 'api-key') {
@@ -25,10 +26,11 @@ export class HeaderApiKeyStrategy extends PassportStrategy(Strategy, 'api-key') 
       done(null, true);
     }
 
-    const exists = await this.apiKeysService.findOne(apiKey);
+    const exists: ApiKey | undefined = await this.apiKeysService.findOne(apiKey);
 
     if (exists) {
       done(null, true);
+      return;
     }
 
     done(new UnauthorizedException(), null);
