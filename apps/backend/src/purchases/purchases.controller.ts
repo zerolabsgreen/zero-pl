@@ -55,7 +55,7 @@ export class PurchasesController {
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FullPurchaseDto })
   findOne(@Param('id') id: string): Promise<FullPurchaseDto> {
@@ -78,7 +78,7 @@ export class PurchasesController {
   }
 
   @Get(':id/blockchain-events')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiOkResponse({ schema: purchaseEventsSchema })
   @ApiParam({ name: 'id', type: String })
   async getBlockchainEvents(@Param('id') id: string) {

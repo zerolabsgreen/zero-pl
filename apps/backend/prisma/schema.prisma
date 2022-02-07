@@ -9,8 +9,9 @@ generator client {
 }
 
 enum ApiKeyPermissions {
-  CREATE
+  PUBLIC
   READ
+  CREATE
   UPDATE
   DELETE
   ADMIN

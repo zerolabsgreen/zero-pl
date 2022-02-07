@@ -77,7 +77,7 @@ export class FilesController {
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiOkResponse({ description: 'binary file content' })
   @ApiParam({ name: 'id', type: String })
   async getFileContent(

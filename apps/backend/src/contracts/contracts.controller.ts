@@ -51,7 +51,7 @@ export class ContractsController {
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: ContractDto })
   @ApiParam({ name: 'id', type: String })
   findOne(@Param('id') id: string): Promise<ContractDto> {

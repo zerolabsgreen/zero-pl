@@ -7,10 +7,10 @@ import { Type } from '@nestjs/passport';
 import { memoize } from '../utils/memoize';
 
 export const ApiKeyPermissionsGuard: (
-  neededPermissions: ApiKeyPermissions[]
+  supportedPermissions: ApiKeyPermissions[]
 ) => Type<CanActivate> = memoize(createApiKeyPermissionsGuard);
 
-function createApiKeyPermissionsGuard(neededPermissions: ApiKeyPermissions[]): Type<CanActivate> {
+function createApiKeyPermissionsGuard(supportedPermissions: ApiKeyPermissions[]): Type<CanActivate> {
   @Injectable()
   class MixinApiKeyPermissionsGuard implements CanActivate {
     constructor(
@@ -31,7 +31,7 @@ function createApiKeyPermissionsGuard(neededPermissions: ApiKeyPermissions[]): T
       const apiKeyEntity = await this.apiKeysService.findOne(apiKey);
 
       if (apiKeyEntity) {
-          return neededPermissions.every(
+          return supportedPermissions.some(
               perm => apiKeyEntity.permissions.includes(perm)
           );
       }
