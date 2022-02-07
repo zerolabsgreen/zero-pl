@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Purchase } from '@prisma/client';
 
-export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd'> {
+export class PurchaseDto implements Purchase {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
   id: string;
 
@@ -18,13 +18,13 @@ export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reporting
   certificateId: string;
 
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
-  reportingStart: string;
+  reportingStart: Date;
 
   @ApiPropertyOptional({ example: 180 })
   reportingStartTimezoneOffset;
 
   @ApiPropertyOptional({ example: '2020-12-31T23:59:59.999Z' })
-  reportingEnd: string;
+  reportingEnd: Date;
 
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset;
@@ -49,9 +49,9 @@ export class PurchaseDto implements Omit<Purchase, 'reportingStart' | 'reporting
       sellerId: p.sellerId,
       buyerId: p.buyerId,
       certificateId: p.certificateId,
-      reportingStart: p.reportingStart?.toISOString(), 
+      reportingStart: p.reportingStart, 
       reportingStartTimezoneOffset: p.reportingStartTimezoneOffset,
-      reportingEnd: p.reportingEnd?.toISOString(), 
+      reportingEnd: p.reportingEnd, 
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
       contractId: p.contractId,
       createdAt: p.createdAt,

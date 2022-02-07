@@ -39,13 +39,13 @@ export class FullPurchaseDto {
   certificate: CertificateDto;
 
   @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
-  reportingStart: string;
+  reportingStart: Date;
 
   @ApiPropertyOptional({ example: 180 })
   reportingStartTimezoneOffset;
 
   @ApiPropertyOptional({ example: '2020-12-31T23:59:59.999Z' })
-  reportingEnd: string;
+  reportingEnd: Date;
 
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset;
@@ -63,8 +63,6 @@ export class FullPurchaseDto {
   static toDto(purchase: FullPurchaseEntity): FullPurchaseDto {
     return {
       ...purchase,
-      reportingStart: purchase.reportingStart?.toISOString(),
-      reportingEnd: purchase.reportingEnd?.toISOString(),
       buyer: BuyerDto.toDto(purchase.buyer),
       seller: new SellerDto(purchase.seller),
       certificate: CertificateDto.toDto(purchase.certificate),
