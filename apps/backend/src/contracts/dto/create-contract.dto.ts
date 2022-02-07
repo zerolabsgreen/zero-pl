@@ -38,10 +38,10 @@ export class CreateContractDto extends PartialType(PickType(ContractDto, [
   @ApiPropertyOptional({ example: 'NE' })
   @IsOptional()
   @IsString()
-  region: string;
+  region?: string;
 
   @ApiPropertyOptional({ type: String, example: "ID_123456" })
   @IsOptional()
   @IsString()
-  externalId: string;
+  externalId?: string;
 }

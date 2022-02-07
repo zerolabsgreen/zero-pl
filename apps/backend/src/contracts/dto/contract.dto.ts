@@ -3,10 +3,11 @@ import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
 import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Seller } from '@prisma/client';
-import { IsEnum, IsInt, IsISO8601, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsEnum, IsInt, IsISO8601, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
 import { PurchaseWithCertificateDto, PurchaseWithCertificateEntity } from '../../purchases/dto/purchase-with-certificate.dto';
+import { IsStringArrayDistinct } from '../../validators/ArrayDistinct';
 
 export type ContractEntityWithRelations = Contract & {
   seller: Seller,
@@ -37,7 +38,9 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   productType: ProductEnumType;
 
   @ApiProperty({ example: [EnergySourceEnumType.SOLAR, EnergySourceEnumType.WIND] })
-  @IsEnum(ProductEnumType, { each: true })
+  @IsStringArrayDistinct()
+  @ArrayMinSize(1)
+  @IsEnum(EnergySourceEnumType, { each: true })
   energySources: EnergySourceEnumType[];
 
   @ApiProperty({ example: 'EU' })
@@ -45,6 +48,8 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   region: string;
 
   @ApiProperty({ example: [CountryEnumType.DE, CountryEnumType.HR] })
+  @ArrayMinSize(1)
+  @IsStringArrayDistinct()
   @IsEnum(CountryEnumType, { each: true })
   countries: CountryEnumType[];
 

@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   Patch,
   Post,
   UseGuards,
@@ -38,7 +39,7 @@ export class CertificatesController {
       type: [CertificateDto],
       description: 'Creates certificates'
   })
-  create(@Body() createCertificateDtos: CreateCertificateDto[]) {
+  create(@Body(new ParseArrayPipe({ items: CreateCertificateDto })) createCertificateDtos: CreateCertificateDto[]) {
     return this.certificatesService.create(createCertificateDtos);
   }
 
