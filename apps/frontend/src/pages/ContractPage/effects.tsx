@@ -60,7 +60,7 @@ export const useProductPageEffects = () => {
         }
       </>
     ),
-    region: `${data?.country ?? ''}${data?.region ? ', ' + data?.region : ''}`,
+    region: `${data?.countries.join(' & ') ?? ''}${data?.region ? ', ' + data?.region : ''}`,
     contractDate: dayjs(data?.contractDate).isValid()
       ? dayjs(data?.contractDate).utc().format('YYYY-MM-DD')
       : '-',

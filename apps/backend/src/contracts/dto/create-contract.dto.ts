@@ -6,7 +6,7 @@ import { ContractDto } from './contract.dto';
 export class CreateContractDto extends PartialType(PickType(ContractDto, [
   'productType',
   'energySources',
-  'country',
+  'countries',
   'contractDate',
   'deliveryDate',
   'reportingStart',

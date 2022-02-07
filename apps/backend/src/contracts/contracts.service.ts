@@ -68,7 +68,7 @@ export class ContractsService {
             timezoneOffset: createContractDto.timezoneOffset,
             volume: BigInt(createContractDto.volume),
             productType: createContractDto.productType,
-            country: createContractDto.country,
+            countries: createContractDto.countries,
             region: createContractDto.region ?? '',
             externalId: createContractDto.externalId
           },
@@ -140,7 +140,7 @@ export class ContractsService {
           timezoneOffset: updateContractDto.timezoneOffset,
           volume: updateContractDto.volume ? BigInt(updateContractDto.volume) : undefined,
           productType: updateContractDto.productType,
-          country: updateContractDto.country,
+          countries: updateContractDto.countries,
           region: updateContractDto.region ?? '',
           externalId: updateContractDto.externalId
         },
