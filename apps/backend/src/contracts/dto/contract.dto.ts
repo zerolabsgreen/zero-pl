@@ -1,12 +1,13 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional} from '@nestjs/swagger';
 import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
-import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, ProductEnumType, Seller } from '@prisma/client';
-import { IsEnum, IsInt, IsISO8601, IsOptional, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
+import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, LabelEnumType, ProductEnumType, Seller } from '@prisma/client';
+import { ArrayMinSize, IsEnum, IsInt, IsISO8601, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
 import { PurchaseWithCertificateDto, PurchaseWithCertificateEntity } from '../../purchases/dto/purchase-with-certificate.dto';
+import { IsStringArrayDistinct } from '../../validators/ArrayDistinct';
 
 export type ContractEntityWithRelations = Contract & {
   seller: Seller,
@@ -37,16 +38,20 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   productType: ProductEnumType;
 
   @ApiProperty({ example: [EnergySourceEnumType.SOLAR, EnergySourceEnumType.WIND] })
-  @IsEnum(ProductEnumType, { each: true })
+  @IsStringArrayDistinct()
+  @ArrayMinSize(1)
+  @IsEnum(EnergySourceEnumType, { each: true })
   energySources: EnergySourceEnumType[];
 
-  @ApiProperty({ example: 'NE' })
+  @ApiProperty({ example: 'EU' })
   @IsString()
   region: string;
 
-  @ApiProperty({ example: CountryEnumType.DE })
-  @IsEnum(CountryEnumType)
-  country: CountryEnumType;
+  @ApiProperty({ example: [CountryEnumType.DE, CountryEnumType.HR] })
+  @ArrayMinSize(1)
+  @IsStringArrayDistinct()
+  @IsEnum(CountryEnumType, { each: true })
+  countries: CountryEnumType[];
 
   @ApiProperty({ example: '2020-11-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
@@ -90,6 +95,10 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   @IsString()
   externalId: string;
 
+  @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
+  @IsEnum(LabelEnumType)
+  label: LabelEnumType;
+
   @ApiProperty({ example: '2021-10-11T07:48:46.799Z' })
   createdAt: Date;
 
@@ -122,8 +131,9 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
       timezoneOffset: dbEntity.timezoneOffset,
       filecoinNode: new FilecoinNodeDto(dbEntity.filecoinNode),
       region: dbEntity.region,
-      country: dbEntity.country,
+      countries: dbEntity.countries,
       externalId: dbEntity.externalId,
+      label: dbEntity.label,
       createdAt: dbEntity.createdAt,
       updatedAt: dbEntity.updatedAt
     }

@@ -211,7 +211,7 @@ model Contract {
   productType    ProductEnumType
   energySources  EnergySourceEnumType[]
   region         String?
-  country        CountryEnumType
+  countries      CountryEnumType[]
   contractDate   DateTime
   deliveryDate   DateTime
   reportingStart DateTime
@@ -219,6 +219,7 @@ model Contract {
   timezoneOffset Int
   volume         BigInt                 @default(0)
   externalId     String?
+  label          LabelEnumType?
 
   purchases Purchase[]
 
@@ -241,6 +242,7 @@ enum ProductEnumType {
   IREC
   GO
   TIGR
+  LGC
 }
 
 enum EnergySourceEnumType {

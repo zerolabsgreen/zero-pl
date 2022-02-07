@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   Patch,
   Post,
   UseGuards,
@@ -15,7 +16,7 @@ import {
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ContractDto } from './dto/contract.dto';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
@@ -38,7 +39,7 @@ export class ContractsController {
       type: [ContractDto],
       description: 'Creates contracts'
   })
-  create(@Body() createContractDtos: [CreateContractDto]): Promise<ContractDto[]> {
+  create(@Body(new ParseArrayPipe({ items: CreateContractDto })) createContractDtos: [CreateContractDto]): Promise<ContractDto[]> {
     return this.contractsService.create(createContractDtos);
   }
 

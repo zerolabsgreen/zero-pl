@@ -3,6 +3,7 @@ import { PaymentPreferencesEnumType, ProtocolTypeEnumType, UserTypeEnumType } fr
 import { ArrayMinSize, IsArray, IsEmail, IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { CreateOrderItemDto } from "./create-order-item.dto";
 import { Type } from "class-transformer";
+import { IsStringArrayDistinct } from "../../validators/ArrayDistinct";
 
 export class CreateOrderDto {
   @ApiProperty({
@@ -11,6 +12,8 @@ export class CreateOrderDto {
     enumName: 'PaymentPreferencesEnumType',
     example: [PaymentPreferencesEnumType.WIRE_TRANSFER, PaymentPreferencesEnumType.CRYPTO]
   })
+  @ArrayMinSize(1)
+  @IsStringArrayDistinct()
   @IsEnum(PaymentPreferencesEnumType, { each: true })
   paymentPreferences: PaymentPreferencesEnumType[];
 

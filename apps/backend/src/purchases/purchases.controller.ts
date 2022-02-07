@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   Patch,
   Post,
   UseGuards,
@@ -42,7 +43,7 @@ export class PurchasesController {
       type: [FullPurchaseDto],
       description: 'Creates purchases'
   })
-  create(@Body() createPurchaseDtos: CreatePurchaseDto[]): Promise<FullPurchaseDto[]> {
+  create(@Body(new ParseArrayPipe({ items: CreatePurchaseDto })) createPurchaseDtos: CreatePurchaseDto[]): Promise<FullPurchaseDto[]> {
     return this.purchasesService.create(createPurchaseDtos);
   }
 

@@ -68,9 +68,10 @@ export class ContractsService {
             timezoneOffset: createContractDto.timezoneOffset,
             volume: BigInt(createContractDto.volume),
             productType: createContractDto.productType,
-            country: createContractDto.country,
+            countries: createContractDto.countries,
             region: createContractDto.region ?? '',
-            externalId: createContractDto.externalId
+            externalId: createContractDto.externalId,
+            label: createContractDto.label
           },
           include: {
             seller: true,
@@ -140,9 +141,10 @@ export class ContractsService {
           timezoneOffset: updateContractDto.timezoneOffset,
           volume: updateContractDto.volume ? BigInt(updateContractDto.volume) : undefined,
           productType: updateContractDto.productType,
-          country: updateContractDto.country,
+          countries: updateContractDto.countries,
           region: updateContractDto.region ?? '',
-          externalId: updateContractDto.externalId
+          externalId: updateContractDto.externalId,
+          label: updateContractDto.label
         },
         include: {
           seller: true,
