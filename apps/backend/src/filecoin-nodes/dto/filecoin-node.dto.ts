@@ -11,6 +11,12 @@ export class FilecoinNodeDto implements FilecoinNode {
   @ApiPropertyOptional({ example: '0x9442ED348b161af888e6cB999951aE8b961F7B4B' })
   blockchainAddress: string;
 
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
+
   constructor(partial: Partial<FilecoinNodeDto>) {
     Object.assign(this, partial);
   }

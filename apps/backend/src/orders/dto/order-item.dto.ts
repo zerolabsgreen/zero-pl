@@ -27,4 +27,10 @@ export class OrderItemDto implements OrderItem {
 
   @ApiProperty({ type: [OrderItemTimeframeDto] })
   timeFrames: OrderItemTimeframeDto[];
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 }

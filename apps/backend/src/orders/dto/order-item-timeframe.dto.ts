@@ -22,4 +22,10 @@ export class OrderItemTimeframeDto implements OrderItemTimeFrame {
   @ApiProperty({ type: 'number', example: 100000 })
   @Transform(({ value }) => Number(value)) // CreateOrderItemTimeframeDto.energy is a number, so no risk of loosing data here
   energy: bigint;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 }

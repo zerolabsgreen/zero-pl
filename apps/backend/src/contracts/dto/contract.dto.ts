@@ -15,7 +15,7 @@ export type ContractEntityWithRelations = Contract & {
   purchases: PurchaseWithCertificateEntity[];
 };
 
-export class ContractDto {
+export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'filecoinNodeId' | 'volume'> {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
   @IsUUID()
   id: string;
@@ -40,34 +40,33 @@ export class ContractDto {
   @IsEnum(ProductEnumType, { each: true })
   energySources: EnergySourceEnumType[];
 
-  @ApiPropertyOptional({ example: 'NE' })
+  @ApiProperty({ example: 'NE' })
   @IsString()
-  @IsOptional()
-  region?: string;
+  region: string;
 
   @ApiProperty({ example: CountryEnumType.DE })
   @IsEnum(CountryEnumType)
   country: CountryEnumType;
 
-  @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
+  @ApiProperty({ example: '2020-11-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  contractDate: string;
+  contractDate: Date;
 
-  @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
+  @ApiProperty({ example: '2021-06-01T23:59:59.999Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  deliveryDate: string;
+  deliveryDate: Date;
 
-  @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
+  @ApiProperty({ example: '2020-11-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  reportingStart: string;
+  reportingStart: Date;
 
-  @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
+  @ApiProperty({ example: '2021-06-01T23:59:59.999Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  reportingEnd: string;
+  reportingEnd: Date;
 
   @ApiProperty({ example: 180 })
   @IsInt()
@@ -87,10 +86,15 @@ export class ContractDto {
   @ValidateNested({ each: true })
   purchases: PurchaseWithCertificateDto[];
 
-  @ApiPropertyOptional({ type: String, example: "ID_123456" })
-  @IsOptional()
+  @ApiProperty({ type: String, example: "ID_123456" })
   @IsString()
-  externalId?: string;
+  externalId: string;
+
+  @ApiProperty({ example: '2021-10-11T07:48:46.799Z' })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 
   constructor(partial: Partial<ContractDto>) {
     Object.assign(this, partial);
@@ -106,10 +110,10 @@ export class ContractDto {
       id: dbEntity.id,
       productType: dbEntity.productType,
       energySources: dbEntity.energySources,
-      contractDate: dbEntity.contractDate.toISOString(),
-      deliveryDate: dbEntity.deliveryDate.toISOString(),
-      reportingStart: dbEntity.reportingStart.toISOString(),
-      reportingEnd: dbEntity.reportingEnd.toISOString(),
+      contractDate: dbEntity.contractDate,
+      deliveryDate: dbEntity.deliveryDate,
+      reportingStart: dbEntity.reportingStart,
+      reportingEnd: dbEntity.reportingEnd,
       buyer: BuyerDto.toDto(dbEntity.buyer),
       seller: new SellerDto(dbEntity.seller),
       openVolume: openVolume.toString(),
@@ -117,8 +121,11 @@ export class ContractDto {
       purchases: dbEntity.purchases.map(p => PurchaseWithCertificateDto.toDto(p)),
       timezoneOffset: dbEntity.timezoneOffset,
       filecoinNode: new FilecoinNodeDto(dbEntity.filecoinNode),
+      region: dbEntity.region,
       country: dbEntity.country,
-      externalId: dbEntity.externalId
+      externalId: dbEntity.externalId,
+      createdAt: dbEntity.createdAt,
+      updatedAt: dbEntity.updatedAt
     }
   }
 }

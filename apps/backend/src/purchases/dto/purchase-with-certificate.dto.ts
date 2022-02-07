@@ -16,12 +16,13 @@ export class PurchaseWithCertificateDto extends OmitType(PurchaseDto, ['certific
       sellerId: p.sellerId,
       buyerId: p.buyerId,
       certificate: CertificateDto.toDto(p.certificate),
-      reportingStart: p.reportingStart?.toISOString(), 
+      reportingStart: p.reportingStart, 
       reportingStartTimezoneOffset: p.reportingStartTimezoneOffset,
-      reportingEnd: p.reportingEnd?.toISOString(), 
+      reportingEnd: p.reportingEnd, 
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
-      createdOn: p.createdOn,
       contractId: p.contractId,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
     };
   }
 }

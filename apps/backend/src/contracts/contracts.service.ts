@@ -131,14 +131,14 @@ export class ContractsService {
       const newContract = await this.prisma.contract.update({
         where: { id },
         data: {
-          buyer: { connect: { id: updateContractDto.buyerId }},
-          seller: { connect: { id: updateContractDto.sellerId }},
+          buyerId: updateContractDto.buyerId,
+          sellerId: updateContractDto.sellerId,
           contractDate: updateContractDto.contractDate,
           deliveryDate: updateContractDto.deliveryDate,
           reportingStart:  updateContractDto.reportingStart,
           reportingEnd: updateContractDto.reportingEnd,
           timezoneOffset: updateContractDto.timezoneOffset,
-          volume: BigInt(updateContractDto.volume),
+          volume: updateContractDto.volume ? BigInt(updateContractDto.volume) : undefined,
           productType: updateContractDto.productType,
           country: updateContractDto.country,
           region: updateContractDto.region ?? '',

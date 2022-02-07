@@ -13,7 +13,13 @@ export class BuyerDto implements Buyer {
   blockchainAddress: string;
 
   @ApiPropertyOptional({ type: [FilecoinNodeDto] })
-  filecoinNodes?: FilecoinNodeDto[]
+  filecoinNodes?: FilecoinNodeDto[];
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  createdAt: Date;
+
+  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  updatedAt: Date;
 
   constructor(partial: Partial<BuyerDto>) {
     Object.assign(this, partial);

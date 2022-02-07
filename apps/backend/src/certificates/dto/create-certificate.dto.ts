@@ -14,7 +14,7 @@ import {
 import { IsDatetimePrismaCompatible } from '../../validators'
 import { CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
 
-export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
+export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash', 'createdAt', 'updatedAt']) {
   @ApiPropertyOptional({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
   @IsUUID()
   @IsOptional()
@@ -51,10 +51,10 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @IsEnum(ProductEnumType)
   productType: ProductEnumType;
 
-  @ApiProperty({ example: new Date('2020-11-01T00:00:00.000Z') })
+  @ApiProperty({ example: '2020-11-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  generationStart: string;
+  generationStart: Date;
 
   @ApiPropertyOptional({ example: 180 })
   @IsInt()
@@ -63,10 +63,10 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @IsOptional()
   generationStartTimezoneOffset: number;
 
-  @ApiProperty({ example: new Date('2021-06-01T23:59:59.999Z') })
+  @ApiProperty({ example: '2021-06-01T23:59:59.999Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  generationEnd: string;
+  generationEnd: Date;
 
   @ApiPropertyOptional({ example: 180 })
   @IsInt()
@@ -82,8 +82,8 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @ApiPropertyOptional({ example: 1e9 })
   capacity?: number;
 
-  @ApiPropertyOptional({ example: new Date('2021-06-30T23:59:59.999Z') })
-  commissioningDate?: string;
+  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
+  commissioningDate?: Date;
 
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   label?: LabelEnumType;
