@@ -26,6 +26,8 @@ export interface FormSelectProps {
   inputProps?: InputBaseProps['inputProps'];
   CustomMenuItem?: FC<MenuItemProps>;
   CustomInput?: FC<OutlinedInputProps>;
+  selectClassName?: string;
+  menuClassName?: string;
 }
 
 export const FormSelect: FC<FormSelectProps> = ({
@@ -36,6 +38,8 @@ export const FormSelect: FC<FormSelectProps> = ({
   placeholder,
   CustomMenuItem,
   CustomInput,
+  selectClassName,
+  menuClassName
 }) => {
   const MenuItemToDisplay = CustomMenuItem ?? StyledMenuItem;
   return (
@@ -46,7 +50,8 @@ export const FormSelect: FC<FormSelectProps> = ({
       value={value}
       onChange={handleChange}
       IconComponent={KeyboardArrowDownIcon}
-      MenuProps={{ disablePortal: true }}
+      MenuProps={{ disablePortal: true, className: menuClassName }}
+      className={selectClassName}
       input={CustomInput ? <CustomInput /> : <StyledInput />}
       renderValue={(value: any) => (
         <ValueRenderer

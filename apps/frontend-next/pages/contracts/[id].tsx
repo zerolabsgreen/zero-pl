@@ -70,7 +70,7 @@ export const ContractPage: NextPage = () => {
         }
       </>
     ),
-    region: `${data?.country ?? ''}${data?.region ? ', ' + data?.region : ''}`,
+    region: `${data?.countries?.join(', ') ?? ''}`,
     contractDate: dayjs(data?.contractDate).isValid()
       ? dayjs(data?.contractDate).utc().format('YYYY-MM-DD')
       : '-',

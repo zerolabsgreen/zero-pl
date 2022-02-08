@@ -1,5 +1,4 @@
 import { FilecoinNodeDto } from '@energyweb/zero-protocol-labs-api-client';
-import { useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -7,24 +6,19 @@ import PaperBox from '../common/PaperBox';
 import FieldLabel from '../common/FieldLabel';
 import FieldValue from '../common/FieldValue';
 import FieldValueList from '../common/FieldValueList';
-import ButtonDetails from './ButtonDetails';
 
 export interface PurchaseBuyerInformationProps {
   buyerName: string;
   buyerId: string;
   filecoinMinerIdList: FilecoinNodeDto[];
-  generationPeriod: { fromDate: string; toDate: string };
 }
 
 export const PurchaseBuyerInformation = ({
-  generationPeriod,
   buyerName,
   buyerId,
   filecoinMinerIdList = [],
 }: PurchaseBuyerInformationProps) => {
   const theme = useTheme();
-  const [info, setInfo] = useState(false);
-  const showInfo = () => setInfo(!info);
 
   return (
     <Box>
@@ -55,17 +49,7 @@ export const PurchaseBuyerInformation = ({
               <FieldValue valueText={buyerName} />
             </BuyerNameWrapper>
           </FlexBox>
-          <Box display={'flex'}>
-            <Box ml={'20px'}>
-              <div>
-                <ButtonDetails
-                  name={'Details'}
-                  onClick={showInfo}
-                  isButtonUp={info}
-                />
-              </div>
-            </Box>
-          </Box>
+          <Box />
         </FlexBox>
       </PaperBox>
     </Box>
