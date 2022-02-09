@@ -21,18 +21,25 @@ export class HeaderApiKeyStrategy extends PassportStrategy(Strategy, 'api-key') 
 
   public validate = async (apiKey: string, done: (error: Error, data) => Record<string, unknown>) => {
     const adminKey = this.configService.get<string>('SUPERADMIN_API_KEY');
+    let errorMessage = 'Invalid API key';
 
     if (adminKey === apiKey) {
       done(null, true);
     }
 
-    const exists: ApiKey | undefined = await this.apiKeysService.findOne(apiKey);
+    const existingApiKey: ApiKey | undefined = await this.apiKeysService.findOne(apiKey);
 
-    if (exists) {
-      done(null, true);
-      return;
+    if (existingApiKey) {
+      const now = new Date();
+
+      if (now.getTime() < existingApiKey.expires.getTime()) {
+        done(null, true);
+        return;
+      }
+
+      errorMessage = 'API key expired';
     }
 
-    done(new UnauthorizedException(), null);
+    done(new UnauthorizedException(errorMessage), null);
   }
 }

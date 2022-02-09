@@ -30,7 +30,7 @@ export class PurchaseDto implements Purchase {
   reportingEndTimezoneOffset;
 
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
-  contractId: string
+  contractId: string;
 
   @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
   createdAt: Date;
