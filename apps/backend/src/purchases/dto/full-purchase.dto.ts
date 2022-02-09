@@ -56,6 +56,9 @@ export class FullPurchaseDto {
   @ApiProperty({ type: [File] })
   files: File[];
 
+  @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
+  contractId: string;
+
   constructor(partial: Partial<FullPurchaseDto>) {
     Object.assign(this, partial);
   }
@@ -68,7 +71,8 @@ export class FullPurchaseDto {
       certificate: CertificateDto.toDto(purchase.certificate),
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${purchase.id}`,
       files: purchase.files.map(f => ({ ...f.file, url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
-      filecoinNodes: purchase.filecoinNodes
+      filecoinNodes: purchase.filecoinNodes,
+      contractId: purchase.contractId,
     };
   }
 }

@@ -26,11 +26,15 @@ export class HeaderApiKeyStrategy extends PassportStrategy(Strategy, 'api-key') 
       done(null, true);
     }
 
-    const exists: ApiKey | undefined = await this.apiKeysService.findOne(apiKey);
+    const existingApiKey: ApiKey | undefined = await this.apiKeysService.findOne(apiKey);
 
-    if (exists) {
-      done(null, true);
-      return;
+    if (existingApiKey) {
+      const now = new Date();
+
+      if (now.getMilliseconds() < existingApiKey.expires.getMilliseconds()) {
+        done(null, true);
+        return;
+      }
     }
 
     done(new UnauthorizedException(), null);
