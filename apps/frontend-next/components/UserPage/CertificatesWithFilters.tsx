@@ -6,12 +6,11 @@ import MenuItem from "@mui/material/MenuItem";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { styled, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography"
-import CircularProgress from "@mui/material/CircularProgress";
 import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import dayjs from "dayjs";
 import { BigNumber } from "@ethersproject/bignumber";
-import { FC, useState } from "react";
-import { ContractDto, FilecoinNodesControllerGetTransactions200TransactionsItem, useFilecoinNodesControllerFindOneWithContracts, useFilecoinNodesControllerGetTransactions } from "@energyweb/zero-protocol-labs-api-client";
+import { FC } from "react";
+import { ContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../common/PageSection"
 // import { ReactComponent as SankeySVG } from '../../assets/sankey.svg';
 // import { ReactComponent as ListSVG } from '../../assets/list.svg';
@@ -21,45 +20,49 @@ import FuelType, { FuelTypeEnum } from "../common/FuelType";
 import ButtonRight from "./ButtonRight";
 
 interface CertificatesWithFiltersProps {
-  filecoinNodeId: string;
+  certificateType: CertificateBlocksEnum;
+  handleCertificateTypeChange: (event: SelectChangeEvent) => void;
+  contracts?: ContractDto[];
+  transactionsData?: FullPurchaseDto[];
 }
 
-const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({ filecoinNodeId }) => {
+const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
+  certificateType,
+  handleCertificateTypeChange,
+  contracts = [],
+  transactionsData = []
+}) => {
   const router = useRouter();
-  const [certificateType, setCertificateType] = useState<CertificateBlocksEnum>(CertificateBlocksEnum.Redeemed);
-  const handleCertificateTypeChange = (event: SelectChangeEvent) => {
-    setCertificateType(event.target.value as CertificateBlocksEnum)
-  };
   const title = certificateType === CertificateBlocksEnum.Redeemed ? 'REC Redemptions' : 'Contracts (Futures)'
   const headers = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsHeaders : contractsHeaders;
-
-  const { data: filecoinNodeTransactions, isLoading: areTransactionsLoading } = useFilecoinNodesControllerGetTransactions(filecoinNodeId);
-  const { data: filecoinNodeContracts, isLoading: areContractsLoading } = useFilecoinNodesControllerFindOneWithContracts(filecoinNodeId);
-
-  const redeemedRecsTableData: TableRowData<FilecoinNodesControllerGetTransactions200TransactionsItem['id']>[] = filecoinNodeTransactions?.transactions?.map(tx => ({
+  console.log(transactionsData);
+  const redeemedRecsTableData: TableRowData<FullPurchaseDto['id']>[] = transactionsData.map(tx => ({
     id: tx.id,
-    proofId: <EthereumAddress shortify clipboard address={tx.id ?? ''} />,
-    product: tx.generation.productType,
-    beneficiary: filecoinNodeId,
-    amount: `${filecoinNodeTransactions.recsTotal} ${DisplayUnit.MWh}`,
-    period: (
-    <>
-      {dayjs(tx.generation.generationStartLocal).isValid()
-        ? dayjs(tx.generation.generationStartLocal).utc().format('YYYY-MM-DD')
-        : '-'} <br />
-      {dayjs(tx.generation.generationEndLocal).isValid()
-        ? dayjs(tx.generation.generationEndLocal).utc().format('YYYY-MM-DD')
-        : '-'}
-    </>),
-    generatorId: tx.generation.generatorId,
-    energySource: <FuelType fuelType={tx.generation.energySource as FuelTypeEnum} />,
-    region: `${tx.generation.country}, ${tx.generation.region}`,
-    seller: <EthereumAddress shortify clipboard address={tx.sellerId} />,
+    proofId: <EthereumAddress shortify clipboard address={tx.id} />,
+    beneficiary: <EthereumAddress shortify clipboard address={tx.buyer.id} />,
+    product: tx.certificate.productType,
+    amount: formatPower(tx.certificate.energy, {
+      unit: DisplayUnit.MWh,
+      includeUnit: true,
+    }),
+    period: `${dayjs(tx.certificate.generationStart).isValid()
+      ? dayjs(tx.certificate.generationStart)
+          .utc()
+          .format('YYYY-MM-DD')
+      : '-'} / ${dayjs(tx.certificate.generationEnd).isValid()
+      ? dayjs(tx.certificate.generationEnd)
+          .utc()
+          .format('YYYY-MM-DD')
+      : '-'}`,
+    generatorId: tx.certificate.generatorId,
+    energySource: <FuelType fuelType={tx.certificate.energySource as FuelTypeEnum} />,
+    region: `${tx.certificate.country}, ${tx.certificate.region}`,
+    seller: <EthereumAddress shortify clipboard address={tx.seller.id ?? ''} />,
     action: <ButtonRight onClick={() => router.push(`/proofs/${tx.id}`)} />
-  }));
+    })) ?? [];
 
 
-  const contractTableData: TableRowData<ContractDto['id']>[] = filecoinNodeContracts?.contracts?.map((contract) => {
+  const contractTableData: TableRowData<ContractDto['id']>[] = contracts.map((contract) => {
     const totalAmount = (BigNumber.from(contract?.openVolume ?? 0).add(BigNumber.from(contract?.deliveredVolume ?? 0))).toString();
     return {
     id: contract?.id ?? '',
@@ -100,16 +103,13 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({ filecoinNod
     deliveryDate: dayjs(contract?.deliveryDate).isValid()
       ? dayjs(contract?.deliveryDate).utc().format('YYYY-MM-DD')
       : '-',
-    seller: <EthereumAddress shortify clipboard address={contract?.seller.blockchainAddress ?? ''} />,
+    seller: <EthereumAddress shortify clipboard address={contract?.seller.id ?? ''} />,
     action: <ButtonRight onClick={() => router.push(`/contracts/${contract.id}`)} />
   }}) ?? [];
 
   const tableData = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsTableData : contractTableData;
 
   const theme = useTheme();
-  const isLoading = areContractsLoading || areTransactionsLoading;
-
-  if (isLoading) return <CircularProgress />;
 
   return (
     <PageSection>
@@ -118,6 +118,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({ filecoinNod
         options={certificatesTypeOptions}
         handleChange={handleCertificateTypeChange}
         selectClassName={css`
+          height: 48px;
           background-color: ${theme.palette.secondary.light};
           max-width: 150px;
           & .MuiSvgIcon-root {
