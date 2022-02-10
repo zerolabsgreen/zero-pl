@@ -2,7 +2,7 @@ const $blueExtraDark = '#19355E';
 const $blueLight = '#4480DB';
 
 const $green = '#00D08A';
-const $greenLight = '#b1ebcd';
+const $greenLight = '#BEFFE9';
 
 const $graphite = '#6A658A';
 

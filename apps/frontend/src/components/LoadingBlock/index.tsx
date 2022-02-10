@@ -126,3 +126,5 @@ export const LoadingBlock = () => {
     </Box>
   </StyledLoading>
 )}
+
+export default LoadingBlock

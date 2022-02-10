@@ -12,7 +12,7 @@ export function FieldValueList({ valueList = [] }: FieldValueListProps) {
       {valueList.map((value, index) => (
         <Link
           key={value}
-          href={`/buyer/${value}`}
+          href={`/user/${value}`}
         >
           <StyledBox component={'span'}>
             {value}
