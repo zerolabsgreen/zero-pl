@@ -5,7 +5,15 @@ import utc from 'dayjs/plugin/utc';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { FilecoinNodesControllerGetTransactions200TransactionsItem, FullPurchaseDto, purchasesControllerFindOne, useBuyersControllerFindOne, useFilecoinNodesControllerFindOne, useFilecoinNodesControllerFindOneWithContracts, useFilecoinNodesControllerGetTransactions } from '@energyweb/zero-protocol-labs-api-client';
+import {
+  FilecoinNodesControllerGetTransactions200TransactionsItem,
+  FullPurchaseDto,
+  purchasesControllerFindOne,
+  useBuyersControllerFindOne,
+  useFilecoinNodesControllerFindOne,
+  useFilecoinNodesControllerFindOneWithContracts,
+  useFilecoinNodesControllerGetTransactions
+} from '@energyweb/zero-protocol-labs-api-client';
 import LoadingBlock from '../../components/common/LoadingBlock';
 import Breadcrumbs from '../../components/common/Breadcrumbs';
 import PageSection from '../../components/common/PageSection';
@@ -15,7 +23,7 @@ import YearlyCertificatesTable, { CertificatePerYear } from '../../components/Us
 import { ReactComponent as RedeemedCertificateSVG } from '../../assets/certificate_locked.svg';
 import { ReactComponent as ContractsSVG } from '../../assets/certificate_timer.svg';
 import { formatPower } from '../../utils';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 dayjs.extend(utc);
 
@@ -33,25 +41,25 @@ const BuyerPage: NextPage = () => {
   const certificateType = certType as CertificateBlocksEnum ?? CertificateBlocksEnum.Redeemed;
 
   const filecoinNodeId = id as string;
-  const handleCertificateTypeChange = (event: SelectChangeEvent) => {
+  const handleCertificateTypeChange = useCallback((event: SelectChangeEvent) => {
     router.push({
         pathname: `/user/${id}`,
         query: { certType: encodeURI(event.target.value as CertificateBlocksEnum) },
     });
-  };
+  }, [router, id]);
 
-  const handleRedeemedSelect = () => {
+  const handleRedeemedSelect = useCallback(() => {
     router.push({
       pathname: `/user/${id}`,
       query: { certType: encodeURI(CertificateBlocksEnum.Redeemed) },
     });
-  }
-  const handleContractsSelect = () => {
+  }, [router, id])
+  const handleContractsSelect = useCallback(() => {
     router.push({
       pathname: `/user/${id}`,
       query: { certType: encodeURI(CertificateBlocksEnum.Contracts) },
     });
-  }
+  }, [router, id])
 
   const {
     data: filecoinNode,
@@ -71,14 +79,14 @@ const BuyerPage: NextPage = () => {
   const { data: filecoinNodeTransactions, isLoading: areTransactionsLoading } = useFilecoinNodesControllerGetTransactions(filecoinNodeId);
   const transactions = filecoinNodeTransactions?.transactions;
 
-  const fetchAllTransactionsData = async (transactions: FilecoinNodesControllerGetTransactions200TransactionsItem[]) => {
+  const fetchAllTransactionsData = useCallback(async (transactions: FilecoinNodesControllerGetTransactions200TransactionsItem[]) => {
     const newTxsData = await Promise.all(
       transactions.map(
         async (tx) => await purchasesControllerFindOne(`${tx.id}`)
       )
     )
     setTransactionsData(newTxsData);
-  }
+  }, [transactions])
 
   useEffect(() => {
     if(transactions && transactions.length > 0) {
@@ -86,25 +94,25 @@ const BuyerPage: NextPage = () => {
     }
   }, [transactions])
 
-  const yearlyRedeemedData = yearsToUse.map(yearItem => {
-    const allTransactionsFromYear = transactionsData.filter(purchase => dayjs(purchase.certificate.generationStart).get('year') === yearItem.year);
+  const yearlyRedeemedData = useMemo(() => yearsToUse.map(yearItem => {
+    const allTransactionsFromYear = transactionsData.filter(purchase => dayjs(purchase.reportingEnd).get('year') === yearItem.year);
     return {
       ...yearItem,
       amount: allTransactionsFromYear?.reduce(
         (prev, current) => prev + parseFloat(formatPower(current.certificate.energy)), yearItem.amount)
     }
-  });
+  }), [transactionsData]);
 
   const { data: filecoinNodeContracts, isLoading: areContractsLoading } = useFilecoinNodesControllerFindOneWithContracts(filecoinNodeId);
 
-  const yearlyContractsData = yearsToUse.map(yearItem => {
-    const allContractsFromYear = filecoinNodeContracts?.contracts?.filter(contract => dayjs(contract.contractDate).get('year') === yearItem.year);
+  const yearlyContractsData = useMemo(() => yearsToUse.map(yearItem => {
+    const allContractsFromYear = filecoinNodeContracts?.contracts?.filter(contract => dayjs(contract.reportingEnd).get('year') === yearItem.year);
     return {
       ...yearItem,
       amount: allContractsFromYear?.reduce(
         (prev, current) => prev + (parseFloat(formatPower(current.openVolume)) + parseFloat(formatPower(current.deliveredVolume))), yearItem.amount)
     }
-  });
+  }), [filecoinNodeContracts]);
 
   const isLoading = isFilecoinNodeLoading || isBuyerLoading || areTransactionsLoading || areContractsLoading;
 
@@ -116,14 +124,14 @@ const BuyerPage: NextPage = () => {
           breadcrumbList={[
             'Product Offer',
             `Miner ID: ${id}`,
-            'User Page',
+            'Beneficiary Page',
           ]}
         />
-        <PageSection headingText={'User Page'}>
+        <PageSection headingText={'Beneficiary Page'}>
           <UserInfoBlock
+            minerId={id as string}
             userName={buyer.name}
             userAddress={buyer.blockchainAddress}
-            filecoinNodes={buyer.filecoinNodes}
             buyerId={buyer.id}
           />
           <Grid container spacing={"30px"} pt="24px">
@@ -150,6 +158,7 @@ const BuyerPage: NextPage = () => {
             </Grid>
         </PageSection>
         <CertificatesWithFilters
+          userId={id as string}
           certificateType={certificateType}
           handleCertificateTypeChange={handleCertificateTypeChange}
           contracts={filecoinNodeContracts.contracts}

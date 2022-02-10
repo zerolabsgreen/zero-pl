@@ -9,17 +9,18 @@ import Typography from "@mui/material/Typography"
 import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import dayjs from "dayjs";
 import { BigNumber } from "@ethersproject/bignumber";
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { ContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../common/PageSection"
 // import { ReactComponent as SankeySVG } from '../../assets/sankey.svg';
 // import { ReactComponent as ListSVG } from '../../assets/list.svg';
 import EthereumAddress from "../common/EthereumAddress";
-import { DisplayUnit, formatPower } from "../../utils";
+import { DisplayUnit, formatPower, ProductEnumType } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../common/FuelType";
 import ButtonRight from "./ButtonRight";
 
 interface CertificatesWithFiltersProps {
+  userId: string;
   certificateType: CertificateBlocksEnum;
   handleCertificateTypeChange: (event: SelectChangeEvent) => void;
   contracts?: ContractDto[];
@@ -27,19 +28,30 @@ interface CertificatesWithFiltersProps {
 }
 
 const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
+  userId,
   certificateType,
   handleCertificateTypeChange,
   contracts = [],
   transactionsData = []
 }) => {
   const router = useRouter();
+  const { product } = router.query;
+  const productType = product as ProductEnumType ?? 'Any';
+
+  const handleProductTypeChange = useCallback((event: SelectChangeEvent) => {
+    router.push({
+      pathname: `/user/${userId}`,
+      query: { product: encodeURI(event.target.value) },
+    });
+  }, [router, userId])
+
   const title = certificateType === CertificateBlocksEnum.Redeemed ? 'REC Redemptions' : 'Contracts (Futures)'
   const headers = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsHeaders : contractsHeaders;
-  console.log(transactionsData);
-  const redeemedRecsTableData: TableRowData<FullPurchaseDto['id']>[] = transactionsData.map(tx => ({
+
+  const redeemedRecsTableData: TableRowData<FullPurchaseDto['id']>[] = useMemo(() => transactionsData.map(tx => ({
     id: tx.id,
     proofId: <EthereumAddress shortify clipboard address={tx.id} />,
-    beneficiary: <EthereumAddress shortify clipboard address={tx.buyer.id} />,
+    beneficiary: tx.buyer.filecoinNodes[0].id,
     product: tx.certificate.productType,
     amount: formatPower(tx.certificate.energy, {
       unit: DisplayUnit.MWh,
@@ -57,12 +69,12 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     generatorId: tx.certificate.generatorId,
     energySource: <FuelType fuelType={tx.certificate.energySource as FuelTypeEnum} />,
     region: `${tx.certificate.country}, ${tx.certificate.region}`,
-    seller: <EthereumAddress shortify clipboard address={tx.seller.id ?? ''} />,
+    seller: tx.seller.name ?? '',
     action: <ButtonRight onClick={() => router.push(`/proofs/${tx.id}`)} />
-    })) ?? [];
+    })), [transactionsData]);
 
 
-  const contractTableData: TableRowData<ContractDto['id']>[] = contracts.map((contract) => {
+  const contractTableData: TableRowData<ContractDto['id']>[] = useMemo(() => contracts.map((contract) => {
     const totalAmount = (BigNumber.from(contract?.openVolume ?? 0).add(BigNumber.from(contract?.deliveredVolume ?? 0))).toString();
     return {
     id: contract?.id ?? '',
@@ -103,31 +115,48 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     deliveryDate: dayjs(contract?.deliveryDate).isValid()
       ? dayjs(contract?.deliveryDate).utc().format('YYYY-MM-DD')
       : '-',
-    seller: <EthereumAddress shortify clipboard address={contract?.seller.id ?? ''} />,
+    seller: contract?.seller.name,
     action: <ButtonRight onClick={() => router.push(`/contracts/${contract.id}`)} />
-  }}) ?? [];
+  }}), [contracts]);
 
   const tableData = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsTableData : contractTableData;
-
+  const filteredTableData = productType !== 'Any' ? tableData.filter(row => row.product.includes(productType)) : tableData
   const theme = useTheme();
 
   return (
     <PageSection>
-      <FormSelect
-        value={certificateType}
-        options={certificatesTypeOptions}
-        handleChange={handleCertificateTypeChange}
-        selectClassName={css`
-          height: 48px;
-          background-color: ${theme.palette.secondary.light};
-          max-width: 150px;
-          & .MuiSvgIcon-root {
-            fill: ${theme.palette.secondary.main}
-          }
-        `}
-        menuClassName={css`& ul { padding: 0;} `}
-        CustomMenuItem={StyledMenuItem}
-      />
+      <Box display={'flex'}>
+        <FormSelect
+          value={certificateType}
+          options={certificatesTypeOptions}
+          handleChange={handleCertificateTypeChange}
+          selectClassName={css`
+            height: 48px;
+            background-color: ${theme.palette.secondary.light};
+            max-width: 150px;
+            & .MuiSvgIcon-root {
+              fill: ${theme.palette.secondary.main}
+            }
+          `}
+          menuClassName={css`& ul { padding: 0;} `}
+          CustomMenuItem={StyledMenuItem}
+        />
+        <FormSelect
+          value={productType}
+          options={productTypeOptions}
+          handleChange={handleProductTypeChange}
+          selectClassName={css`
+            margin-left: 20px;
+            height: 48px;
+            max-width: 150px;
+            & .MuiSvgIcon-root {
+              fill: ${theme.palette.secondary.main}
+            }
+          `}
+          menuClassName={css`& ul { padding: 0;} `}
+          CustomMenuItem={StyledMenuItem}
+        />
+      </Box>
       <Box display={'flex'} mt="34px" justifyContent={'space-between'} alignItems={'center'}>
         <Typography
           mt={'15px'}
@@ -149,7 +178,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
         </Box> */}
       </Box>
       <Box mt="20px">
-        <GenericTable headers={headers} data={tableData} />
+        <GenericTable headers={headers} data={filteredTableData} />
       </Box>
     </PageSection>
   )
@@ -164,6 +193,15 @@ export enum CertificateBlocksEnum {
 const certificatesTypeOptions: SelectOption[] = [
   { label: CertificateBlocksEnum.Redeemed, value: CertificateBlocksEnum.Redeemed },
   { label: CertificateBlocksEnum.Contracts, value: CertificateBlocksEnum.Contracts }
+]
+
+const productTypeOptions: SelectOption[] = [
+  { label: 'Any', value: 'Any' },
+  { label: ProductEnumType.REC, value: ProductEnumType.REC },
+  { label: ProductEnumType.IREC, value: ProductEnumType.IREC },
+  { label: ProductEnumType.GO, value: ProductEnumType.GO },
+  { label: ProductEnumType.TIGR, value: ProductEnumType.TIGR },
+  { label: ProductEnumType.LGC, value: ProductEnumType.LGC },
 ]
 
 const redeemedRecsHeaders: TableHeader = {
