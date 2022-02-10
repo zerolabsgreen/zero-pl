@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { css } from "@emotion/css";
 import Box from "@mui/material/Box";
 // import Button from "@mui/material/Button";
@@ -9,15 +8,16 @@ import Typography from "@mui/material/Typography"
 import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import dayjs from "dayjs";
 import { BigNumber } from "@ethersproject/bignumber";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { ContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
-import PageSection from "../common/PageSection"
+import PageSection from "../PageSection"
 // import { ReactComponent as SankeySVG } from '../../assets/sankey.svg';
 // import { ReactComponent as ListSVG } from '../../assets/list.svg';
-import EthereumAddress from "../common/EthereumAddress";
-import { DisplayUnit, formatPower, ProductEnumType } from "../../utils";
-import FuelType, { FuelTypeEnum } from "../common/FuelType";
+import EthereumAddress from "../EthereumAddress";
+import { Unit, formatPower, ProductEnumType } from "../../utils";
+import FuelType, { FuelTypeEnum } from "../FuelType";
 import ButtonRight from "./ButtonRight";
+import { useNavigate } from "react-router";
 
 interface CertificatesWithFiltersProps {
   userId: string;
@@ -34,16 +34,12 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
   contracts = [],
   transactionsData = []
 }) => {
-  const router = useRouter();
-  const { product } = router.query;
-  const productType = product as ProductEnumType ?? 'Any';
+  const navigate = useNavigate()
+  const [productType, setProductType] = useState<ProductEnumType | 'Any'>('Any')
 
   const handleProductTypeChange = useCallback((event: SelectChangeEvent) => {
-    router.push({
-      pathname: `/user/${userId}`,
-      query: { product: encodeURI(event.target.value) },
-    });
-  }, [router, userId])
+    setProductType(event.target.value as ProductEnumType)
+  }, [])
 
   const title = certificateType === CertificateBlocksEnum.Redeemed ? 'REC Redemptions' : 'Contracts (Futures)'
   const headers = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsHeaders : contractsHeaders;
@@ -54,7 +50,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     beneficiary: userId,
     product: tx.certificate.productType,
     amount: formatPower(tx.certificate.energy, {
-      unit: DisplayUnit.MWh,
+      unit: Unit.MWh,
       includeUnit: true,
     }),
     period: `${dayjs(tx.certificate.generationStart).isValid()
@@ -70,7 +66,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     energySource: <FuelType fuelType={tx.certificate.energySource as FuelTypeEnum} />,
     region: `${tx.certificate.country}, ${tx.certificate.region}`,
     seller: tx.seller.name ?? '',
-    action: <ButtonRight onClick={() => router.push(`/proofs/${tx.id}`)} />
+    action: <ButtonRight onClick={() => navigate(`/partners/filecoin/purchases/${tx.id}`)} />
     })), [transactionsData]);
 
 
@@ -83,10 +79,10 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     beneficiary: contract?.filecoinNode?.id ?? '',
     amount: contract?.openVolume || contract?.deliveredVolume
       ? <>
-          {formatPower(totalAmount, { unit: DisplayUnit.MWh, includeUnit: true })}
+          {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })}
           <br />
           <SmallText>
-            ({formatPower(contract.openVolume, { unit: DisplayUnit.MWh, includeUnit: true })} | {formatPower(contract.deliveredVolume, { unit: DisplayUnit.MWh, includeUnit: true })})
+            ({formatPower(contract.openVolume, { unit: Unit.MWh, includeUnit: true })} | {formatPower(contract.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
           </SmallText>
         </>
       : '',
@@ -116,7 +112,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
       ? dayjs(contract?.deliveryDate).utc().format('YYYY-MM-DD')
       : '-',
     seller: contract?.seller.name,
-    action: <ButtonRight onClick={() => router.push(`/contracts/${contract.id}`)} />
+    action: <ButtonRight onClick={() => navigate(`/partners/filecoin/contracts/${contract.id}`)} />
   }}), [contracts]);
 
   const tableData = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsTableData : contractTableData;
@@ -142,7 +138,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
           CustomMenuItem={StyledMenuItem}
         />
         <FormSelect
-          value={productType}
+          value={productType as ProductEnumType}
           options={productTypeOptions}
           handleChange={handleProductTypeChange}
           selectClassName={css`

@@ -12,6 +12,7 @@ import { AddressMappingProvider, SelectedProtocolProvider } from '../context';
 import WizardThankPage from '../pages/WizardThankYouPage';
 import { useAxiosDefaults } from '../hooks';
 import ProofExamplePage from '../pages/ProofExamplePage';
+import BeneficiaryPage from '../pages/BeneficiaryPage';
 
 const StyledDiv = styled.div`
   background-color: #f6f3f9;
@@ -34,9 +35,14 @@ export const App = () => {
               path={'/partners/filecoin/contracts/:id'}
               element={<ContractPage />}
             />
+            {/* this is an old page, keeping just in case anybody needs old */}
             <Route
               path={'/partners/filecoin/nodes/:productId/transactions'}
               element={<PurchasePage />}
+            />
+            <Route
+              path={'/partners/filecoin/nodes/:minerId/beneficiary'}
+              element={<BeneficiaryPage />}
             />
             <Route
               path={'/wizard'}

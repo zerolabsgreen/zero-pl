@@ -19,7 +19,7 @@ export function FieldValueList({ valueList = [], disableLink = false }: FieldVal
       ) : (
         <StyledLink
           key={value}
-          to={`/partners/filecoin/nodes/${value}/transactions`}
+          to={`/partners/filecoin/nodes/${value}/beneficiary`}
         >
           <Box component={'span'}>
             {value}
