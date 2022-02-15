@@ -1,21 +1,25 @@
-import type { FC } from 'react';
-import dayjs from 'dayjs';
+import { FC, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import { styled, useTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
 import { blockchainEventsMock } from './blockchainEvents';
-import BlockchainEventIcons from '../../ProofPage/BlockchainEventIcons';
-import EthereumAddress from '../../common/EthereumAddress';
+import TableView from './TableView';
+import SankeyView from './SankeyView';
+
+enum ViewModeEnum {
+  Table = 'Table',
+  Sankey = 'Sankey'
+}
 
 export const TableListProofsExample: FC = () => {
-  const theme = useTheme();
+  const [viewMode, setViewMode] = useState(ViewModeEnum.Table)
+  const toggleTableMode = () => setViewMode(viewMode === ViewModeEnum.Table ? ViewModeEnum.Sankey : ViewModeEnum.Table)
+  const btnTitle = `${viewMode === ViewModeEnum.Table ? ViewModeEnum.Sankey : ViewModeEnum.Table} view`
+
   return (
     <Box mb={4}>
-      <Box display="flex" alignItems="center">
+      <Box display="flex" alignItems="center" justifyContent='space-between'>
         <Typography
           mt={'30px'}
           mb={'18px'}
@@ -26,107 +30,36 @@ export const TableListProofsExample: FC = () => {
         >
           BLOCKCHAIN PROOFS {'&'} HISTORY
         </Typography>
+        <Box>
+          <SecondaryButton onClick={toggleTableMode}>
+            {btnTitle}
+          </SecondaryButton>
+        </Box>
       </Box>
-        <TableWrapper>
-          <StyledTable>
-            <TableBody>
-              {blockchainEventsMock.map(event => (
-                  <TableRow
-                    key={event.transactionHash}
-                    sx={{ backgroundColor: '#F6F3F9' }}
-                  >
-                      <StyledTableCell>
-                        <span style={{ marginLeft: '20px', marginRight: '30px' }}>
-                          <StyledThCell>Date</StyledThCell>
-                          <span>{dayjs(event.timestamp!*1000).format('YYYY.MM.DD')}</span>
-                        </span>
-                      </StyledTableCell>
-                      <StyledTableCell
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          color: theme.palette.secondary.main,
-                          fontWeight: 700,
-                          marginLeft: '10px'
-                        }}
-                      >
-                        <BlockchainEventIcons event={event.name} />
-                        <span style={{
-                          color: theme.palette.secondary.main,
-                          fontWeight: 700,
-                          marginLeft: '10px'
-                        }}
-                        >{event.name}</span>
-                      </StyledTableCell>
-                      <StyledTableCell
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          width: '130px'
-                        }}
-                      >
-                        <StyledThCell>Amount</StyledThCell>
-                        <span>{event.recs} RECs</span>
-                      </StyledTableCell>
-                      <StyledTableCell
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          minWidth: '140px',
-                        }}
-                      >
-                        <StyledThCell sx={{ width: '130px' }}>
-                          From Address
-                        </StyledThCell>
-                        <EthereumAddress popover shortify address={event.from ?? ''} />
-                      </StyledTableCell>
-                      <StyledTableCell sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <StyledThCell>To Address</StyledThCell>
-                        <EthereumAddress popover shortify address={event.to ?? ''} />
-                      </StyledTableCell>
-                      <StyledTableCell sx={{ marginRight: '22px' }}>
-                        <span>
-                          <StyledThCell>
-                            Transaction proof
-                          </StyledThCell>
-                          <EthereumAddress shortify visibility address={event.transactionHash ?? ''} />
-                        </span>
-                      </StyledTableCell>
-                  </TableRow>))}
-            </TableBody>
-          </StyledTable>
-        </TableWrapper>
+        {viewMode === ViewModeEnum.Table
+          ? <TableView blockchainEvents={blockchainEventsMock} />
+          : <SankeyView blockchainEvents={blockchainEventsMock} />
+        }
     </Box>
   );
 };
 
-const TableWrapper = styled(Box)(({ theme }) => `
-  border-radius: 5px;
-  padding: 0 16px;
+const SecondaryButton = styled(Button)(({ theme }) => `
   background-color: ${theme.palette.background.paper};
-  & .MuiTableRow-root {
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  };
-`);
-
-const StyledTable = styled(Table)`
-  border-collapse: separate;
-  border-spacing: 0px 16px;
-`;
-
-const StyledTableCell = styled(TableCell)(({ theme }) => `
   color: ${theme.palette.primary.main};
-  font-weight: 600;
-  font-size: 20px;
-  border: none;
-  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
+  border-radius: 5px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 14px;
+  margin-right: 20px;
+  &:hover {
+    background-color: ${theme.palette.secondary.main};
+    color: ${theme.palette.background.paper};
+    & path {
+      fill: ${theme.palette.primary.main}
+    }
+  }
 `)
-
-const StyledThCell = styled('span')`
-  display: flex;
-  font-weight: 500;
-  font-size: 14px;
-`

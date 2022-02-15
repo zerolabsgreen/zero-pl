@@ -52,11 +52,12 @@ const ProofExamplePage: NextPage = () => {
               <Grid container>
                 <Grid item xs={12}>
                   <Typography
+                    mt={'50px'}
                     mb={'18px'}
-                    fontWeight={700}
+                    // fontWeight={700}
                     fontSize={'20px'}
                     color='primary'
-                    sx={{ mt: '50px' }}
+                    sx={{ fontWeight: 700 }}
                   >
                     Certificate information
                   </Typography>
