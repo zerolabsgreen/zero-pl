@@ -217,7 +217,7 @@ const contractsHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
   beneficiary: { label: 'Beneficiary' },
   product: { label: 'Product' },
-  amount: { label: 'Amount' },
+  amount: { label: 'Amount (Open | Delivered)' },
   period: { label: 'Period' },
   energySource: { label: 'Energy Source' },
   region: { label: 'Region' },
