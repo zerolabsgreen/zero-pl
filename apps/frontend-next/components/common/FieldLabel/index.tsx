@@ -8,7 +8,6 @@ export interface FieldLabelProps extends BoxProps {
 
 const StyledFieldLabel = styled(Box)(({ theme }) => `
   font-size: 16px;
-  font-weight: 500;
   line-height: 16px;
   color: ${theme.palette.primary.main};
 `);
@@ -25,6 +24,7 @@ export const FieldLabel = ({
     mb={mb}
     minWidth={width}
     maxWidth={width}
+    sx={{ fontWeight: 500 }}
     {...props}
   >
     {labelText}
