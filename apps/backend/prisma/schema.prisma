@@ -201,26 +201,43 @@ model OrderItemTimeFrame {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+model RegionCountry {
+  id        Int                        @id @default(autoincrement())
+  region    String?
+  country   CountryEnumType
+  contracts RegionCountryOnContracts[]
+
+  @@unique([region, country])
+}
+
+model RegionCountryOnContracts {
+  contract        Contract      @relation(fields: [contractId], references: [id])
+  contractId      String
+  regionCountry   RegionCountry @relation(fields: [regionCountryId], references: [id])
+  regionCountryId Int
+
+  @@id([contractId, regionCountryId])
+}
+
 model Contract {
-  id             String                 @id @default(uuid())
-  buyer          Buyer                  @relation(fields: [buyerId], references: [id])
-  buyerId        String
-  seller         Seller                 @relation(fields: [sellerId], references: [id])
-  sellerId       String
-  filecoinNode   FilecoinNode?          @relation(fields: [filecoinNodeId], references: [id])
-  filecoinNodeId String?
-  productType    ProductEnumType
-  energySources  EnergySourceEnumType[]
-  region         String?
-  countries      CountryEnumType[]
-  contractDate   DateTime
-  deliveryDate   DateTime
-  reportingStart DateTime
-  reportingEnd   DateTime
-  timezoneOffset Int
-  volume         BigInt                 @default(0)
-  externalId     String?
-  label          LabelEnumType?
+  id              String                     @id @default(uuid())
+  buyer           Buyer                      @relation(fields: [buyerId], references: [id])
+  buyerId         String
+  seller          Seller                     @relation(fields: [sellerId], references: [id])
+  sellerId        String
+  filecoinNode    FilecoinNode?              @relation(fields: [filecoinNodeId], references: [id])
+  filecoinNodeId  String?
+  productType     ProductEnumType
+  energySources   EnergySourceEnumType[]
+  regionCountries RegionCountryOnContracts[]
+  contractDate    DateTime
+  deliveryDate    DateTime
+  reportingStart  DateTime
+  reportingEnd    DateTime
+  timezoneOffset  Int
+  volume          BigInt                     @default(0)
+  externalId      String?
+  label           LabelEnumType?
 
   purchases Purchase[]
 

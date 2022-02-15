@@ -79,7 +79,8 @@ export class FilecoinNodesService {
               seller: true,
               buyer: true,
               filecoinNode: true,
-              purchases: { include: { certificate: true } }
+              purchases: { include: { certificate: true } },
+              regionCountries: { include: { regionCountry: true }}
             }
           },
         }

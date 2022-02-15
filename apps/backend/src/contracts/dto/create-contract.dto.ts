@@ -7,12 +7,12 @@ import { ContractDto } from './contract.dto';
 export class CreateContractDto extends PartialType(PickType(ContractDto, [
   'productType',
   'energySources',
-  'countries',
   'contractDate',
   'deliveryDate',
   'reportingStart',
   'reportingEnd',
-  'timezoneOffset'
+  'timezoneOffset',
+  'regionCountries'
 ])) {
   @ApiPropertyOptional({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
@@ -35,11 +35,6 @@ export class CreateContractDto extends PartialType(PickType(ContractDto, [
   @IsOptional()
   @IsString()
   filecoinNodeId?: string;
-
-  @ApiPropertyOptional({ example: 'NE' })
-  @IsOptional()
-  @IsString()
-  region?: string;
 
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   @IsOptional()

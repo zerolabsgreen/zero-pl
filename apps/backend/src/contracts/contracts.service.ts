@@ -68,23 +68,58 @@ export class ContractsService {
             timezoneOffset: createContractDto.timezoneOffset,
             volume: BigInt(createContractDto.volume),
             productType: createContractDto.productType,
-            countries: createContractDto.countries,
-            region: createContractDto.region ?? '',
             externalId: createContractDto.externalId,
             label: createContractDto.label
-          },
-          include: {
-            seller: true,
-            buyer: true,
-            filecoinNode: true,
-            purchases: { include: { certificate: true } }
           }
         }).catch(err => {
           this.logger.error(`error creating a new Contract: ${err}`);
           throw err;
         });
 
-        contracts.push(ContractDto.toDto(newRecord));
+        for (const regionCountry of createContractDto.regionCountries) {
+          let toBeAssigned = await prisma.regionCountry.findFirst({ where: {
+            country: regionCountry.country,
+            region: regionCountry.region
+          }})
+
+          if (!toBeAssigned) {
+            toBeAssigned = await prisma.regionCountry.create({
+              data: {
+                country: regionCountry.country,
+                region: regionCountry.region
+              }
+            }).catch(err => {
+              this.logger.error(`error creating a new RegionCountry: ${err}`);
+              throw err;
+            });
+          }
+
+          await prisma.regionCountryOnContracts.create({
+            data: {
+              regionCountryId: toBeAssigned.id,
+              contractId: newRecord.id
+            }
+          }).catch(err => {
+            this.logger.error(`error linking regionCountry to the contract: ${err}`);
+            throw err;
+          });
+        }
+
+        const completeContract = await prisma.contract.findUnique({
+          where: { id: newRecord.id },
+          include: {
+            seller: true,
+            buyer: true,
+            filecoinNode: true,
+            purchases: { include: { certificate: true } },
+            regionCountries: { include: { regionCountry: true }}
+          }
+        }).catch(err => {
+          this.logger.error(`error getting the Contract: ${err}`);
+          throw err;
+        });
+
+        contracts.push(ContractDto.toDto(completeContract));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
@@ -100,7 +135,8 @@ export class ContractsService {
         seller: true,
         buyer: true,
         filecoinNode: true,
-        purchases: { include: { certificate: true } }
+        purchases: { include: { certificate: true } },
+        regionCountries: { include: { regionCountry: true } }
       }
     });
 
@@ -116,7 +152,8 @@ export class ContractsService {
         seller: true,
         buyer: true,
         filecoinNode: true,
-        purchases: { include: { certificate: true } }
+        purchases: { include: { certificate: true } },
+        regionCountries: { include: { regionCountry: true } }
       }
     });
 
@@ -141,8 +178,6 @@ export class ContractsService {
           timezoneOffset: updateContractDto.timezoneOffset,
           volume: updateContractDto.volume ? BigInt(updateContractDto.volume) : undefined,
           productType: updateContractDto.productType,
-          countries: updateContractDto.countries,
-          region: updateContractDto.region ?? '',
           externalId: updateContractDto.externalId,
           label: updateContractDto.label
         },
@@ -150,7 +185,8 @@ export class ContractsService {
           seller: true,
           buyer: true,
           filecoinNode: true,
-          purchases: { include: { certificate: true } }
+          purchases: { include: { certificate: true } },
+          regionCountries: { include: { regionCountry: true } }
         }
       });
 
