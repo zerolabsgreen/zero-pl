@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Certificate, CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
+import { BigNumber } from 'ethers';
 
 export class CertificateDto {
   @ApiProperty({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
@@ -21,7 +22,7 @@ export class CertificateDto {
   country: CountryEnumType;
 
   @ApiProperty()
-  energy: string;
+  energyWh: string;
 
   @ApiProperty({ example: EnergySourceEnumType.SOLAR })
   energySource: EnergySourceEnumType;
@@ -51,7 +52,7 @@ export class CertificateDto {
   redemptionDate?: Date;
 
   @ApiPropertyOptional({ example: 1e9 })
-  capacity?: number;
+  nameplateCapacityWh?: number;
 
   @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
   commissioningDate?: Date;
@@ -65,14 +66,31 @@ export class CertificateDto {
   @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
   updatedAt: Date;
 
+  @ApiPropertyOptional({ example: 'Certificate_CID' })
+  certificateCid?: string;
+
   constructor(partial: Partial<CertificateDto>) {
     Object.assign(this, partial);
   }
 
-  static toDto(dbEntity: Certificate): CertificateDto {
+  static toDbEntity(dto: Partial<CertificateDto>) {
+    const {energyWh, nameplateCapacityWh, ...stripped} = dto;
     return {
-      ...dbEntity,
-      energy: dbEntity.energy.toString(),
+      ...stripped,
+      energy: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined,
+      capacity: nameplateCapacityWh
     }
   }
+
+  static toDto(dbEntity: Certificate): CertificateDto {
+
+    const { energy, capacity, ...stripped } = dbEntity;
+    return {
+      ...stripped,
+      energyWh: energy ? BigNumber.from(energy).toString() : undefined,
+      nameplateCapacityWh: capacity
+    }
+
+  }
+
 }

@@ -34,7 +34,7 @@ export const ProofPage = () => {
               sectionHelpText={
                 <div>
                   This page is a summary of the proof that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{formatPower(data.certificate.energy, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  bought <b>{formatPower(data.certificate.energyWh, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
                   and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
                 </div>
               }
