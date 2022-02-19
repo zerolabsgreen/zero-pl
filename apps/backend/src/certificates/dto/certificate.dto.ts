@@ -52,7 +52,7 @@ export class CertificateDto {
   redemptionDate?: Date;
 
   @ApiPropertyOptional({ example: 1e9 })
-  nameplateCapacityWh?: number;
+  nameplateCapacityW?: number;
 
   @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
   commissioningDate?: Date;
@@ -74,11 +74,11 @@ export class CertificateDto {
   }
 
   static toDbEntity(dto: Partial<CertificateDto>) {
-    const {energyWh, nameplateCapacityWh, ...stripped} = dto;
+    const {energyWh, nameplateCapacityW, ...stripped} = dto;
     return {
       ...stripped,
       energy: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined,
-      capacity: nameplateCapacityWh
+      capacity: nameplateCapacityW
     }
   }
 
@@ -88,7 +88,7 @@ export class CertificateDto {
     return {
       ...stripped,
       energyWh: energy ? BigNumber.from(energy).toString() : undefined,
-      nameplateCapacityWh: capacity
+      nameplateCapacityW: capacity
     }
 
   }

@@ -77,7 +77,7 @@ curl -w "\n" -s -X 'POST' \
   "generationStart": "2020-11-01T00:00:00.000Z",
   "generationEnd": "2021-06-01T23:59:59.999Z",
   "energyWh": "3000000",
-  "nameplateCapacityWh": 12000
+  "nameplateCapacityW": 12000
 },{
   "id": "00000000-0000-0000-0000-000000000777",
   "generatorName": "Solar 1 - Non Bua Lampon",
@@ -90,7 +90,7 @@ curl -w "\n" -s -X 'POST' \
   "generationStart": "2021-06-02T00:00:00.000Z",
   "generationEnd": "2021-06-30T23:59:59.999Z",
   "energyWh": "7000000",
-  "nameplateCapacityWh": 400000000
+  "nameplateCapacityW": 400000000
 }]'
 
 echo

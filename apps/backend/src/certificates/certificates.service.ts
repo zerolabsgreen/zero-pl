@@ -26,7 +26,7 @@ export class CertificatesService {
       for (const createCertificateDto of createCertificateDtos) {
         let newCertificate: Certificate;
 
-        const { energyWh, nameplateCapacityWh, ...newCertificateData } = createCertificateDto;
+        const { energyWh, nameplateCapacityW, ...newCertificateData } = createCertificateDto;
 
         if (!(await this.prisma.seller.findUnique({ where: { id: newCertificateData.initialSellerId } }))) {
           this.logger.warn(`attempt to create a certificate for non-existing sellerId=${newCertificateData.initialSellerId}`);
@@ -34,7 +34,7 @@ export class CertificatesService {
         }
 
         try {
-          newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energy: BigInt(energyWh), capacity: nameplateCapacityWh, } });
+          newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energy: BigInt(energyWh), capacity: nameplateCapacityW, } });
           this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
         } catch (err) {
           this.logger.error(`error creating a new certificate: ${err}`);
