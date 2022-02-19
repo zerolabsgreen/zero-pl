@@ -1,7 +1,6 @@
-import { ApiProperty, ApiPropertyOptional, OmitType, PartialType, PickType } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { CountryEnumType } from '@prisma/client';
-import { IsOptional, IsEnum, IsString, IsUUID, Validate } from 'class-validator';
-import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
+import { IsEnum, IsString } from 'class-validator';
 import { ContractDto } from './contract.dto';
 
 
@@ -20,7 +19,7 @@ export class FindContractDto extends OmitType(ContractDto, [
   'region',
   'countries',
 ]) {
-  @ApiProperty({ example: [{ region: 'EU', country: 'DE' }, { region: 'EU', country: 'FR' }] })
+  @ApiProperty({ type: [CountryRegionPair], example: [{ region: 'EU', country: 'DE' }, { region: 'EU', country: 'FR' }] })
   countryRegionMap: CountryRegionPair[];
 
   static toDto(entity: ContractDto): FindContractDto {

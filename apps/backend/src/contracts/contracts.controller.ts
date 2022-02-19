@@ -19,7 +19,6 @@ import { UpdateContractDto } from './dto/update-contract.dto';
 import { FindContractDto } from './dto/find-contract.dto';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ContractDto } from './dto/contract.dto';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
