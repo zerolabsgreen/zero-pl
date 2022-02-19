@@ -9,7 +9,7 @@ import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } fro
 import dayjs from "dayjs";
 import { BigNumber } from "@ethersproject/bignumber";
 import { FC, useCallback, useMemo, useState } from "react";
-import { ContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
+import { FindContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../PageSection"
 // import { ReactComponent as SankeySVG } from '../../assets/sankey.svg';
 // import { ReactComponent as ListSVG } from '../../assets/list.svg';
@@ -23,7 +23,7 @@ interface CertificatesWithFiltersProps {
   userId: string;
   certificateType: CertificateBlocksEnum;
   handleCertificateTypeChange: (event: SelectChangeEvent) => void;
-  contracts?: ContractDto[];
+  contracts?: FindContractDto[];
   transactionsData?: FullPurchaseDto[];
 }
 
@@ -70,7 +70,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     })), [transactionsData]);
 
 
-  const contractTableData: TableRowData<ContractDto['id']>[] = useMemo(() => contracts.map((contract) => {
+  const contractTableData: TableRowData<FindContractDto['id']>[] = useMemo(() => contracts.map((contract) => {
     const totalAmount = (BigNumber.from(contract?.openVolume ?? 0).add(BigNumber.from(contract?.deliveredVolume ?? 0))).toString();
     return {
     id: contract?.id ?? '',
@@ -104,7 +104,11 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
         }
       </>
     ),
-    region: `${contract?.countries?.join(', ') ?? ''}`,
+    location: contract?.countryRegionMap.map(item => (
+      <div key={item.country+item.region}>
+        {item.country}, {item.region}
+      </div>
+    )),
     contractDate: dayjs(contract?.contractDate).isValid()
       ? dayjs(contract?.contractDate).utc().format('YYYY-MM-DD')
       : '-',
@@ -220,7 +224,7 @@ const contractsHeaders: TableHeader = {
   amount: { label: 'Amount (Open | Delivered)' },
   period: { label: 'Period' },
   energySource: { label: 'Energy Source' },
-  region: { label: 'Region' },
+  location: { label: 'Location' },
   contractDate: { label: 'Contract date' },
   deliveryDate: { label: 'Delivery date' },
   seller: { label: 'Seller' },
