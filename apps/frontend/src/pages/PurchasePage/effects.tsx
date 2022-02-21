@@ -55,7 +55,7 @@ export const usePurchasePageEffects = () => {
     generatorId: tx.certificate.generatorId,
     country: tx.certificate.country,
     energySource: tx.certificate.energySource,
-    amountPurchased: formatPower(tx.certificate.energy, {
+    amountPurchased: formatPower(tx.certificate.energyWh, {
       unit: Unit.MWh,
       includeUnit: true,
     }),

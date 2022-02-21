@@ -34,7 +34,7 @@ const ProofExamplePage = () => {
               sectionHelpText={
                 <div>
                   This page is a summary of the proof that the buyer <b>{shortifyEthAddr(exampleData.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{formatPower(exampleData.certificate.energy, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  bought <b>{formatPower(exampleData.certificate.energyWh, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
                   and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
                 </div>
               }
@@ -97,7 +97,7 @@ const certificateInfoTableData: TableRowData<CertificateDto['id']>[] = [{
   proofId: <EthereumAddress shortify clipboard address={exampleData.certificate.id ?? ''} />,
   product: exampleData.certificate.productType ?? '',
   beneficiary: exampleData.certificate.beneficiary ?? '',
-  amount: exampleData.certificate?.energy ? formatPower(exampleData.certificate.energy, { unit: Unit.MWh, includeUnit: true }) : '',
+  amount: exampleData.certificate?.energyWh ? formatPower(exampleData.certificate.energyWh, { unit: Unit.MWh, includeUnit: true }) : '',
   period: (
   <>{dayjs(exampleData.certificate.generationStart).isValid()
     ? dayjs(exampleData.certificate.generationStart).utc().format('YYYY-MM-DD')

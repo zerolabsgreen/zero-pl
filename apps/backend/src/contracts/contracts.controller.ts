@@ -16,9 +16,9 @@ import {
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
+import { FindContractDto } from './dto/find-contract.dto';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ContractDto } from './dto/contract.dto';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
@@ -30,41 +30,48 @@ import { ApiKeyPermissions } from '@prisma/client';
 @UseInterceptors(ClassSerializerInterceptor, NoDataInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class ContractsController {
-  constructor(private readonly contractsService: ContractsService) {}
+  constructor(private readonly contractsService: ContractsService) { }
 
   @Post()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
-  @ApiBody({ type: [CreateContractDto] })
+  @ApiBody({ type: [FindContractDto] })
   @ApiCreatedResponse({
-      type: [ContractDto],
-      description: 'Creates contracts'
+    type: [FindContractDto],
+    description: 'Creates contracts'
   })
-  create(@Body(new ParseArrayPipe({ items: CreateContractDto })) createContractDtos: [CreateContractDto]): Promise<ContractDto[]> {
-    return this.contractsService.create(createContractDtos);
+  create(@Body(new ParseArrayPipe({ items: CreateContractDto })) createContractDtos: [CreateContractDto]): Promise<FindContractDto[]> {
+    return this.contractsService
+      .create(createContractDtos)
+      .then((contracts) => contracts.map((contract) => FindContractDto.toDto(contract)));
   }
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({type: [ContractDto]})
-  findAll(): Promise<ContractDto[]> {
-    return this.contractsService.findAll();
+  @ApiOkResponse({ type: [FindContractDto] })
+  findAll(): Promise<FindContractDto[]> {
+    return this.contractsService.findAll()
+      .then((contracts) => contracts.map((contract) => FindContractDto.toDto(contract)));
   }
 
   @Get(':id')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: ContractDto })
+  @ApiOkResponse({ type: FindContractDto })
   @ApiParam({ name: 'id', type: String })
-  findOne(@Param('id') id: string): Promise<ContractDto> {
-    return this.contractsService.findOne(id)
+  findOne(@Param('id') id: string): Promise<FindContractDto> {
+    return this.contractsService.findOne(id).then((contract) => {
+      return FindContractDto.toDto(contract)
+    })
   }
 
   @Patch(':id')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateContractDto })
-  @ApiOkResponse({ type: ContractDto })
-  update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto): Promise<ContractDto> {
-    return this.contractsService.update(id, updateContractDto);
+  @ApiOkResponse({ type: FindContractDto })
+  update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto): Promise<FindContractDto> {
+    return this.contractsService.update(id, updateContractDto).then((contract) => {
+      return FindContractDto.toDto(contract)
+    });
   }
 
   @Delete(':id')

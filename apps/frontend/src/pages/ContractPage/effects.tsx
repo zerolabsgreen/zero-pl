@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { ContractDto, useContractsControllerFindOne } from '@energyweb/zero-protocol-labs-api-client'
+import { FindContractDto, useContractsControllerFindOne } from '@energyweb/zero-protocol-labs-api-client'
 import { TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import { BigNumber } from '@ethersproject/bignumber';
 import { styled } from "@mui/material/styles";
@@ -15,7 +15,7 @@ export const contractTableHeaders: TableHeader = {
   amount: { label: 'Amount (Open | Delivered)' },
   period: { label: 'Period' },
   energySource: { label: 'Energy Source' },
-  region: { label: 'Region' },
+  region: { label: 'Country, Region' },
   contractDate: { label: 'Contract date' },
   deliveryDate: { label: 'Delivery date' },
   seller: { label: 'Seller' }
@@ -28,7 +28,7 @@ export const useProductPageEffects = () => {
 
   const totalAmount = (BigNumber.from(data?.openVolume ?? 0).add(BigNumber.from(data?.deliveredVolume ?? 0))).toString();
 
-  const contractTableData: TableRowData<ContractDto['id']>[] = [{
+  const contractTableData: TableRowData<FindContractDto['id']>[] = [{
     id: data?.id ?? '',
     orderId: <EthereumAddress shortify clipboard address={data?.id ?? ''} />,
     product: data?.productType ?? '',
@@ -60,7 +60,11 @@ export const useProductPageEffects = () => {
         }
       </>
     ),
-    region: `${data?.countries.join(' & ') ?? ''}${data?.region ? ', ' + data?.region : ''}`,
+    region: data?.countryRegionMap.map(item => (
+      <div key={item.country+item.region}>
+        {item.country}, {item.region}
+      </div>
+    )),
     contractDate: dayjs(data?.contractDate).isValid()
       ? dayjs(data?.contractDate).utc().format('YYYY-MM-DD')
       : '-',

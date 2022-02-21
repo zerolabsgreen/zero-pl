@@ -131,7 +131,7 @@ export class FilecoinNodesService {
       recsTotal: data.purchases.reduce(
         (total, transaction) =>
           total.add(
-            BigNumber.from(transaction.purchase.certificate.energy)
+            BigNumber.from(transaction.purchase.certificate.energy).mul(1000000)
           ), BigNumber.from(0)
         ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
@@ -146,12 +146,17 @@ export class FilecoinNodesService {
             'reportingStartTimezoneOffset',
             'reportingEnd',
             'reportingEndTimezoneOffset',
+            'txHash',
+            'buyerId',
+            'contractId',
+            'createdAt',
+            'updatedAt'
           ]),
           reportingStartLocal: toDateStringWithOffset(p.purchase.reportingStart, p.purchase.reportingStartTimezoneOffset),
           reportingEndLocal: toDateStringWithOffset(p.purchase.reportingEnd, p.purchase.reportingEndTimezoneOffset),
           generation: {
             ...pick(p.purchase.certificate, [
-              // 'id',
+              'id',
               'region',
               'country',
               'energySource',
@@ -162,9 +167,18 @@ export class FilecoinNodesService {
               'generationStartTimezoneOffset',
               'generationEnd',
               'generationEndTimezoneOffset',
-              // 'txHash',
-              // 'initialSellerId',
+              'txHash',
+              'initialSellerId',
+              'beneficiary',
+              'redemptionDate',
+              'productType',
+              'capacity',
+              'commissioningDate',
+              'label',
+              'createdAt',
+              'updatedAt'
             ]),
+            energy: BigNumber.from(p.purchase.certificate.energy).toNumber(),
             generationStartLocal: toDateStringWithOffset(p.purchase.certificate.generationStart, p.purchase.certificate.generationStartTimezoneOffset),
             generationEndLocal: toDateStringWithOffset(p.purchase.certificate.generationEnd, p.purchase.certificate.generationEndTimezoneOffset)
           }
@@ -181,7 +195,7 @@ export const transactionsSchema = {
     buyerId: { type: "string", example: "29e25d61-103a-4710-b03d-ee12df765066" },
     pageUrl: { type: "string", example: `${process.env.UI_BASE_URL}/partners/filecoin/nodes/f0112027/beneficiary` },
     dataUrl: { type: "string", example: `${process.env.API_BASE_URL}/api/partners/filecoin/nodes/f0112027/transactions` },
-    recsTotal: { type: "number", example: 3 },
+    recsTotal: { type: "number", example: 3000000 },
     transactions: {
       type: "array",
       items: {
@@ -197,6 +211,11 @@ export const transactionsSchema = {
             example: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/04a7155d-ced1-4981-8660-48670a0735dd`
           },
           sellerId: { type: "string", example: "68926364-a0ba-4160-b3ea-1ee70c2690dd" },
+          txHash: { type: "string", example: "5e7ed59f-18e8-4e3d-b0b6-7e962af095e9" },
+          buyerId: { type: "string", example: "b7cda676-b005-44dd-b51b-b8c8d4ebd3dd" },
+          contractId: { type: "string", example: "6383554e-0ae6-4400-946a-384ffcb36442" },
+          createdAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
+          updatedAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
           annually: {
             type: "array",
             items: {
@@ -216,6 +235,7 @@ export const transactionsSchema = {
           generation: {
             type: "object",
             properties: {
+              id: { type: "string", example: "ca58b875-68ca-4286-8f88-5ce366103c82" },
               "region": {type: "string", example: "north_china"},
               "country": {type: "string", example: "China"},
               "energySource": {type: "string"},
@@ -227,6 +247,15 @@ export const transactionsSchema = {
               "generationStartTimezoneOffset": {type: "number", example: 480},
               "generationEndLocal": {type: "string", example: "2021-06-02T23:59:59.999+08:00"},
               "generationEndTimezoneOffset": {type: "number", example: 480},
+              initialSellerId: { type: "string", example: "68926364-a0ba-4160-b3ea-1ee70c2690dd" },
+              txHash: { type: "string", example: "5e7ed59f-18e8-4e3d-b0b6-7e962af095e9" },
+              beneficiary: { type: "string", example: "5e7ed59f-18e8-4e3d-b0b6-7e962af095e9" },
+              redemptionDate: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
+              commissioningDate: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
+              capacity: { type: "number", example: 12000 },
+              label: { type: "string" },
+              createdAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
+              updatedAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
             }
           }
         }

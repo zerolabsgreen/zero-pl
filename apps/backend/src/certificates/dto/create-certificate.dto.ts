@@ -77,7 +77,7 @@ export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash', 'c
 
   @ApiProperty({ type: 'string', example: '10000' })
   @IsNumberString()
-  energy: string;
+  energyWh: string;
 
   @ApiPropertyOptional({ example: 1e9 })
   capacity?: number;
