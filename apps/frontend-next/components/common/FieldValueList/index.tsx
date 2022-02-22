@@ -4,21 +4,27 @@ import Link from 'next/link';
 
 export interface FieldValueListProps {
   valueList: Array<string>;
+  disableLink?: boolean;
 }
 
-export function FieldValueList({ valueList = [] }: FieldValueListProps) {
+export function FieldValueList({ valueList = [], disableLink = false }: FieldValueListProps) {
   return (
     <StyledFieldValueList>
-      {valueList.map((value, index) => (
-        <Link
+      {valueList.map((value, index) => disableLink ? (
+        <Box component={'span'} key={value}>
+          {value}
+          {index < valueList.length - 1 && ', '}
+        </Box>
+      ) : (
+        <StyledLink
           key={value}
-          href={`/user/${value}`}
+          href={`user/${value}`}
         >
-          <StyledBox component={'span'}>
+          <Box component={'span'}>
             {value}
             {index < valueList.length - 1 && ', '}
-          </StyledBox>
-        </Link>
+          </Box>
+        </StyledLink>
       ))}
     </StyledFieldValueList>
   );
@@ -33,12 +39,8 @@ const StyledFieldValueList = styled(Box)(({ theme }) => `
   font-weight: 700;
 `);
 
-const StyledBox = styled(Box)(({ theme }) => `
-  color: ${theme.palette.primary.main};
-  cursor: pointer;
-  transition: all .2s ease-in;
-  &:hover {
-    color: ${theme.palette.secondary.main}
-  };
+const StyledLink = styled(Link)(({ theme }) => `
+  text-decoration: none;
+  color: ${theme.palette.primary.main}
 `)
 

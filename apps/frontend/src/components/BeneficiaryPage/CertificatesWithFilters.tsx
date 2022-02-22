@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { css } from "@emotion/css";
 import Box from "@mui/material/Box";
 // import Button from "@mui/material/Button";
@@ -11,13 +12,13 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { FC, useCallback, useMemo, useState } from "react";
 import { FindContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../PageSection"
-// import { ReactComponent as SankeySVG } from '../../assets/sankey.svg';
-// import { ReactComponent as ListSVG } from '../../assets/list.svg';
+// import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
+// import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 import EthereumAddress from "../EthereumAddress";
 import { Unit, formatPower, ProductEnumType } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../FuelType";
 import ButtonRight from "./ButtonRight";
-import { useNavigate } from "react-router";
+// import SankeyView from "./SankeyView";
 
 interface CertificatesWithFiltersProps {
   userId: string;
@@ -25,6 +26,11 @@ interface CertificatesWithFiltersProps {
   handleCertificateTypeChange: (event: SelectChangeEvent) => void;
   contracts?: FindContractDto[];
   transactionsData?: FullPurchaseDto[];
+}
+
+const enum ViewModeEnum {
+  List = 'List',
+  Sankey = 'Sankey'
 }
 
 const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
@@ -35,6 +41,9 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
   transactionsData = []
 }) => {
   const navigate = useNavigate()
+  // const [viewMode, setViewMode] = useState(ViewModeEnum.List);
+  // const handleListView = () => setViewMode(ViewModeEnum.List)
+  // const handleSankeyView = () => setViewMode(ViewModeEnum.Sankey)
   const [productType, setProductType] = useState<ProductEnumType | 'Any'>('Any')
 
   const handleProductTypeChange = useCallback((event: SelectChangeEvent) => {
@@ -167,18 +176,30 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
         >
           {title}
         </Typography>
-        {/* temporary hidden */}
+        {/* Hide until sankey is finalized */}
         {/* <Box display={'flex'}>
-          <SecondaryButton startIcon={<ListSVG />} sx={{ marginRight: '10px' }}>
-            list view
+          <SecondaryButton
+            active={viewMode === ViewModeEnum.List}
+            onClick={handleListView}
+            startIcon={<ListSVG />}
+            sx={{ marginRight: '10px' }}
+          >
+            List view
           </SecondaryButton>
-          <SecondaryButton startIcon={<SankeySVG />}>
-            sankey view
+          <SecondaryButton
+            active={viewMode === ViewModeEnum.Sankey}
+            onClick={handleSankeyView}
+            startIcon={<SankeySVG />}
+          >
+            Sankey view
           </SecondaryButton>
         </Box> */}
       </Box>
       <Box mt="20px">
+        {/* {viewMode === ViewModeEnum.List ?  */}
         <GenericTable headers={headers} data={filteredTableData} />
+          {/* : <SankeyView contracts={contracts} /> */}
+        {/* } */}
       </Box>
     </PageSection>
   )
@@ -246,19 +267,22 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => `
   };
 `);
 
-// const SecondaryButton = styled(Button)(({ theme }) => `
-//   background-color: ${theme.palette.background.paper};
-//   color: ${theme.palette.primary.main};
+// const SecondaryButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => `
+//   background-color: ${active ? theme.palette.secondary.main : theme.palette.background.paper};
+//   color: ${active ? theme.palette.text.primary : theme.palette.primary.main};
 //   border: 1px solid rgba(0, 0, 0, 0.05);
 //   box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
 //   border-radius: 5px;
-//   padding: 14px 16px;
+//   padding: 10px 12px;
 //   font-size: 16px;
 //   font-weight: 700;
 //   line-height: 20px;
+//   & path {
+//     fill: ${active && theme.palette.primary.main}
+//   }
 //   &:hover {
 //     background-color: ${theme.palette.secondary.main};
-//     color: ${theme.palette.background.paper};
+//     color: ${theme.palette.text.primary};
 //     & path {
 //       fill: ${theme.palette.primary.main}
 //     }

@@ -25,6 +25,7 @@ export const FieldLabel = ({
     mb={mb}
     minWidth={width}
     maxWidth={width}
+    sx={{ fontWeight: 500 }}
     {...props}
   >
     {labelText}
