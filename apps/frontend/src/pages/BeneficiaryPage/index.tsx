@@ -17,9 +17,9 @@ import {
 import LoadingBlock from '../../components/LoadingBlock';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import PageSection from '../../components/PageSection';
-import CertificatesWithFilters, { CertificateBlocksEnum } from '../../components/UserPage/CertificatesWithFilters';
-import UserInfoBlock from '../../components/UserPage/UserInfoBlock';
-import YearlyCertificatesTable, { CertificatePerYear } from '../../components/UserPage/YearlyCertificatesTable';
+import CertificatesWithFilters, { CertificateBlocksEnum } from '../../components/BeneficiaryPage/CertificatesWithFilters';
+import UserInfoBlock from '../../components/BeneficiaryPage/UserInfoBlock';
+import YearlyCertificatesTable, { CertificatePerYear } from '../../components/BeneficiaryPage/YearlyCertificatesTable';
 import { ReactComponent as RedeemedCertificateSVG } from '../../assets/svg/certificate_locked.svg';
 import { ReactComponent as ContractsSVG } from '../../assets/svg/certificate_timer.svg';
 import { formatPower } from '../../utils';
