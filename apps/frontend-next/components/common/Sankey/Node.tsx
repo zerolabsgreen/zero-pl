@@ -1,3 +1,4 @@
+import Tooltip from "@mui/material/Tooltip";
 import type { SankeyNode, sankey, SankeyGraph } from "d3-sankey";
 
 type NodeProps<N, L> = {
@@ -8,6 +9,7 @@ type NodeProps<N, L> = {
   height?: number;
   graph?: SankeyGraph<N, L>;
   sankey?: typeof sankey;
+  address?: string
 };
 
 export default function Node<N, L>({
@@ -15,7 +17,8 @@ export default function Node<N, L>({
   color,
   name,
   width,
-  height
+  height,
+  address
 }: NodeProps<N, L>) {
   const defaultWidth = x1 - x0;
   const defaultHeight = y1 - y0;
@@ -30,25 +33,27 @@ export default function Node<N, L>({
   const textY = height ? nodeY + height / 2 + 6 : y0 + nodeHeight / 2 + 6;
 
   return (
-    <g style={{ pointerEvents: "all" }} onClick={() => console.log()}>
-      <rect
-        x={nodeX}
-        y={nodeY}
-        width={nodeWidth}
-        height={nodeHeight}
-        fill={color}
-      >
-        <title>{name}</title>
-      </rect>
-      <text
-        x={textX + 5}
-        y={textY}
-        width={nodeWidth}
-        fill="black"
-        style={{ userSelect: "none", overflowX: "hidden" }}
-      >
-        {name}
-      </text>
-    </g>
+    <Tooltip title={address}>
+      <g style={{ pointerEvents: "all" }} onClick={() => console.log()}>
+        <rect
+          x={nodeX}
+          y={nodeY}
+          width={nodeWidth}
+          height={nodeHeight}
+          fill={color}
+        >
+          <title>{name}</title>
+        </rect>
+        <text
+          x={textX + 5}
+          y={textY}
+          width={nodeWidth}
+          fill="black"
+          style={{ userSelect: "none", overflowX: "hidden" }}
+        >
+          {name}
+        </text>
+      </g>
+    </Tooltip>
   );
 }
