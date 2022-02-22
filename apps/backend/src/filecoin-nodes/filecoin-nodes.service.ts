@@ -131,7 +131,7 @@ export class FilecoinNodesService {
       recsTotal: data.purchases.reduce(
         (total, transaction) =>
           total.add(
-            BigNumber.from(transaction.purchase.certificate.energy).mul(1000000)
+            BigNumber.from(transaction.purchase.certificate.energyWh).mul(1000000)
           ), BigNumber.from(0)
         ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
@@ -178,7 +178,7 @@ export class FilecoinNodesService {
               'createdAt',
               'updatedAt'
             ]),
-            energy: BigNumber.from(p.purchase.certificate.energy).toNumber(),
+            energyWh: BigNumber.from(p.purchase.certificate.energyWh).toNumber(),
             generationStartLocal: toDateStringWithOffset(p.purchase.certificate.generationStart, p.purchase.certificate.generationStartTimezoneOffset),
             generationEndLocal: toDateStringWithOffset(p.purchase.certificate.generationEnd, p.purchase.certificate.generationEndTimezoneOffset)
           }

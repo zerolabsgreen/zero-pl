@@ -53,7 +53,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     proofId: <EthereumAddress shortify clipboard address={tx.id} />,
     beneficiary: userId,
     product: tx.certificate.productType,
-    amount: formatPower(tx.certificate.energy, {
+    amount: formatPower(tx.certificate.energyWh, {
       unit: DisplayUnit.MWh,
       includeUnit: true,
     }),

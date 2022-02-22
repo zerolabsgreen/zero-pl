@@ -76,7 +76,7 @@ export const useWizardPageEffects = () => {
             timeFrames: addressMapping.get(key) ? addressMapping.get(key).map(nestedId => ({
               start: (values[`startDate_${key}_${nestedId}`] as Dayjs).startOf('day').toISOString(),
               end: (values[`endDate_${key}_${nestedId}`] as Dayjs).endOf('day').toISOString(),
-              energy: BigNumber.from(values[`energy_${key}_${nestedId}`]).mul(BigNumber.from(10).pow(6)).toNumber()
+              energyWh: BigNumber.from(values[`energy_${key}_${nestedId}`]).mul(BigNumber.from(10).pow(6)).toNumber()
             })) : []
           }
         })

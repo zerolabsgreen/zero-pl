@@ -29,7 +29,7 @@ const ProofPage: NextPage = () => {
     proofId: <EthereumAddress shortify clipboard address={data?.certificate?.id ?? ''} />,
     product: data?.certificate?.productType ?? '',
     beneficiary: data?.certificate?.beneficiary ?? '',
-    amount: data?.certificate?.energy ? formatPower(data.certificate.energy, { unit: DisplayUnit.MWh, includeUnit: true }) : '',
+    amount: data?.certificate?.energy ? formatPower(data.certificate.energyWh, { unit: DisplayUnit.MWh, includeUnit: true }) : '',
     period: (
     <>{dayjs(data?.certificate?.generationStart).isValid()
       ? dayjs(data?.certificate?.generationStart).utc().format('YYYY-MM-DD')

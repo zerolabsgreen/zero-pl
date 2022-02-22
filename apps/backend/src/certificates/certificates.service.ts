@@ -34,7 +34,7 @@ export class CertificatesService {
         }
 
         try {
-          newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energy: BigInt(energyWh), capacity: nameplateCapacityW, } });
+          newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energyWh: BigInt(energyWh), nameplateCapacityW, } });
           this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
         } catch (err) {
           this.logger.error(`error creating a new certificate: ${err}`);
@@ -89,7 +89,7 @@ export class CertificatesService {
       ({ txHash } = await this.issuerService.issueCertificate({
         toSeller: seller.blockchainAddress,
         deviceId: offChainCert.generatorId,
-        energy: offChainCert.energy.toString(),
+        energyWh: offChainCert.energyWh.toString(),
         fromTime: new Date(offChainCert.generationStart),
         toTime: new Date(offChainCert.generationEnd)
       }));

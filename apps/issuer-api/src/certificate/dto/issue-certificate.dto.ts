@@ -12,7 +12,7 @@ export class IssueCertificateDTO {
     @ApiProperty({ type: String, example: '10000000' })
     @Validate(PositiveBNStringValidator)
     @Validate(IntUnitsOfEnergy)
-    energy: string;
+    energyWh: string;
 
     @ApiProperty({ type: Number, example: 1616605000 })
     @IsInt()

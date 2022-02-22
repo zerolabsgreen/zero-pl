@@ -99,7 +99,7 @@ const BuyerPage: NextPage = () => {
     return {
       ...yearItem,
       amount: allTransactionsFromYear?.reduce(
-        (prev, current) => prev + parseFloat(formatPower(current.certificate.energy)), yearItem.amount)
+        (prev, current) => prev + parseFloat(formatPower(current.certificate.energyWh)), yearItem.amount)
     }
   }), [transactionsData]);
 

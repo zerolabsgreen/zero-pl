@@ -29,7 +29,7 @@ export class CreateOrderItemTimeframeDto {
   @IsInt()
   @Max(9007199254740991)
   @Min(1)
-  energy: number;
+  energyWh: number;
 }
 
 function IsStartOfDay(validationOptions?: ValidationOptions) {
