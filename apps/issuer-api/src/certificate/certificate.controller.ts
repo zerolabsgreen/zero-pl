@@ -126,7 +126,7 @@ export class CertificateController {
         const tx = await this.commandBus.execute(
             new IssueCertificateCommand(
                 dto.to,
-                dto.energy,
+                dto.energyWh,
                 dto.fromTime,
                 dto.toTime,
                 dto.deviceId,

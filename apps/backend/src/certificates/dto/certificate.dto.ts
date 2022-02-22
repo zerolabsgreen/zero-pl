@@ -73,24 +73,22 @@ export class CertificateDto {
     Object.assign(this, partial);
   }
 
-  static toDbEntity(dto: Partial<CertificateDto>) {
-    const {energyWh, nameplateCapacityW, ...stripped} = dto;
+  static toDbEntity(dto: Partial<CertificateDto>): Partial<Certificate> {
+    const {energyWh, ...stripped} = dto;
+
     return {
       ...stripped,
-      energy: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined,
-      capacity: nameplateCapacityW
-    }
+      energyWh: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined
+    };
   }
 
   static toDto(dbEntity: Certificate): CertificateDto {
+    const { energyWh, ...stripped } = dbEntity;
 
-    const { energy, capacity, ...stripped } = dbEntity;
     return {
       ...stripped,
-      energyWh: energy ? BigNumber.from(energy).toString() : undefined,
-      nameplateCapacityW: capacity
-    }
-
+      energyWh: energyWh ? BigNumber.from(energyWh).toString() : undefined
+    };
   }
 
 }

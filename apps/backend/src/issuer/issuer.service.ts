@@ -6,7 +6,7 @@ import polly from 'polly-js';
 
 interface IssueCertificateDTO {
   deviceId: string;
-  energy: string;
+  energyWh: string;
   fromTime: Date;
   toTime: Date;
   toSeller: string;
@@ -64,6 +64,7 @@ export class IssuerService {
 
     const issuerApiIssueCertDTO = {
       ...issueCertificateDTO,
+      energy: issueCertificateDTO.energyWh,
       to: issueCertificateDTO.toSeller,
       fromTime: Math.floor(issueCertificateDTO.fromTime.getTime() / 1000),
       toTime: Math.floor(issueCertificateDTO.toTime.getTime() / 1000)
@@ -103,7 +104,7 @@ export class IssuerService {
         id: certificate.id,
         fromAddress: issueCertificateDTO.toSeller,
         toAddress: this.configService.get('ISSUER_CHAIN_ADDRESS'),
-        amount: issueCertificateDTO.energy
+        amount: issueCertificateDTO.energyWh
       });
 
       this.logger.debug(`submitted ${certificate.id} certificate transfer: ${issueCertificateDTO.toSeller} -> ${this.configService.get('ISSUER_CHAIN_ADDRESS')}`);

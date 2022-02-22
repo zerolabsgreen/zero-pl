@@ -70,7 +70,7 @@ model Seller {
 
 model Certificate {
   id                            String               @id @default(uuid())
-  energy                        BigInt               @default(0)
+  energyWh                      BigInt               @default(0)
   generatorName                 String?
   generatorId                   String?
   region                        String?
@@ -87,7 +87,7 @@ model Certificate {
   initialSellerId               String
   beneficiary                   String?
   redemptionDate                DateTime?
-  capacity                      Int?
+  nameplateCapacityW            Int?
   commissioningDate             DateTime?
   label                         LabelEnumType?
   certificateCid                String?
@@ -196,7 +196,7 @@ model OrderItemTimeFrame {
   orderItemId String?
   start       DateTime
   end         DateTime
-  energy      BigInt
+  energyWh      BigInt
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
