@@ -21,13 +21,13 @@ async function bootstrap() {
   app.enableShutdownHooks(); // required by the docker engine
 
   const document = SwaggerModule.createDocument(app, new DocumentBuilder()
-    .setTitle('Energy Web Zero PL POC Issuer API')
+    .setTitle('Zero Labs API - Protocol Labs')
     .setVersion('0.3')
     .addApiKey({ type: 'apiKey', name: 'X-API-KEY' }, 'api-key')
     .build());
 
   SwaggerModule.setup('swagger', app, document, {
-    customSiteTitle: 'Swagger documentation for Energy Web Zero PL POC Issuer API',
+    customSiteTitle: 'Swagger documentation for Zero Labs API - Protocol Labs',
     swaggerOptions: {
       persistAuthorization: true,
     },

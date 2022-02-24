@@ -186,7 +186,7 @@
         The original attestation form is attached as Annex 1. Zero Labs guarantees that these EACs belong to the indicated SP and cannot be resold or transferred to anyone else than this SP.
       </p>
       <p>
-        The breakdown allocation of RECs to Miner ID {{buyerId}}, based on the total RECs purchased by Energy Web, is attached in the following table:
+        The breakdown allocation of RECs to Miner ID {{buyerId}}, based on the total RECs purchased by Zero Labs, is attached in the following table:
       </p>
       <table>
         <tr>

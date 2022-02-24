@@ -27,7 +27,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, getSwaggerDocumentationConfig());
   SwaggerModule.setup('swagger', app, document, {
-    customSiteTitle: 'Swagger documentation for Energy Web Zero PL POC API',
+    customSiteTitle: 'Swagger documentation for Zero Labs API - Protocol Labs',
     swaggerOptions: {
       persistAuthorization: true,
     },
