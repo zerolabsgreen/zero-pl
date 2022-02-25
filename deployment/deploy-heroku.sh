@@ -4,6 +4,9 @@ yarn build:docker
 
 heroku container:login
 
+# Auto-backup the database
+heroku pg:backups:capture -a zero-api-ap
+
 # UI
 docker tag zero-pl-frontend registry.heroku.com/zero-ui-app/web
 docker push registry.heroku.com/zero-ui-app/web
