@@ -7,6 +7,7 @@ export type TFormatPowerOptions = {
   shouldRound?: boolean;
   unit?: string;
   decimalPlaces?: number;
+  withoutComma?: boolean
 };
 
 export const formatPower = (
@@ -26,6 +27,10 @@ export const formatPower = (
   const value = shouldRound ? Math.round(calculatedValue) : calculatedValue;
 
   const formatter = getNumberFormatter(decimalPlaces);
+
+  if (options?.withoutComma) {
+    return `${formatter.format(value).replace(',', '')}${includeUnit ? ' ' + unit : ''}`
+  }
 
   return `${formatter.format(value)}${includeUnit ? ' ' + unit : ''}`;
 };

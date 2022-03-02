@@ -8,14 +8,13 @@ import { styled, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography"
 import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import dayjs from "dayjs";
-import { BigNumber } from "@ethersproject/bignumber";
 import { FC, useCallback, useMemo, useState } from "react";
 import { FindContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../PageSection"
 // import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
 // import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 import EthereumAddress from "../EthereumAddress";
-import { Unit, formatPower, ProductEnumType } from "../../utils";
+import { Unit, formatPower, ProductEnumType, getContractTotalVolume } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../FuelType";
 import ButtonRight from "./ButtonRight";
 // import SankeyView from "./SankeyView";
@@ -80,7 +79,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
 
 
   const contractTableData: TableRowData<FindContractDto['id']>[] = useMemo(() => contracts.map((contract) => {
-    const totalAmount = (BigNumber.from(contract?.openVolume ?? 0).add(BigNumber.from(contract?.deliveredVolume ?? 0))).toString();
+    const totalAmount = getContractTotalVolume(contract);
     return {
     id: contract?.id ?? '',
     orderId: <EthereumAddress shortify clipboard address={contract?.id ?? ''} />,
