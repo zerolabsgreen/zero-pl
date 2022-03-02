@@ -22,7 +22,7 @@ import UserInfoBlock from '../../components/BeneficiaryPage/UserInfoBlock';
 import YearlyCertificatesTable, { CertificatePerYear } from '../../components/BeneficiaryPage/YearlyCertificatesTable';
 import { ReactComponent as RedeemedCertificateSVG } from '../../assets/svg/certificate_locked.svg';
 import { ReactComponent as ContractsSVG } from '../../assets/svg/certificate_timer.svg';
-import { formatPower } from '../../utils';
+import { formatPower, getContractTotalVolume, Unit } from '../../utils';
 
 dayjs.extend(utc);
 
@@ -96,10 +96,12 @@ const BeneficiaryPage: FC = () => {
 
   const yearlyContractsData = useMemo(() => yearsToUse.map(yearItem => {
     const allContractsFromYear = filecoinNodeContracts?.contracts?.filter(contract => dayjs(contract.reportingEnd).get('year') === yearItem.year);
+
     return {
       ...yearItem,
       amount: allContractsFromYear?.reduce(
-        (prev, current) => prev + (parseFloat(formatPower(current.openVolume)) + parseFloat(formatPower(current.deliveredVolume))), yearItem.amount) ?? yearItem.amount
+        (prev, current) => prev + Number(formatPower(getContractTotalVolume(current), { withoutComma: true, unit: Unit.MWh }))
+      , yearItem.amount) ?? yearItem.amount
     }
   }), [filecoinNodeContracts]);
 
