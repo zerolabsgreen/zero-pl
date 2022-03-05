@@ -25,29 +25,29 @@ import { ApiKeyPermissions } from '@prisma/client';
 
 @Controller('/partners/filecoin/nodes')
 @ApiTags('Filecoin nodes')
-@UseGuards(AuthGuard('api-key'))
-@ApiSecurity('api-key', ['api-key'])
+@UseGuards(AuthGuard('anonymous'))
 @UseInterceptors(ClassSerializerInterceptor, NoDataInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class FilecoinNodesController {
   constructor(private readonly filecoinNodesService: FilecoinNodesService) {}
 
   @Post()
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
+  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(AuthGuard('api-key'), ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiCreatedResponse({ type: FilecoinNodeDto })
   create(@Body() createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     return this.filecoinNodesService.create(createFilecoinNodeDto);
   }
 
   @Get()
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: [FilecoinNodeDto] })
   findAll(): Promise<FilecoinNodeDto[]> {
     return this.filecoinNodesService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
+  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(AuthGuard('api-key'), ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FilecoinNodeDto })
   findOne(@Param('id') id: string): Promise<FilecoinNodeDto> {
@@ -55,7 +55,6 @@ export class FilecoinNodesController {
   }
 
   @Get(':id/contracts')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FilecoinNodeWithContractsDto })
   findOneWithContracts(@Param('id') id: string): Promise<FilecoinNodeWithContractsDto> {
@@ -63,15 +62,17 @@ export class FilecoinNodesController {
   }
 
   @Patch(':id')
+  @ApiSecurity('api-key', ['api-key'])
   @ApiOkResponse({ type: FilecoinNodeDto })
   @ApiParam({ name: 'id', type: String })
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @UseGuards(AuthGuard('api-key'), ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   update(@Param('id') id: string, @Body() updateFilecoinNodeDto: UpdateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     return this.filecoinNodesService.update(id, updateFilecoinNodeDto);
   }
 
   @Delete(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.DELETE]))
+  @ApiSecurity('api-key', ['api-key'])
+  @UseGuards(AuthGuard('api-key'), ApiKeyPermissionsGuard([ApiKeyPermissions.DELETE]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Boolean })
   remove(@Param('id') id: string): Promise<boolean> {
@@ -79,7 +80,6 @@ export class FilecoinNodesController {
   }
 
   @Get(':id/transactions')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ schema: transactionsSchema })
   getTransactions(@Param('id') id: string) {
