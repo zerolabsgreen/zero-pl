@@ -1,11 +1,12 @@
-import Tooltip from "@mui/material/Tooltip";
+import { useTheme } from "@mui/material/styles";
 import type { SankeyNode, sankey, SankeyGraph } from "d3-sankey";
+import { ReactNode } from "react";
 import { ExtendedNodeProperties, SankeyItemType } from "../BeneficiaryPage/SankeyView";
 
 type NodeProps<N, L> = {
   link: SankeyNode<ExtendedNodeProperties, Record<string, any>>;
   color: string;
-  name: string;
+  name: string | ReactNode;
   width?: number;
   height?: number;
   graph?: SankeyGraph<N, L>;
@@ -15,8 +16,16 @@ type NodeProps<N, L> = {
   textColor?: string
 };
 
+export const isContractNode = (node: SankeyNode<ExtendedNodeProperties, Record<string, any>>) => {
+  return node.type === SankeyItemType.Contract
+}
+
 export const isEmptyContractNode = (node: SankeyNode<ExtendedNodeProperties, Record<string, any>>) => {
-  return node.sourceLinks?.length === 0 && node.type === SankeyItemType.Contract
+  return node.sourceLinks?.length === 0 && isContractNode(node)
+}
+
+export const isNonEmptyContractNode = (node: SankeyNode<ExtendedNodeProperties, Record<string, any>>) => {
+  return isContractNode(node) && !isEmptyContractNode(node)
 }
 
 export default function Node<N, L>({
@@ -25,9 +34,10 @@ export default function Node<N, L>({
   name,
   width,
   height,
-  fullAddress,
+  volume,
   textColor,
 }: NodeProps<N, L>) {
+  const theme = useTheme()
   const { x0, x1, y0, y1 } = link
 
   const isLinkAnEmptyContractNode = isEmptyContractNode(link)
@@ -35,38 +45,54 @@ export default function Node<N, L>({
   const defaultWidth = (x1 ?? 0) - (x0 ?? 0);
   const defaultHeight = (y1 ?? 0) - (y0 ?? 0);
 
-  const nodeWidth = width ? width : defaultWidth;
-  const nodeHeight = height ? height : defaultHeight;
+  const nodeWidth = (width ? width : defaultWidth);
+  const nodeHeight = height ? height : defaultHeight
   const nodeX = isLinkAnEmptyContractNode ? 0 : x0;
   const nodeY = height && !isFirstNode
     // smaller nodeY for empty contract nodes
     ? y0 + defaultHeight / 2 - height / (isLinkAnEmptyContractNode ? 15 : 2)
     : y0 ?? 0;
 
-  const textX = (isLinkAnEmptyContractNode ? 0 : x0) ?? 0;
-  const textY = height ? nodeY + height / 2 + 6 : (y0 ?? 0) + nodeHeight / 2 + 6;
+  const textX = (isLinkAnEmptyContractNode ? 0 : x0 ?? 0) + 15;
+  const textY = height ? nodeY + height / 5 + 6 : (y0 ?? 0) + nodeHeight / 2 + 6;
 
   return (
-    <Tooltip title={fullAddress ?? ''}>
       <g style={{ pointerEvents: "all" }}>
         <rect
           x={nodeX}
           y={nodeY}
-          width={nodeWidth}
+          width={10}
           height={nodeHeight}
           fill={color}
-          rx="5"
         />
         <text
-          x={textX + 10}
+          x={textX}
           y={textY}
           width={nodeWidth}
           fill={textColor ?? 'black'}
-          style={{ userSelect: "none", overflowX: "hidden", }}
+          style={{
+            userSelect: "none",
+            overflowX: "hidden",
+            fontWeight: 600,
+            color: theme.palette.primary.main
+          }}
         >
           {name}
         </text>
+        <text
+          x={textX}
+          y={textY+20}
+          width={nodeWidth}
+          fill={textColor ?? 'black'}
+          style={{
+            userSelect: "none",
+            overflowX: "hidden",
+            fontWeight: 600,
+            color: theme.palette.primary.main
+          }}
+        >
+          {volume}
+        </text>
       </g>
-    </Tooltip>
   );
 }
