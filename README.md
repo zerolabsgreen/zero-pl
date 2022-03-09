@@ -32,6 +32,7 @@ To reset database schemas and Ganache storage and recreate from scratch, execute
 ```shell
 docker-compose -f docker-compose-dev.yaml down -v
 docker-compose -f docker-compose-dev.yaml up -d
+sleep 5
 yarn migrate:all
 ```
 
