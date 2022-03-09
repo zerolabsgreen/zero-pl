@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { css } from "@emotion/css";
 import Box from "@mui/material/Box";
-// import Button from "@mui/material/Button";
+import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { styled, useTheme } from "@mui/material/styles";
@@ -11,13 +11,13 @@ import dayjs from "dayjs";
 import { FC, useCallback, useMemo, useState } from "react";
 import { FindContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../PageSection"
-// import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
-// import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
+import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
+import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 import EthereumAddress from "../EthereumAddress";
 import { Unit, formatPower, ProductEnumType, getContractTotalVolume } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../FuelType";
 import ButtonRight from "./ButtonRight";
-// import SankeyView from "./SankeyView";
+import SankeyView from "./SankeyView";
 
 interface CertificatesWithFiltersProps {
   userId: string;
@@ -40,9 +40,9 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
   transactionsData = []
 }) => {
   const navigate = useNavigate()
-  // const [viewMode, setViewMode] = useState(ViewModeEnum.List);
-  // const handleListView = () => setViewMode(ViewModeEnum.List)
-  // const handleSankeyView = () => setViewMode(ViewModeEnum.Sankey)
+  const [viewMode, setViewMode] = useState(ViewModeEnum.List);
+  const handleListView = () => setViewMode(ViewModeEnum.List)
+  const handleSankeyView = () => setViewMode(ViewModeEnum.Sankey)
   const [productType, setProductType] = useState<ProductEnumType | 'Any'>('Any')
 
   const handleProductTypeChange = useCallback((event: SelectChangeEvent) => {
@@ -176,7 +176,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
           {title}
         </Typography>
         {/* Hide until sankey is finalized */}
-        {/* <Box display={'flex'}>
+        <Box display={'flex'}>
           <SecondaryButton
             active={viewMode === ViewModeEnum.List}
             onClick={handleListView}
@@ -192,13 +192,13 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
           >
             Sankey view
           </SecondaryButton>
-        </Box> */}
+        </Box>
       </Box>
       <Box mt="20px">
-        {/* {viewMode === ViewModeEnum.List ?  */}
-        <GenericTable headers={headers} data={filteredTableData} />
-          {/* : <SankeyView contracts={contracts} /> */}
-        {/* } */}
+        {viewMode === ViewModeEnum.List
+          ? <GenericTable headers={headers} data={filteredTableData} />
+          : <SankeyView contracts={contracts} beneficiary={userId} />
+        }
       </Box>
     </PageSection>
   )
@@ -266,27 +266,27 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => `
   };
 `);
 
-// const SecondaryButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => `
-//   background-color: ${active ? theme.palette.secondary.main : theme.palette.background.paper};
-//   color: ${active ? theme.palette.text.primary : theme.palette.primary.main};
-//   border: 1px solid rgba(0, 0, 0, 0.05);
-//   box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
-//   border-radius: 5px;
-//   padding: 10px 12px;
-//   font-size: 16px;
-//   font-weight: 700;
-//   line-height: 20px;
-//   & path {
-//     fill: ${active && theme.palette.primary.main}
-//   }
-//   &:hover {
-//     background-color: ${theme.palette.secondary.main};
-//     color: ${theme.palette.text.primary};
-//     & path {
-//       fill: ${theme.palette.primary.main}
-//     }
-//   }
-// `)
+const SecondaryButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => `
+  background-color: ${active ? theme.palette.secondary.main : theme.palette.background.paper};
+  color: ${active ? theme.palette.text.primary : theme.palette.primary.main};
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
+  border-radius: 5px;
+  padding: 10px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  & path {
+    fill: ${active && theme.palette.primary.main}
+  }
+  &:hover {
+    background-color: ${theme.palette.secondary.main};
+    color: ${theme.palette.text.primary};
+    & path {
+      fill: ${theme.palette.primary.main}
+    }
+  }
+`)
 
 const SmallText = styled('span')`
   font-size: 14px;

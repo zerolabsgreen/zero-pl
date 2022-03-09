@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { linkHorizontal } from "d3-shape";
 import type { SankeyLink } from "d3-sankey";
-import Tooltip from "@mui/material/Tooltip";
-import { ExtendedNodeProperties } from "../BeneficiaryPage/SankeyView";
+import { ExtendedNodeProperties, SankeyItemType } from "../BeneficiaryPage/SankeyView";
+import SankeyLinkPopover from "./LinkPopover";
 
 type LinkProps = {
   link: SankeyLink<ExtendedNodeProperties, Record<string, any>>;
   color: string;
   maxWidth?: number;
+  width?: number;
+  beneficiary?: string;
 };
 
 function horizontalSourceO(d: any): [number, number] {
@@ -21,7 +23,7 @@ function horizontalTargetO(d: any): [number, number] {
 }
 
 function horizontalSource(d: any): [number, number] {
-  return [d.source.x1, d.y0];
+  return [d.source.x0, d.y0];
 }
 
 function horizontalTarget(d: any): [number, number] {
@@ -36,30 +38,62 @@ function sankeyLinkHorizontalO() {
   return linkHorizontal().source(horizontalSourceO).target(horizontalTargetO);
 }
 
-export default function Link({ link, color, maxWidth }: LinkProps) {
-  const linkWidth = maxWidth
-    ? (link.value / (link.source as any).value) * maxWidth
-    : link.width;
+export default function Link({ link, color, maxWidth, width, beneficiary }: LinkProps) {
+  const linkWidth = width
+    ? width
+    : maxWidth
+      ? (link.value / (link.source as any).value) * maxWidth
+      : link.width;
 
   const path: any = maxWidth
     ? sankeyLinkHorizontalO()(link as any)
     : sankeyLinkHorizontal()(link as any);
 
   const [opacity, setOpacity] = useState(0.3);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const popoverAnchor = useRef(null)
+  const handlePopoverOpen = () => {
+    setPopoverOpen(true)
+    setOpacity(0.8)
+  };
+  const handlePopoverClose = () => {
+    setPopoverOpen(false)
+    setOpacity(0.3)
+  };
+  const source = link.source as any;
+  const target = link.target as any;
 
   return (
-    <Tooltip title={`${link.value} MWh`}>
+    <>
       <path
         d={path}
+        ref={popoverAnchor}
+        aria-owns={'sankey-link-popover'}
+        aria-haspopup="true"
+        onMouseOver={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
         style={{
           fill: "none",
           strokeOpacity: opacity,
           stroke: color,
-          strokeWidth: linkWidth && !isNaN(linkWidth) ? linkWidth : 0
+          strokeWidth: linkWidth && !isNaN(linkWidth) ? linkWidth : 0,
         }}
-        onMouseEnter={() => setOpacity(0.8)}
-        onMouseLeave={() => setOpacity(0.3)}
       />
-    </Tooltip>
+      <SankeyLinkPopover
+         open={popoverOpen}
+         anchorEl={popoverAnchor.current}
+         handleClose={handlePopoverClose}
+         handleOpen={handlePopoverOpen}
+         type={source.type}
+         id={source.id}
+         targetId={source.type === SankeyItemType.Certificate ? target.id : source.id}
+         amount={target.volume}
+         beneficiary={beneficiary}
+         period={source.period}
+         generator={source.generator}
+         sources={source.energySources}
+         location={source.location}
+      />
+    </>
   );
 }
