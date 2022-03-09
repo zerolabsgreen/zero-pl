@@ -34,7 +34,7 @@ export class ContractsController {
 
   @Post()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
-  @ApiBody({ type: [FindContractDto] })
+  @ApiBody({ type: [CreateContractDto] })
   @ApiCreatedResponse({
     type: [FindContractDto],
     description: 'Creates contracts'
