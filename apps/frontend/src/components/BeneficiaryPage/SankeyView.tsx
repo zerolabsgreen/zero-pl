@@ -62,6 +62,8 @@ type ColumnData = {
   [SankeyItemType.Contract]: {
     amountOfBlocksInColumn: number;
     columnTotalEnergy: number;
+    openAmount: number;
+    deliveredAmount: number;
   };
   [SankeyItemType.Certificate]: {
     amountOfBlocksInColumn: number;
@@ -137,7 +139,9 @@ const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyDat
   const columnData: ColumnData = {
     [SankeyItemType.Contract]: {
       amountOfBlocksInColumn: contractsNodes.length,
-      columnTotalEnergy: contractsNodes.reduce((prev, current) => prev + parseInt(current.volume ?? '0') , 0)
+      columnTotalEnergy: contractsNodes.reduce((prev, current) => prev + parseInt(current.volume ?? '0') , 0),
+      openAmount: contracts.reduce((prev, current) => prev + parseInt(formatPower(current.openVolume, { unit: Unit.MWh })), 0),
+      deliveredAmount: contracts.reduce((prev, current) => prev + parseInt(formatPower(current.deliveredVolume, { unit: Unit.MWh })), 0),
     },
     [SankeyItemType.Certificate]: {
       amountOfBlocksInColumn: certificatesNodes.length,
@@ -247,25 +251,25 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
           </Sankey>
         </Box>
         <Box
-          width={sankeyWidth-170}
-          height={sankeyHeight}
+          width={sankeyWidth}
           display="flex"
           justifyContent="space-between"
-          marginLeft="180px"
+          marginX="auto"
+          paddingRight="150px"
         >
           <Box>
             <TotalText color="primary">
-              <b>54</b> MWh DELIVERED
+              <b>{columnData.Contract.deliveredAmount}</b> MWh DELIVERED
             </TotalText>
             <TotalText color="textSecondary">
-              <b>25</b> MWh OPEN
+              <b>{columnData.Contract.openAmount}</b> MWh OPEN
             </TotalText>
           </Box>
           <TotalText color="primary">
-            <b>54</b> MWh
+            <b>{columnData.Certificate.columnTotalEnergy}</b> MWh
           </TotalText>
           <TotalText color="primary" marginRight="10px">
-            <b>54</b> MWh
+            <b>{columnData.Proof.columnTotalEnergy}</b> MWh
           </TotalText>
         </Box>
       </Box>
