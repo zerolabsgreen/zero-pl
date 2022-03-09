@@ -1,20 +1,23 @@
 import {
-  AdvisorsBlock,
-  FirstQuestionsBlock,
-  Footer,
-  SearchBlock,
-  SecondQuestionsBlock,
-  TabsSection,
-  WelcomeBlock,
-  WelcomeSubtitle,
-  WelcomeTitle,
+  // AdvisorsBlock,
+  // FirstQuestionsBlock,
+  // Footer,
+  // SearchBlock,
+  // SecondQuestionsBlock,
+  // TabsSection,
+  // WelcomeBlock,
+  // WelcomeSubtitle,
+  // WelcomeTitle,
   Wrapper
 } from "../../components/HomePage";
 
 export const WelcomePage = () => {
+  window.onload = function() {
+    window.location.href = "https://zerolabs.green";
+  }
   return (
     <Wrapper>
-      <main>
+      {/* <main>
         <WelcomeBlock>
           <WelcomeTitle color="secondary">
             Welcome to Zero
@@ -29,7 +32,7 @@ export const WelcomePage = () => {
         <TabsSection />
         <AdvisorsBlock />
         <Footer />
-      </main>
+      </main> */}
     </Wrapper>
   );
 };
