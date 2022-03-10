@@ -5,6 +5,7 @@ import type { SankeyNode, SankeyLink } from "d3-sankey";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { BigNumber } from "@ethersproject/bignumber";
+import { maxBy } from 'lodash'
 import { FindContractDto, PurchaseWithCertificateDto } from "@energyweb/zero-protocol-labs-api-client";
 import Sankey from "../Sankey";
 import Link from "../Sankey/Link";
@@ -73,6 +74,7 @@ type ColumnData = {
     amountOfBlocksInColumn: number;
     columnTotalEnergy: number;
   };
+  heightMultiplier: number
 }
 
 const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyData; columnData: ColumnData }  => {
@@ -151,7 +153,15 @@ const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyDat
       amountOfBlocksInColumn: proofsNodes.length,
       columnTotalEnergy: proofsNodes.reduce((prev, current) => prev + parseInt(current.volume ?? '0') , 0)
     },
+    heightMultiplier: 0,
   }
+  const mltpArr = [
+    columnData.Contract,
+    columnData.Certificate,
+    columnData.Proof
+  ]
+
+  columnData.heightMultiplier = maxBy(mltpArr, 'amountOfBlocksInColumn')?.amountOfBlocksInColumn ?? 0
 
   return {
     sankeyData,
@@ -176,6 +186,9 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
     </Box>
     )
   }
+
+  const multipliedHeight = columnData.heightMultiplier*85
+  const sankeyHeight = multipliedHeight > 750 ? multipliedHeight : 750;
 
   return (
     <Box
