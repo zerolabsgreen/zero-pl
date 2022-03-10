@@ -108,9 +108,11 @@
     "stream-browserify": "3.0.0",
     "swagger-ui-express": "4.1.6",
     "tslib": "2.3.1",
-    "yup": "0.32.11"
+    "yup": "0.32.11",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
+    "@types/lodash": "4.14.179",
     "@emotion/babel-plugin": "11.3.0",
     "@nestjs/schematics": "8.0.5",
     "@nestjs/testing": "8.0.6",
