@@ -8,22 +8,23 @@ import { getProviderWithFallback } from '@energyweb/utils-general';
 import { Repository } from 'typeorm';
 import { AccountDTO } from './account.dto';
 import { Account } from './account.entity';
+import { SignerService } from '../blockchain/get-signer.service';
 
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly repository: Repository<Account>,
     private readonly blockchainPropertiesService: BlockchainPropertiesService,
+    private readonly signerService: SignerService,
     private readonly configService: ConfigService
   ) {}
 
   public async create(): Promise<AccountDTO> {
     const totalAccounts = await this.repository.count();
 
-    const { registry, rpcNode, platformOperatorPrivateKey } =
-      await this.blockchainPropertiesService.get();
+    const { registry, rpcNode } = await this.blockchainPropertiesService.get();
     const provider = getProviderWithFallback(rpcNode);
-    const issuerAccount = new Wallet(platformOperatorPrivateKey, provider);
+    const issuerAccount = await this.signerService.get();
 
     const minBalanceNeeded = utils.parseEther(
       this.configService.get<string>('MIN_ETHER_BALANCE') || '0.01'

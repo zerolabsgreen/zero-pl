@@ -1346,36 +1346,36 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@energyweb/issuer-api@0.4.1-alpha.1637852659.0":
-  version "0.4.1-alpha.1637852659.0"
-  resolved "https://registry.yarnpkg.com/@energyweb/issuer-api/-/issuer-api-0.4.1-alpha.1637852659.0.tgz#f2d4f2e11dd59e8227e5cfb6eeb1826d91469b1e"
-  integrity sha512-hsVcOGMsL4VADCw4BoEEL0wxsHtss67MChOwrUe+uR10u58E/RXepZR6zDuegIImrWCo0CNUwt3Tg+Rg7njlSA==
+"@energyweb/issuer-api@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@energyweb/issuer-api/-/issuer-api-0.6.1.tgz#04bd5158612cab0808630e7ce4524ef87244b82e"
+  integrity sha512-hqUdzc1aRBVFIsKISHGQ9q3Is6JSfUmfyHvjlA5SAvAhlmaOJrydyE4tCUCCR1ojF69ltfS46Xw+I7z8IQRIWQ==
   dependencies:
-    "@energyweb/issuer" "4.1.1-alpha.1637852659.0"
-    "@energyweb/origin-backend-core" "8.0.4-alpha.1637852659.0"
-    "@energyweb/origin-backend-utils" "1.6.2-alpha.1637852659.0"
-    "@energyweb/utils-general" "11.0.5-alpha.1637852659.0"
+    "@energyweb/issuer" "6.0.1"
+    "@energyweb/origin-backend-core" "8.2.1"
+    "@energyweb/origin-backend-utils" "1.8.1"
+    "@energyweb/utils-general" "11.2.1"
     "@nestjs/config" "1.0.2"
     "@nestjs/passport" "8.0.1"
     "@nestjs/schedule" "1.0.1"
     "@nestjs/swagger" "5.1.4"
     class-validator "0.13.2"
     ethers "5.3.1"
+    ew-precise-proofs-js "1.1.0"
     ganache-cli "6.12.2"
     moment "2.29.1"
     moment-range "4.0.2"
     pg "8.7.1"
-    precise-proofs-js "1.2.0"
     rxjs "7.4.0"
-    swagger-ui-express "4.1.6"
+    swagger-ui-express "4.2.0"
     typeorm "0.2.41"
 
-"@energyweb/issuer@4.1.1-alpha.1637852659.0":
-  version "4.1.1-alpha.1637852659.0"
-  resolved "https://registry.yarnpkg.com/@energyweb/issuer/-/issuer-4.1.1-alpha.1637852659.0.tgz#70d1cd6ab17c9f8f9807450f0f20f0cbaab0edb2"
-  integrity sha512-dAxuo+NBj70IQERP74WYHEbrYLDY0VLf+x1F7iyrMJ8dnBdHUJCXimG6G6wooebDYShmek9Sp5ZVL1U8eZjJyA==
+"@energyweb/issuer@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@energyweb/issuer/-/issuer-6.0.1.tgz#9ee8b566fdca19ebb2e14b2add7bafc89125a8cd"
+  integrity sha512-xj3m34WhBbhTxGlU+lQK35DwuKetuwofsOXBzcHMfSCfyF0EUuqxvtJliEY3Ta9+pnAb3YiXgfaXVEZHRTIUfw==
   dependencies:
-    "@energyweb/utils-general" "11.0.5-alpha.1637852659.0"
+    "@energyweb/utils-general" "11.2.1"
     "@ethersproject/abi" "5.3.1"
     "@ethersproject/abstract-signer" "5.3.0"
     "@ethersproject/contracts" "5.3.0"
@@ -1383,41 +1383,41 @@
     "@ethersproject/wallet" "5.3.0"
     dotenv "10.0.0"
     ethers "5.3.1"
+    ew-precise-proofs-js "1.1.0"
     ganache-cli "6.12.2"
     moment "2.29.1"
-    precise-proofs-js "1.2.0"
     winston "3.3.3"
 
-"@energyweb/origin-backend-core@8.0.4-alpha.1637852659.0":
-  version "8.0.4-alpha.1637852659.0"
-  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-core/-/origin-backend-core-8.0.4-alpha.1637852659.0.tgz#3fd6c16033097c4e8acf72c47ab4da77aac0e3f8"
-  integrity sha512-VRFRFr3B6ZAoDCviXg6UOh6ArA1y4/5Qk3XvQGZ3AT9LZAH1yXsjw1/FjzO+6jiVxI1BV5AaGgxC2JiClNoKwA==
+"@energyweb/origin-backend-core@8.2.1":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-core/-/origin-backend-core-8.2.1.tgz#797d8c2746bba6ba2c7e2ce384af69de8502959c"
+  integrity sha512-ALwGHeergdY4AJaDF8jhZh+I9VFrdI9haIhiXqk8JDGAV2hgR/+Bcm2bZRo0xykWn9uZKgfz3cfvO3u9iiDXcw==
   dependencies:
     class-transformer "0.3.1"
     class-validator "0.13.2"
     ethers "5.3.1"
 
-"@energyweb/origin-backend-utils@1.6.2-alpha.1637852659.0":
-  version "1.6.2-alpha.1637852659.0"
-  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-utils/-/origin-backend-utils-1.6.2-alpha.1637852659.0.tgz#81eedb8f53c29e312462f6d50365447afa030978"
-  integrity sha512-ieQQOWCMuXbq3g5NWK/WXftbMLPK+7W1mp2XA2lh2u9HUFlYdRx6+voMT8mJO6UyEG5aC3yy1Zg70L3sRAnHMw==
+"@energyweb/origin-backend-utils@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-utils/-/origin-backend-utils-1.8.1.tgz#097e6f9bb051581788f017863006724d99f04ff2"
+  integrity sha512-XJ0dUqiYiDA187SXrev3vEC+OaKNhUtG2m8aw2XuNbN9CC5l9RRrD2V/ZxR4q/peUNLk9xQ/edcqo3+WgLXYwQ==
   dependencies:
-    "@energyweb/origin-backend-core" "8.0.4-alpha.1637852659.0"
+    "@energyweb/origin-backend-core" "8.2.1"
     "@nestjs/config" "1.0.2"
     "@nestjs/swagger" "5.1.4"
     bn.js "5.2.0"
     class-validator "0.13.2"
     pg "8.7.1"
-    polly-js "1.8.2"
+    polly-js "1.8.3"
     rxjs "7.4.0"
     typeorm "0.2.41"
 
-"@energyweb/utils-general@11.0.5-alpha.1637852659.0":
-  version "11.0.5-alpha.1637852659.0"
-  resolved "https://registry.yarnpkg.com/@energyweb/utils-general/-/utils-general-11.0.5-alpha.1637852659.0.tgz#0878ed340c929be3560827e448feb044e4d0bace"
-  integrity sha512-KZLI8O7CVnmXXiKcylNDCJGYwo0SOf1FRDBrqhLiZbSD7ClZOLr9R0zpG0WZTV9YLfT1N2bKEe6eKwJlykqxYg==
+"@energyweb/utils-general@11.2.1":
+  version "11.2.1"
+  resolved "https://registry.yarnpkg.com/@energyweb/utils-general/-/utils-general-11.2.1.tgz#84936d34ad8e87069dbb2a9a7302a81d36ad071b"
+  integrity sha512-OvK7M/Sid29/hMS57+sScz8MHRv11/C9/RxrSTJPV97eZR2FrPjolT62SqcoItRgUwPUcEUoTwaqVr8Yciujuw==
   dependencies:
-    chai "4.3.0"
+    chai "4.3.4"
     eth-sig-util "2.5.4"
     ethers "5.3.1"
     jsonschema "1.4.0"
@@ -5847,16 +5847,16 @@ center-align@^0.1.1:
     align-text "^0.1.3"
     lazy-cache "^1.0.3"
 
-chai@4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.0.tgz#5523a5faf7f819c8a92480d70a8cccbadacfc25f"
-  integrity sha512-/BFd2J30EcOwmdOgXvVsmM48l0Br0nmZPlO0uOW4XKh6kpsUumRXBgPV+IlaqFaqr9cYbeoZAM1Npx0i4A+aiA==
+chai@4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.4.tgz#b55e655b31e1eac7099be4c08c21964fce2e6c49"
+  integrity sha512-yS5H68VYOCtN1cjfwumDSuzn/9c+yza4f3reKXlE5rUg7SFcCEy90gJvydNgOYtblyf4Zi6jIWRnXOgErta0KA==
   dependencies:
     assertion-error "^1.1.0"
     check-error "^1.0.2"
     deep-eql "^3.0.1"
     get-func-name "^2.0.0"
-    pathval "^1.1.0"
+    pathval "^1.1.1"
     type-detect "^4.0.5"
 
 chalk@2.4.2, chalk@^2.0.0, chalk@^2.4.1, chalk@^2.4.2:
@@ -8710,6 +8710,17 @@ evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   dependencies:
     md5.js "^1.3.4"
     safe-buffer "^5.1.1"
+
+ew-precise-proofs-js@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ew-precise-proofs-js/-/ew-precise-proofs-js-1.1.0.tgz#1bfd5e8c3378d370c4ee5ba0a60e5d94169ec086"
+  integrity sha512-1D77M/k8cn0sHjEWWoZ44mQBv1Z2iBKiVaHvj08zrEZ4bd7tEW5nLn9uFjMkzhsYuRqTwxrBXmeyXlo2QqqscA==
+  dependencies:
+    build "0.1.4"
+    colors "1.4.0"
+    ethers "5.0.7"
+    treeify "1.1.0"
+    web3-utils "1.2.6"
 
 execa@4.1.0:
   version "4.1.0"
@@ -13499,7 +13510,7 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pathval@^1.1.0:
+pathval@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.1.tgz#8534e77a77ce7ac5a2512ea21e0fdb8fcf6c3d8d"
   integrity sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==
@@ -13683,6 +13694,11 @@ polly-js@1.8.2:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/polly-js/-/polly-js-1.8.2.tgz#6643376f4ec3feb91300ade628d14f11231b9d49"
   integrity sha512-xLP03RU7rnczJgul5YtCbk9SRtuvE/f0hMntAoH4mMmqRoLaHBO9SXPG2UFZRBjqv0ResUCmXhQPwQXkYhBxsg==
+
+polly-js@1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/polly-js/-/polly-js-1.8.3.tgz#c1bfe878f676a78146e394a95b41b4ba5143300c"
+  integrity sha512-pFgSsipKs5bxtXMM+Vfw2p8kOEZhJ+Z9xDZLbiMjjw57WZdlg+6eTZdSIHDycNii+4+7xmzCfryQVIqwgeYX4g==
 
 portfinder@^1.0.28:
   version "1.0.28"
@@ -14018,17 +14034,6 @@ postgres-interval@^1.1.0:
   integrity sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==
   dependencies:
     xtend "^4.0.0"
-
-precise-proofs-js@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/precise-proofs-js/-/precise-proofs-js-1.2.0.tgz#7027b2b828b22191ca3684085dbb187f0089de54"
-  integrity sha512-epihRcFUK7z4OBvlmk58o285zSi93ZQKY060FRGlscThzwWYn0Q74ff6b1jv5hTe2LR1Pp+OWhX1t4hkOiSpxQ==
-  dependencies:
-    build "0.1.4"
-    colors "1.4.0"
-    ethers "5.0.7"
-    treeify "1.1.0"
-    web3-utils "1.2.6"
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -16233,6 +16238,11 @@ svgo@^2.5.0, svgo@^2.7.0:
     picocolors "^1.0.0"
     stable "^0.1.8"
 
+swagger-ui-dist@>3.52.5:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-4.6.2.tgz#3c6ac79108b67d37c76ac8f8bebf4b432ef81585"
+  integrity sha512-BSt+ukOGkGZ2uHV4jyyCAzt60ysyQpGZAAhtIh7AMHT4MH1xXGkoXm2tfr1oRqO1N4IEY6qqNAlmcfMo/dAYuw==
+
 swagger-ui-dist@^3.18.1:
   version "3.52.5"
   resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-3.52.5.tgz#9aa8101a2be751f5145195b9e048bc21b12fac60"
@@ -16244,6 +16254,13 @@ swagger-ui-express@4.1.6:
   integrity sha512-Xs2BGGudvDBtL7RXcYtNvHsFtP1DBFPMJFRxHe5ez/VG/rzVOEjazJOOSc/kSCyxreCTKfJrII6MJlL9a6t8vw==
   dependencies:
     swagger-ui-dist "^3.18.1"
+
+swagger-ui-express@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/swagger-ui-express/-/swagger-ui-express-4.2.0.tgz#98797cc147071170670415c9193951cfbde173bd"
+  integrity sha512-znrHTwh9UpvsjqgWopA4noIet7mi7UGuIYZ465YfUDKQ5Dpas0jxnkfUKCo+0aB17YCBv26AhIjiQYDV4uvJFA==
+  dependencies:
+    swagger-ui-dist ">3.52.5"
 
 swagger2openapi@^7.0.8:
   version "7.0.8"

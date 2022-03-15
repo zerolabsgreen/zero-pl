@@ -52,12 +52,18 @@ export class Seed9999999999999 implements MigrationInterface {
 
     await queryRunner.query(
       `INSERT INTO public.issuer_blockchain_properties (
-                "netId", "registry", "issuer", "rpcNode", "rpcNodeFallback", "platformOperatorPrivateKey"
+                "netId", "registry", "issuer", "rpcNode", "rpcNodeFallback"
             ) VALUES (${provider.network.chainId}, '${
         contractsLookup.registry
       }', '${contractsLookup.issuer}', '${primaryRpc}', '${
         fallbackRpc ?? ''
-      }', '${deployer.privateKey}')`
+      }')`
+    );
+
+    await queryRunner.query(
+      `INSERT INTO public.issuer_signer (
+                "blockchainNetId", "platformOperatorPrivateKey", "isEncrypted"
+            ) VALUES (${provider.network.chainId}, '${deployer.privateKey}', '${false}')`
     );
   }
 
