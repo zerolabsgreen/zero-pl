@@ -19,11 +19,12 @@ export class SignerService {
         const queryRunner = this.connection.createQueryRunner();
 
         await queryRunner.connect();
-        await queryRunner.startTransaction();
 
         const privateKey = await queryRunner.query(
             `SELECT "platformOperatorPrivateKey" FROM public.issuer_signer;`
         );
+
+        await queryRunner.release();
 
         console.log(privateKey);
 
