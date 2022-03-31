@@ -6,23 +6,29 @@ import FileDownloadLink from '../FileDownloadLink';
 import PaperBox from '../PaperBox';
 
 export interface DownloadSectionProps {
+  title: string;
   fileList: File[];
 }
 
-export const DownloadSection = ({ fileList = [] }: DownloadSectionProps) => {
+const shortifyFileName = (fileName: string) => {
+  if (fileName.length <= 24) return fileName
+  return `${fileName.substr(0, 24)}... ${fileName.substr(fileName.length - 4, fileName.length - 1)}`
+}
+
+export const DownloadSection = ({ title, fileList = [] }: DownloadSectionProps) => {
   const theme = useTheme();
 
   return (
     <PaperBox customPadding={'25px'} bgColor={theme.palette.primary.main}>
       <ResponsiveBox>
         <StyledTypography>
-          Download official Attestation
+          {title}
         </StyledTypography>
         {fileList.map((file) => (
           <FileDownloadLink
             key={file.fileName + file.url}
             downloadUrl={file.url}
-            filename={file.fileName ?? 'Official attestion'}
+            filename={file.fileName ? shortifyFileName(file.fileName) : title}
           />
         ))}
       </ResponsiveBox>

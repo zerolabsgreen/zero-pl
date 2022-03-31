@@ -59,8 +59,8 @@ export const exampleData = {
         }
     ],
     "certificate": {
-        "id": "55a057a4-8955-4d5b-96df-3ac0d56aa197",
-        "energy": "108000000",
+        "id": "w55a057a4-8955-4d5b-96df-3ac0d56aa197",
+        "energyWh": "108000000",
         "generatorName": "Valentine Wind, LLC (NE)",
         "generatorId": "did:zl:DG000000000003",
         "region": "NE",
@@ -83,12 +83,14 @@ export const exampleData = {
         {
             "id": "d52cf9e9-8a50-48e9-83e3-6753c14178d5",
             "fileName": "ZeroLabs_EAC-Attestation_f0763337.pdf",
+            "fileType": "ATTESTATION",
             "mimeType": "application/pdf",
             "url": "https://proofs-api.zerolabs.green/api/files/d52cf9e9-8a50-48e9-83e3-6753c14178d5"
         },
         {
             "id": "648c16b3-6a33-48d5-a222-ba1906ec81a5",
             "fileName": "Green-e_Attestation.pdf",
+            "fileType": "REDEMPTION_STATEMENT",
             "mimeType": "application/pdf",
             "url": "https://proofs-api.zerolabs.green/api/files/648c16b3-6a33-48d5-a222-ba1906ec81a5"
         }

@@ -65,8 +65,19 @@ const ProofExamplePage = () => {
                     data={certificateInfoTableData}
                   />
                 </Grid>
-                <Grid item xs={12} sx={{ pt: '16px' }}>
-                  <DownloadSection fileList={exampleData.files} />
+                <Grid container justifyContent="space-between" spacing={2}>
+                  <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
+                    <DownloadSection
+                      title="Download Official Attestation"
+                      fileList={[exampleData.files[0]]}
+                    />
+                  </Grid>
+                  <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
+                    <DownloadSection
+                      title="Download Redemption Statement"
+                      fileList={[exampleData.files[1]]}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </PageSection>

@@ -15,8 +15,7 @@ import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
 import { formatPower, Unit } from '../../utils';
 
 export const ProofPage = () => {
-  const { certificateInfoTableData, data, isLoading, isFetched, purchaseId } = useProductPageEffects();
-
+  const { certificateInfoTableData, data, redemptionFile, attestationFile, isLoading, isFetched, purchaseId } = useProductPageEffects();
   return !isLoading && isFetched && certificateInfoTableData && data ? (
     <Container maxWidth={'xl'}>
       <Grid container>
@@ -64,8 +63,19 @@ export const ProofPage = () => {
                     data={certificateInfoTableData}
                   />
                 </Grid>
-                <Grid item xs={12} sx={{ pt: '16px' }}>
-                  <DownloadSection fileList={data.files} />
+                <Grid container justifyContent="space-between" spacing={2}>
+                  <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
+                    <DownloadSection
+                      title="Download Official Attestation"
+                      fileList={attestationFile ? [attestationFile] : []}
+                    />
+                  </Grid>
+                  <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
+                    <DownloadSection
+                      title="Download Redemption Statement"
+                      fileList={redemptionFile ? [redemptionFile] : []}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </PageSection>
