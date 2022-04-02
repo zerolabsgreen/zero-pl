@@ -77,7 +77,7 @@ type ColumnData = {
   heightMultiplier: number
 }
 
-const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyData; columnData: ColumnData }  => {
+export const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyData; columnData: ColumnData }  => {
   const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
     id: contract.id,
     targetIds: contract.purchases.map(purchase => purchase.certificate.id),
@@ -290,7 +290,7 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
 }
 export default SankeyView
 
-const TotalText = styled(Typography)(({ theme }) => `
+const TotalText = styled(Typography)`
   font-weight: 600;
   font-size: 14px;
-`)
+`
