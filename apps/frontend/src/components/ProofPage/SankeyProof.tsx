@@ -27,7 +27,7 @@ enum SankeyItemType {
 }
 
 const sankeyColors: SankeyColors = {
-  NonTargetColor: '#D0CBF0',
+  NonTargetColor: '#CFCFCF',
   Contract: '#4480DB',
   Certificate: '#61CB80',
   Proof: '#7FD9A2',
@@ -78,9 +78,9 @@ export const SankeyProof = ({ proof }: Props) => {
                     }
                     {graph &&
                       graph.nodes.map(node => {
-                        const nodeColor = node.type === SankeyItemType.Certificate && node.id !== proof.certificate.id
-                          ? sankeyColors.NonTargetColor
-                          : node.type === SankeyItemType.Proof && node.id !== proof.id
+                        const nonTargetNode = node.type === SankeyItemType.Certificate && node.id !== proof.certificate.id
+                         || node.type === SankeyItemType.Proof && node.id !== proof.id
+                        const nodeColor = nonTargetNode
                             ? sankeyColors.NonTargetColor
                             : sankeyColors[node.type]
                         return (
@@ -91,6 +91,7 @@ export const SankeyProof = ({ proof }: Props) => {
                             name={node.type}
                             graph={graph}
                             volume={node.volume}
+                            textColor={nonTargetNode ? '#A0A0A0' : undefined}
                           />
                         )
                       })
