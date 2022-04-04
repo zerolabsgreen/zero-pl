@@ -30,7 +30,7 @@ export class FileMetadataDto implements File {
   @Expose()
   purchases: string[];
 
-  @ApiProperty( { example: FileType.ATTESTATION })
+  @ApiProperty({ example: FileType.ATTESTATION })
   @Expose()
   fileType: FileType;
 

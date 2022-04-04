@@ -7,16 +7,16 @@ import { GenericTable } from '@zero-labs/zero-ui-components';
 import { BuyerSellerInformation } from '../../components/BuyerSellerInformation';
 import { PageSection } from '../../components/PageSection';
 import { DownloadSection } from '../../components/DownloadSection';
-import { TableListProofs } from '../../components/TableListProofs';
+// import { TableListProofs } from '../../components/TableListProofs';
 import { LoadingBlock } from '../../components/LoadingBlock';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { shortifyEthAddr } from '../../components/EthereumAddress';
 import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
 import { formatPower, Unit } from '../../utils';
+import { SankeyProof } from '../../components/ProofPage';
 
 export const ProofPage = () => {
-  const { certificateInfoTableData, data, isLoading, isFetched, purchaseId } = useProductPageEffects();
-
+  const { certificateInfoTableData, data, redemptionFile, attestationFile, isLoading, isFetched, purchaseId } = useProductPageEffects();
   return !isLoading && isFetched && certificateInfoTableData && data ? (
     <Container maxWidth={'xl'}>
       <Grid container>
@@ -64,15 +64,27 @@ export const ProofPage = () => {
                     data={certificateInfoTableData}
                   />
                 </Grid>
-                <Grid item xs={12} sx={{ pt: '16px' }}>
-                  <DownloadSection fileList={data.files} />
+                <Grid container justifyContent="space-between" spacing={2}>
+                  <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
+                    <DownloadSection
+                      title="Download Official Attestation"
+                      fileList={attestationFile ? [attestationFile] : []}
+                    />
+                  </Grid>
+                  <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
+                    <DownloadSection
+                      title="Download Redemption Statement"
+                      fileList={redemptionFile ? [redemptionFile] : []}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </PageSection>
           </Grid>
         </Box>
         <Box width={'100%'}>
-          <TableListProofs purchaseId={purchaseId} />
+          {/* <TableListProofs purchaseId={purchaseId} /> */}
+          <SankeyProof proof={data} />
         </Box>
       </Grid>
     </Container>

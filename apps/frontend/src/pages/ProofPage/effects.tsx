@@ -19,7 +19,6 @@ export const certificateInfoTableHeaders: TableHeader = {
   seller: { label: 'Seller', infoText: 'ID of the EAC seller' }
 }
 
-
 export const useProductPageEffects = () => {
   const { productId: purchaseId } = useParams();
 
@@ -48,5 +47,8 @@ export const useProductPageEffects = () => {
     seller: <EthereumAddress shortify clipboard address={data?.certificate?.initialSellerId ?? ''} />
   }]
 
-  return { certificateInfoTableData, data, isLoading, isFetched, purchaseId };
+  const attestationFile = data?.files?.find(file => file.fileType === 'ATTESTATION')
+  const redemptionFile = data?.files?.find(file => file.fileType === 'REDEMPTION_STATEMENT')
+
+  return { certificateInfoTableData, data, redemptionFile, attestationFile, isLoading, isFetched, purchaseId };
 }

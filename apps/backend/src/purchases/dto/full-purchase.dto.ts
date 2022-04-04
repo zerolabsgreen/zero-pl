@@ -6,7 +6,7 @@ import { CertificateDto } from '../../certificates/dto/certificate.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
 import { Buyer, Certificate, FilecoinNode, Purchase, Seller } from '@prisma/client';
 
-class File extends PartialType(PickType(FileMetadataDto, ['id', 'fileName', 'mimeType'] as const)) {
+class File extends PartialType(PickType(FileMetadataDto, ['id', 'fileName', 'mimeType', 'fileType'] as const)) {
   @ApiProperty({ example: `${process.env.API_BASE_URL}/api/files/5ff1cb39-da8b-4f0a-a17d-a5d00ea85a60` })
   url: string;
 }
