@@ -88,6 +88,7 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
             {amount}
           </Typography>
         </Flexbox>
+        {beneficiary &&
         <Flexbox>
           <Typography width="40%">
             Beneficiary
@@ -95,7 +96,7 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
           <Typography fontWeight="bold" width="60%">
             {beneficiary}
           </Typography>
-        </Flexbox>
+        </Flexbox>}
         <Flexbox>
           <Typography width="40%">
             Period

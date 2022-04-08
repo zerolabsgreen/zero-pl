@@ -7,7 +7,7 @@ import FuelType, { FuelTypeEnum } from "../../components/FuelType";
 import { formatPower, Unit } from "../../utils";
 
 export const certificateInfoTableHeaders: TableHeader = {
-  proofId: { label: 'Proof ID', infoText: 'Proof ID represents the identifier of proof in EW Zero marketplace' },
+  proofId: { label: 'Certificate ID', infoText: 'Certificate ID represents the identifier of certificate in EW Zero marketplace' },
   beneficiary: { label: 'Beneficiary', infoText: 'The ID of the redemption beneficiary' },
   product: { label: 'Product', infoText: 'Type of purchased EAC' },
   amount: { label: 'Amount', infoText: 'The number of EACs the buyer has bought and redeemed for their renewable energy consumption claims. 1 REC normally equals to 1 MWh of electricity produced with clean energy' },
@@ -28,7 +28,7 @@ export const useProductPageEffects = () => {
     id: data?.certificate.id ?? '',
     proofId: <EthereumAddress shortify clipboard address={data?.certificate?.id ?? ''} />,
     product: data?.certificate?.productType ?? '',
-    beneficiary: data?.certificate?.beneficiary ?? '',
+    beneficiary: data?.filecoinNodes?.map(node => node.id)?.join(', ') ?? '',
     amount: data?.certificate?.energyWh ? formatPower(data.certificate.energyWh, { unit: Unit.MWh, includeUnit: true }) : '',
     period: (
     <>{dayjs(data?.certificate?.generationStart).isValid()
