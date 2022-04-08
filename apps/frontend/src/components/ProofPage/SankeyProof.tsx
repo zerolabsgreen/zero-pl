@@ -41,13 +41,15 @@ export const SankeyProof = ({ proof }: Props) => {
     {query:{enabled: Boolean(proof.contractId)}}
   )
 
+  const beneficiary = proof.filecoinNodes.map(node => node.id)?.join(', ')
+
   if (contract) {
     const { sankeyData } = createSankeyData([contract])
     const sankeyHeight = contract.purchases.length*150
 
     return (
       <PageSection>
-        <Typography variant="h6" fontWeight={600} component="span" color="primary">
+        <Typography fontSize={'20px'} fontWeight={700} component="span" color="primary">
           Sankey view
         </Typography>
         <Box textAlign="center" pt="40px">
@@ -72,6 +74,7 @@ export const SankeyProof = ({ proof }: Props) => {
                             key={`sankey-link-${i}`}
                             link={link}
                             color={linkColor}
+                            beneficiary={beneficiary}
                           />
                         )
                       })

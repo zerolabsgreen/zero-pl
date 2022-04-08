@@ -16,9 +16,18 @@ import { formatPower, Unit } from '../../utils';
 import { SankeyProof } from '../../components/ProofPage';
 
 export const ProofPage = () => {
-  const { certificateInfoTableData, data, redemptionFile, attestationFile, isLoading, isFetched, purchaseId } = useProductPageEffects();
+  const {
+    certificateInfoTableData,
+    data,
+    redemptionFile,
+    attestationFile,
+    isLoading,
+    isFetched,
+    purchaseId
+  } = useProductPageEffects();
+
   return !isLoading && isFetched && certificateInfoTableData && data ? (
-    <Container maxWidth={'xl'}>
+    <Container maxWidth={'xl'} style={{ paddingBottom: '2rem' }}>
       <Grid container>
         <Box sx={{ width: '100%' }}>
           <Grid item xs={12}>
