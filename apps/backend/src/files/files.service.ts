@@ -17,14 +17,14 @@ export class FilesService {
         content: buffer,
         fileName: filename,
         mimeType: mimeType,
-        fileType,
         purchases: {
           create: purchaseIds.map((id) => ({
             purchase: {
               connect: {
-                id
+                id,
               },
-            }
+            },
+            fileType
           }))
         }
       },
@@ -48,7 +48,6 @@ export class FilesService {
         createdAt: true,
         updatedAt: true,
         purchases: true,
-        fileType: true
       }
     });
 
