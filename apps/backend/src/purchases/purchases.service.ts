@@ -185,11 +185,12 @@ export class PurchasesService {
         files: {
           select: {
             file: {
-              select: {
-                id: true,
-                fileName: true,
-                mimeType: true,
-                fileType: true
+              include: {
+                purchases: {
+                  select: {
+                    fileType: true
+                  }
+                }
               }
             }
           }
@@ -201,7 +202,20 @@ export class PurchasesService {
       return null;
     }
 
-    return FullPurchaseDto.toDto({ ...data, filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode) });
+    return FullPurchaseDto.toDto({
+      ...data,
+      filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode),
+      files: data.files.map(f => {
+        const { purchases, ...file } = f.file;
+
+        return {
+          file: {
+            ...file,
+            fileType: purchases.pop()?.fileType
+          }
+        };
+      }) 
+    });
   }
 
   async update(id: string, updatePurchaseDto: UpdatePurchaseDto) {

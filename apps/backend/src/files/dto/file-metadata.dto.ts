@@ -44,6 +44,7 @@ export class FileMetadataDto implements File {
     return {
       ...dbEntity,
       purchases: dbEntity.purchases.map(p => p.purchaseId),
+      fileType: dbEntity.purchases.pop()?.fileType ?? undefined,
       content: dbEntity.content ?? undefined
     };
   }
