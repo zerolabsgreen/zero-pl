@@ -102,8 +102,14 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   @ApiProperty({ example: '2021-10-11T07:48:46.799Z' })
   createdAt: Date;
 
-  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
+  @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
   updatedAt: Date;
+
+  @ApiPropertyOptional({ example: `${process.env.UI_BASE_URL}/partners/filecoin/contracts/0a420fdb-ff96-42f8-9e99-7c11a6026485` })
+  pageUrl?: string;
+
+  @ApiPropertyOptional({ example: `${process.env.API_BASE_URL}/api/partners/filecoin/contracts/0a420fdb-ff96-42f8-9e99-7c11a6026485` })
+  dataUrl?: string;
 
   constructor(partial: Partial<ContractDto>) {
     Object.assign(this, partial);
@@ -114,7 +120,7 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
       .map(p => p.certificate.energyWh)
       .reduce((partialSum, purchaseVolume) => BigInt(partialSum) + BigInt(purchaseVolume), BigInt(0));
     const openVolume = BigInt(dbEntity.volume) - deliveredVolumeMwh;
-    
+
     return {
       id: dbEntity.id,
       productType: dbEntity.productType,

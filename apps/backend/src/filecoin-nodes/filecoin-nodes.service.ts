@@ -90,7 +90,17 @@ export class FilecoinNodesService {
       throw new NotFoundException(`Filecoin node with id ${id} doesn't exist`);
     }
 
-    return FilecoinNodeWithContractsDto.toDto(record);
+    const node = FilecoinNodeWithContractsDto.toDto(record)
+    const nodeWithUrls: FilecoinNodeWithContractsDto = {
+      ...node,
+      contracts: node.contracts.map(c => ({
+        ...c,
+        pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/contracts/${c.id}`,
+        dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/contracts/${c.id}`,
+      }))
+    }
+
+    return nodeWithUrls
   }
 
   async update(id: string, updateFilecoinNodeDto: UpdateFilecoinNodeDto): Promise<FilecoinNodeDto> {
