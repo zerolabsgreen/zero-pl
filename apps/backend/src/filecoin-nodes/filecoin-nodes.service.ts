@@ -3,17 +3,18 @@ import { CreateFilecoinNodeDto } from './dto/create-filecoin-node.dto';
 import { UpdateFilecoinNodeDto } from './dto/update-filecoin-node.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilecoinNodeDto } from './dto/filecoin-node.dto';
-import { FilecoinNode } from '@prisma/client';
+import { FilecoinNode, FileType } from '@prisma/client';
 import { pick } from 'lodash';
 import { DateTime, Duration } from "luxon";
 import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class FilecoinNodesService {
   private readonly logger = new Logger(FilecoinNodesService.name, { timestamp: true });
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private filesService: FilesService) {}
 
   async create(createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     let newFilecoinNode: FilecoinNode;
@@ -90,7 +91,17 @@ export class FilecoinNodesService {
       throw new NotFoundException(`Filecoin node with id ${id} doesn't exist`);
     }
 
-    return FilecoinNodeWithContractsDto.toDto(record);
+    const node = FilecoinNodeWithContractsDto.toDto(record)
+    const nodeWithUrls: FilecoinNodeWithContractsDto = {
+      ...node,
+      contracts: node.contracts.map(c => ({
+        ...c,
+        pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/contracts/${c.id}`,
+        dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/contracts/${c.id}`,
+      }))
+    }
+
+    return nodeWithUrls
   }
 
   async update(id: string, updateFilecoinNodeDto: UpdateFilecoinNodeDto): Promise<FilecoinNodeDto> {
@@ -123,6 +134,10 @@ export class FilecoinNodesService {
       return null;
     }
 
+    const allFiles = await this.filesService.findAll()
+    const allRedemptionStatements = allFiles.filter(f => f.fileType === FileType.REDEMPTION_STATEMENT) ?? []
+
+    // should be typed
     return {
       minerId: data.id,
       buyerId: data.buyerId,
@@ -135,10 +150,12 @@ export class FilecoinNodesService {
           ), BigNumber.from(0)
         ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
+        const redemptionStatement = allRedemptionStatements.find(rs => rs.purchases.includes(p.purchase.id))
         return {
           id: p.purchase.id,
           pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${p.purchase.id}`,
           dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.purchase.id}`,
+          downloadUrl: redemptionStatement?.id ? `${process.env.API_BASE_URL}/api/files/${redemptionStatement.id}` : null,
           ...pick(p.purchase, [
             'sellerId',
             'annually',
@@ -155,29 +172,7 @@ export class FilecoinNodesService {
           reportingStartLocal: toDateStringWithOffset(p.purchase.reportingStart, p.purchase.reportingStartTimezoneOffset),
           reportingEndLocal: toDateStringWithOffset(p.purchase.reportingEnd, p.purchase.reportingEndTimezoneOffset),
           generation: {
-            ...pick(p.purchase.certificate, [
-              'id',
-              'region',
-              'country',
-              'energySource',
-              'productType',
-              'generatorId',
-              'generatorName',
-              'generationStart',
-              'generationStartTimezoneOffset',
-              'generationEnd',
-              'generationEndTimezoneOffset',
-              'txHash',
-              'initialSellerId',
-              'beneficiary',
-              'redemptionDate',
-              'productType',
-              'capacity',
-              'commissioningDate',
-              'label',
-              'createdAt',
-              'updatedAt'
-            ]),
+            ...p.purchase.certificate,
             energyWh: BigNumber.from(p.purchase.certificate.energyWh).toNumber(),
             generationStartLocal: toDateStringWithOffset(p.purchase.certificate.generationStart, p.purchase.certificate.generationStartTimezoneOffset),
             generationEndLocal: toDateStringWithOffset(p.purchase.certificate.generationEnd, p.purchase.certificate.generationEndTimezoneOffset)
