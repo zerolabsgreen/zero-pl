@@ -97,7 +97,7 @@ export class FilesController {
   }
 
   @Get(':id/metadata')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: FileMetadataDto })
   @UseInterceptors(NoDataInterceptor)

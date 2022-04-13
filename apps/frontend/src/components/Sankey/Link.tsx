@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { linkHorizontal } from "d3-shape";
 import type { SankeyLink } from "d3-sankey";
-import { ExtendedNodeProperties, SankeyItemType } from "../BeneficiaryPage/SankeyView";
 import SankeyLinkPopover from "./LinkPopover";
+import { ExtendedNodeProperties, SankeyItemType } from "./Node";
 
 type LinkProps = {
   link: SankeyLink<ExtendedNodeProperties, Record<string, any>>;

@@ -93,7 +93,7 @@ export const ProofPage = () => {
         </Box>
         <Box width={'100%'}>
           {/* <TableListProofs purchaseId={purchaseId} /> */}
-          <SankeyProof proof={data} />
+          <SankeyProof proof={data} redemptionStatementId={redemptionFile?.id} />
         </Box>
       </Grid>
     </Container>

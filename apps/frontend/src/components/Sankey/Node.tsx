@@ -1,7 +1,6 @@
 import { useTheme } from "@mui/material/styles";
 import type { SankeyNode, sankey, SankeyGraph } from "d3-sankey";
 import { ReactNode } from "react";
-import { ExtendedNodeProperties, SankeyItemType } from "../BeneficiaryPage/SankeyView";
 
 type NodeProps<N, L> = {
   link: SankeyNode<ExtendedNodeProperties, Record<string, any>>;
@@ -14,6 +13,25 @@ type NodeProps<N, L> = {
   volume?: string
   fullAddress?: string
   textColor?: string
+};
+
+export enum SankeyItemType {
+  Contract = 'Contract',
+  Redemption = 'Redemption',
+  Certificate = 'Certificate',
+  Proof = 'Proof'
+}
+
+export type ExtendedNodeProperties = {
+  id: string;
+  targetIds: string[];
+  type: SankeyItemType;
+  volume: string;
+  period?: string;
+  status?: string;
+  generator?: string;
+  energySources?: string[];
+  location?: string;
 };
 
 export const isContractNode = (node: SankeyNode<ExtendedNodeProperties, Record<string, any>>) => {

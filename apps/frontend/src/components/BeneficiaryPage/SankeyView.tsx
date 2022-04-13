@@ -9,20 +9,15 @@ import { maxBy } from 'lodash'
 import { FindContractDto, PurchaseWithCertificateDto } from "@energyweb/zero-protocol-labs-api-client";
 import Sankey from "../Sankey";
 import Link from "../Sankey/Link";
-import Node, { isEmptyContractNode, isContractNode } from "../Sankey/Node";
+import Node, { isEmptyContractNode, isContractNode, ExtendedNodeProperties, SankeyItemType } from "../Sankey/Node";
 import { formatPower, Unit } from "../../utils";
-
-export enum SankeyItemType {
-  Contract = 'Contract',
-  Certificate = 'Certificate',
-  Proof = 'Proof'
-}
 
 type BeneficiarySankeyColors = {
   NotDeliveredContract: string;
   Contract: string;
   Certificate: string;
   Proof: string;
+  Redemption: string;
 }
 
 const sankeyColors: BeneficiarySankeyColors = {
@@ -30,6 +25,7 @@ const sankeyColors: BeneficiarySankeyColors = {
   Contract: '#4480DB',
   Certificate: '#61CB80',
   Proof: '#7FD9A2',
+  Redemption: '#000'
 }
 
 const sankeyWidth = 1000
@@ -41,18 +37,6 @@ const getNodeHeight = (blocksInColumn: number, blockEnergyAmount: number, column
   const result = (sankeyHeight - (nodeSpacer*blocksInColumn)) * (blockEnergyAmount / columnEnergyAmount)
   return result < 40 ? 40 : result
 }
-
-export type ExtendedNodeProperties = {
-  id: string;
-  targetIds: string[];
-  type: SankeyItemType;
-  volume: string;
-  period: string;
-  status?: string;
-  generator?: string;
-  energySources: string[];
-  location: string;
-};
 
 type SankeyData = {
   nodes: SankeyNode<ExtendedNodeProperties, Record<string, any>>[];
@@ -74,10 +58,14 @@ type ColumnData = {
     amountOfBlocksInColumn: number;
     columnTotalEnergy: number;
   };
+  [SankeyItemType.Redemption]: {
+    amountOfBlocksInColumn: number;
+    columnTotalEnergy: number;
+  };
   heightMultiplier: number
 }
 
-export const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyData; columnData: ColumnData }  => {
+const createSankeyData = (contracts: FindContractDto[]): { sankeyData: SankeyData; columnData: ColumnData }  => {
   const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
     id: contract.id,
     targetIds: contract.purchases.map(purchase => purchase.certificate.id),
@@ -152,6 +140,10 @@ export const createSankeyData = (contracts: FindContractDto[]): { sankeyData: Sa
     [SankeyItemType.Proof]: {
       amountOfBlocksInColumn: proofsNodes.length,
       columnTotalEnergy: proofsNodes.reduce((prev, current) => prev + parseInt(current.volume ?? '0') , 0)
+    },
+    [SankeyItemType.Redemption]: {
+      amountOfBlocksInColumn: 0,
+      columnTotalEnergy: 0
     },
     heightMultiplier: 0,
   }

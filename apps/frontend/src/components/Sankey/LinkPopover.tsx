@@ -9,7 +9,7 @@ import { shortifyEthAddr } from "../EthereumAddress";
 import FuelType, { FuelTypeEnum } from "../FuelType";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router";
-import { SankeyItemType } from "../BeneficiaryPage/SankeyView";
+import { SankeyItemType } from "./Node";
 
 interface SankeyLinkPopoverProps {
   open: boolean;

@@ -1,57 +1,180 @@
-import { FullPurchaseDto, useContractsControllerFindOne } from "@energyweb/zero-protocol-labs-api-client"
+import {
+  FileMetadataDto,
+  FindContractDto,
+  FullPurchaseDto,
+  useContractsControllerFindOne,
+  useFilesControllerGetFileMetadata
+} from "@energyweb/zero-protocol-labs-api-client"
+import { BigNumber } from "@ethersproject/bignumber"
+import CircularProgress from "@mui/material/CircularProgress"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
-import { createSankeyData } from "../BeneficiaryPage/SankeyView"
+import { SankeyLink, SankeyNode } from "d3-sankey"
+import dayjs from "dayjs"
+import { useState } from "react"
+import { useContractsByIds } from "../../hooks/fetch/useContractsByIds"
+import { usePurchasesByIds } from "../../hooks/fetch/usePurchasesByIds"
+import { Unit } from "../../utils/enums"
+import { formatPower } from "../../utils/formatters"
 import PageSection from "../PageSection"
 import Sankey from "../Sankey"
 import Link from "../Sankey/Link"
-import Node from "../Sankey/Node"
-
-interface Props {
-  proof: FullPurchaseDto
-}
+import Node, { ExtendedNodeProperties, SankeyItemType } from "../Sankey/Node"
+import SecondaryButton from "../SecondaryButton"
 
 const sankeyWidth = 1000
+
+type SankeyData = {
+  nodes: SankeyNode<ExtendedNodeProperties, Record<string, any>>[];
+  links: SankeyLink<ExtendedNodeProperties, Record<string, any>>[];
+}
+
+export const createSankeyData = (
+  contracts: FindContractDto[],
+  redemptionStatement: FileMetadataDto,
+  purchases: FullPurchaseDto[]
+): { sankeyData: SankeyData }  => {
+
+  const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
+    id: contract.id,
+    targetIds: [redemptionStatement.id],
+    type: SankeyItemType.Contract,
+    volume: formatPower(
+      BigNumber.from(contract.openVolume ?? 0)
+      .add(BigNumber.from(contract.deliveredVolume ?? 0))
+      .toString(),
+      { includeUnit: true, unit: Unit.MWh }
+    ),
+    period: `${dayjs(contract.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(contract.reportingEnd).utc().format('YYYY.MM.DD')}`,
+    energySources: contract.energySources,
+    location: contract.countryRegionMap.map(pair => `${pair.country}, ${pair.region}`).join('; '),
+  }))
+
+  const redemptionNode: ExtendedNodeProperties[] = [{
+    id: redemptionStatement.id,
+    targetIds: purchases.map(p => p.certificate.id),
+    type: SankeyItemType.Redemption,
+    volume: formatPower(purchases.reduce(
+      (prev, current) => prev.add(BigNumber.from(current.certificate.energyWh)),
+      BigNumber.from(0)).toString(),
+      { includeUnit: true, unit: Unit.MWh }
+    ),
+  }]
+
+  const certificatesNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({
+    id: purchase.certificate.id,
+    targetIds: [purchase.id],
+    type: SankeyItemType.Certificate,
+    volume: formatPower(purchase.certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
+    period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
+    energySources: [purchase.certificate.energySource],
+    location: `${purchase.certificate.country}, ${purchase.certificate.region}`,
+    generator: purchase.certificate.generatorName
+  }))
+
+  const proofsNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({
+    id: purchase.id,
+    type: SankeyItemType.Proof,
+    volume: formatPower(purchase.certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
+    targetIds: [],
+    period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
+    energySources: [purchase.certificate.energySource],
+    location: `${purchase.certificate.country}, ${purchase.certificate.region}`,
+    generator: purchase.certificate.generatorName
+  }))
+
+  const nodes: ExtendedNodeProperties[] = [...contractsNodes, ...redemptionNode, ...certificatesNodes, ...proofsNodes];
+
+  const linksArr = nodes.filter(node => node.targetIds.length > 0)
+  const clonedLinks = linksArr.flatMap(link => {
+    if (link.targetIds?.length === 1) {
+      return { ...link, targetIds: link.targetIds[0] }
+    }
+    if (link.targetIds?.length > 1) {
+      return link.targetIds.map(targetId => ({ ...link, targetIds: targetId }))
+    }
+    return link
+  })
+  const links = clonedLinks.map(link => ({
+    source: nodes.findIndex(node => node.id === link.id),
+    target: nodes.findIndex(node => node.id === link.targetIds),
+    value: parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
+  })).filter(item => !!item);
+
+  const sankeyData = { nodes, links }
+
+  return { sankeyData }
+}
 
 type SankeyColors = {
   NonTargetColor: string;
   Contract: string;
   Certificate: string;
   Proof: string;
-}
-
-enum SankeyItemType {
-  Contract = 'Contract',
-  Certificate = 'Certificate',
-  Proof = 'Proof'
+  Redemption: string;
 }
 
 const sankeyColors: SankeyColors = {
   NonTargetColor: '#CFCFCF',
-  Contract: '#4480DB',
+  Contract: '#19355E',
   Certificate: '#61CB80',
   Proof: '#7FD9A2',
+  Redemption: '#4480DB',
 }
 
-export const SankeyProof = ({ proof }: Props) => {
+interface Props {
+  proof: FullPurchaseDto
+  redemptionStatementId?: string
+}
+
+export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
+
+  const [isExtendedSankey, setIsExtendedSankey] = useState(false)
+  const btnText = isExtendedSankey ? 'Short View' : 'Extended View'
+  const handleBtnClick = () => setIsExtendedSankey(!isExtendedSankey)
+
   const {
-    data: contract,
+    data: proofContract,
+    isLoading: isContractLoading
   } = useContractsControllerFindOne(
     proof.contractId ?? '',
     {query:{enabled: Boolean(proof.contractId)}}
   )
 
-  const beneficiary = proof.filecoinNodes.map(node => node.id)?.join(', ')
+  const {
+    data: redemptionStatement,
+    isLoading: isFileLoading
+  } = useFilesControllerGetFileMetadata(
+    redemptionStatementId,
+    {query:{enabled: Boolean(redemptionStatementId)}}
+  )
 
-  if (contract) {
-    const { sankeyData } = createSankeyData([contract])
-    const sankeyHeight = contract.purchases.length*150
+  const purchaseIds = redemptionStatement?.purchases ?? []
+  const { purchases } = usePurchasesByIds(purchaseIds)
+
+  const contractsIds = purchases.map(p => p.contractId ?? '')
+  const validContractIds = contractsIds.filter(c => Boolean(c))
+  const { contracts } = useContractsByIds(validContractIds)
+
+  const beneficiary = proof.filecoinNodes.map(node => node.id)?.join(', ')
+  const isLoading = isContractLoading || isFileLoading
+
+  if (proofContract && redemptionStatement && !isLoading) {
+    const { sankeyData } = !isExtendedSankey
+      ? createSankeyData([proofContract], redemptionStatement, proofContract.purchases as any as FullPurchaseDto[])
+      : createSankeyData(contracts, redemptionStatement, purchases)
+    const sankeyHeight = isExtendedSankey ? purchases.length*80 : proofContract.purchases.length*150
 
     return (
       <PageSection>
-        <Typography fontSize={'20px'} fontWeight={700} component="span" color="primary">
-          Sankey view
-        </Typography>
+        <Box width="100%" display="flex" justifyContent="space-between" alignItems="center">
+          <Typography fontSize='20px' fontWeight={700} component="span" color="primary">
+            Sankey view
+          </Typography>
+          <SecondaryButton onClick={handleBtnClick}>
+            {btnText}
+          </SecondaryButton>
+        </Box>
         <Box textAlign="center" pt="40px">
           <Sankey
               data={sankeyData}
@@ -67,6 +190,7 @@ export const SankeyProof = ({ proof }: Props) => {
                       graph.links.map((link, i) => {
                         const linkColor = (link.source as any).id === proof.certificate.id
                           || (link.target as any).id === proof.certificate.id
+                          || (link.source as any).id === proofContract?.id
                             ? sankeyColors[(link.source as any).type as keyof(SankeyColors)]
                             : sankeyColors.NonTargetColor
                         return (
@@ -86,6 +210,7 @@ export const SankeyProof = ({ proof }: Props) => {
                         const nodeColor = nonTargetNode
                             ? sankeyColors.NonTargetColor
                             : sankeyColors[node.type]
+                        // const isRS = isExtendedSankey && node.type === SankeyItemType.Redemption
                         return (
                           <Node
                             key={`sankey-node-${node.id}`}
@@ -108,5 +233,9 @@ export const SankeyProof = ({ proof }: Props) => {
       )
   }
 
-  return (null)
+  return (
+    <Box width="100%" mt="30px" textAlign="center">
+      <CircularProgress />
+    </Box>
+  )
 }
