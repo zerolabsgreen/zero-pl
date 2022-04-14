@@ -54,11 +54,7 @@ export const createSankeyData = (
     id: redemptionStatement.id,
     targetIds: purchases.map(p => p.certificate.id),
     type: SankeyItemType.Redemption,
-    volume: formatPower(purchases.reduce(
-      (prev, current) => prev.add(BigNumber.from(current.certificate.energyWh)),
-      BigNumber.from(0)).toString(),
-      { includeUnit: true, unit: Unit.MWh }
-    ),
+    volume: '',
   }]
 
   const certificatesNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({
@@ -123,6 +119,14 @@ const sankeyColors: SankeyColors = {
   Certificate: '#61CB80',
   Proof: '#7FD9A2',
   Redemption: '#4480DB',
+}
+
+const sankeyNonTargetColors: SankeyColors = {
+  NonTargetColor: '#CFCFCF',
+  Contract: '#4e5766',
+  Certificate: '#9fbfa8',
+  Proof: '#9cb8a7',
+  Redemption: '#829cc4',
 }
 
 interface Props {
@@ -197,7 +201,7 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
                           || (link.target as any).id === proof.certificate.id
                           || (link.source as any).id === proofContract?.id
                             ? sankeyColors[(link.source as any).type as keyof(SankeyColors)]
-                            : sankeyColors.NonTargetColor
+                            : sankeyNonTargetColors[(link.source as any).type as keyof(SankeyColors)]
                         return (
                           <Link
                             key={`sankey-link-${i}`}
@@ -212,8 +216,9 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
                       graph.nodes.map(node => {
                         const nonTargetNode = node.type === SankeyItemType.Certificate && node.id !== proof.certificate.id
                          || node.type === SankeyItemType.Proof && node.id !== proof.id
+                         || node.type === SankeyItemType.Contract && node.id !== proofContract.id
                         const nodeColor = nonTargetNode
-                            ? sankeyColors.NonTargetColor
+                            ? sankeyNonTargetColors[node.type]
                             : sankeyColors[node.type]
                         return (
                           <Node
