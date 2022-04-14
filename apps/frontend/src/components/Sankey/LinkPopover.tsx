@@ -97,14 +97,14 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
             {beneficiary}
           </Typography>
         </Flexbox>}
-        <Flexbox>
+        {period && <Flexbox>
           <Typography width="40%">
             Period
           </Typography>
           <Typography fontWeight="bold" width="60%">
             {period}
           </Typography>
-        </Flexbox>
+        </Flexbox>}
         <Flexbox>
           <Typography width="40%">
             Generator
@@ -115,12 +115,12 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
             </Typography>
           </Tooltip>
         </Flexbox>
-        <Flexbox>
+        {sources && <Flexbox>
           <Typography width="40%">
             Sources
           </Typography>
           <Box display={'flex'} width="60%">
-            {sources?.map(source => (
+            {sources.map(source => (
               <FuelType
                 key={`${id}-${source}`}
                 withoutText
@@ -131,7 +131,8 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
               />
             ))}
           </Box>
-        </Flexbox>
+        </Flexbox>}
+        {location &&
         <Flexbox mt="5px">
           <Typography width="40%">
             Location
@@ -139,7 +140,7 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
           <Typography fontWeight="bold" width="60%">
             {location}
           </Typography>
-        </Flexbox>
+        </Flexbox>}
         <StyledButton onClick={viewItem}>
           View {type}
         </StyledButton>

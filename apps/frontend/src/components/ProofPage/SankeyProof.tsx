@@ -95,10 +95,13 @@ export const createSankeyData = (
     }
     return link
   })
+
   const links = clonedLinks.map(link => ({
     source: nodes.findIndex(node => node.id === link.id),
     target: nodes.findIndex(node => node.id === link.targetIds),
-    value: parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
+    value: link.type === SankeyItemType.Redemption
+      ? parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
+      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0')
   })).filter(item => !!item);
 
   const sankeyData = { nodes, links }
@@ -130,7 +133,7 @@ interface Props {
 export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
 
   const [isExtendedSankey, setIsExtendedSankey] = useState(false)
-  const btnText = isExtendedSankey ? 'Short View' : 'Extended View'
+  const btnText = isExtendedSankey ? 'See less' : 'See more'
   const handleBtnClick = () => setIsExtendedSankey(!isExtendedSankey)
 
   const {
@@ -165,6 +168,8 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
       : createSankeyData(contracts, redemptionStatement, purchases)
     const sankeyHeight = isExtendedSankey ? purchases.length*80 : proofContract.purchases.length*150
 
+    if (isExtendedSankey && contracts.length < 1) return (<Loader />)
+
     return (
       <PageSection>
         <Box width="100%" display="flex" justifyContent="space-between" alignItems="center">
@@ -179,7 +184,7 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
           <Sankey
               data={sankeyData}
               nodeWidth={160}
-              nodePadding={40}
+              nodePadding={30}
               width={sankeyWidth}
               height={sankeyHeight}
             >
@@ -210,7 +215,6 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
                         const nodeColor = nonTargetNode
                             ? sankeyColors.NonTargetColor
                             : sankeyColors[node.type]
-                        // const isRS = isExtendedSankey && node.type === SankeyItemType.Redemption
                         return (
                           <Node
                             key={`sankey-node-${node.id}`}
@@ -233,6 +237,13 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
       )
   }
 
+  return (
+    <Loader />
+  )
+}
+
+
+const Loader = () => {
   return (
     <Box width="100%" mt="30px" textAlign="center">
       <CircularProgress />

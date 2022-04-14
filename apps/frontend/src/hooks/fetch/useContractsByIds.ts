@@ -24,5 +24,5 @@ export const useContractsByIds = (contractsIds: string[]) => {
     }
   }, [contractsIds])
 
-  return useMemo(() => ({ contracts }), [contractsIds])
+  return useMemo(() => ({ contracts }), [contracts])
 }

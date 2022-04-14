@@ -19,5 +19,5 @@ export const usePurchasesByIds = (purchaseIds: string[]) => {
     }
   }, [purchaseIds])
 
-  return useMemo(() => ({ purchases }), [purchaseIds])
+  return useMemo(() => ({ purchases }), [purchases])
 }

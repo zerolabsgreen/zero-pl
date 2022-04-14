@@ -8,6 +8,7 @@ type NodeProps<N, L> = {
   name: string | ReactNode;
   width?: number;
   height?: number;
+  minHeight?: number;
   graph?: SankeyGraph<N, L>;
   sankey?: typeof sankey;
   volume?: string
@@ -52,6 +53,7 @@ export default function Node<N, L>({
   name,
   width,
   height,
+  minHeight,
   volume,
   textColor,
 }: NodeProps<N, L>) {
@@ -61,7 +63,7 @@ export default function Node<N, L>({
   const isLinkAnEmptyContractNode = isEmptyContractNode(link)
   const isFirstNode = !y0
   const defaultWidth = (x1 ?? 0) - (x0 ?? 0);
-  const defaultHeight = (y1 ?? 0) - (y0 ?? 0);
+  const defaultHeight = minHeight && (y1 ?? 0) - (y0 ?? 0) < minHeight ? minHeight : (y1 ?? 0) - (y0 ?? 0);
 
   const nodeWidth = (width ? width : defaultWidth);
   const nodeHeight = height ? height : defaultHeight
