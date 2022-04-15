@@ -1,7 +1,6 @@
 import { useTheme } from "@mui/material/styles";
 import type { SankeyNode, sankey, SankeyGraph } from "d3-sankey";
 import { ReactNode } from "react";
-import { ExtendedNodeProperties, SankeyItemType } from "../BeneficiaryPage/SankeyView";
 
 type NodeProps<N, L> = {
   link: SankeyNode<ExtendedNodeProperties, Record<string, any>>;
@@ -9,11 +8,31 @@ type NodeProps<N, L> = {
   name: string | ReactNode;
   width?: number;
   height?: number;
+  minHeight?: number;
   graph?: SankeyGraph<N, L>;
   sankey?: typeof sankey;
   volume?: string
   fullAddress?: string
   textColor?: string
+};
+
+export enum SankeyItemType {
+  Contract = 'Contract',
+  Redemption = 'Redemption',
+  Certificate = 'Certificate',
+  Proof = 'Proof'
+}
+
+export type ExtendedNodeProperties = {
+  id: string;
+  targetIds: string[];
+  type: SankeyItemType;
+  volume: string;
+  period?: string;
+  status?: string;
+  generator?: string;
+  energySources?: string[];
+  location?: string;
 };
 
 export const isContractNode = (node: SankeyNode<ExtendedNodeProperties, Record<string, any>>) => {
@@ -34,6 +53,7 @@ export default function Node<N, L>({
   name,
   width,
   height,
+  minHeight,
   volume,
   textColor,
 }: NodeProps<N, L>) {
@@ -43,7 +63,7 @@ export default function Node<N, L>({
   const isLinkAnEmptyContractNode = isEmptyContractNode(link)
   const isFirstNode = !y0
   const defaultWidth = (x1 ?? 0) - (x0 ?? 0);
-  const defaultHeight = (y1 ?? 0) - (y0 ?? 0);
+  const defaultHeight = minHeight && (y1 ?? 0) - (y0 ?? 0) < minHeight ? minHeight : (y1 ?? 0) - (y0 ?? 0);
 
   const nodeWidth = (width ? width : defaultWidth);
   const nodeHeight = height ? height : defaultHeight

@@ -1,13 +1,14 @@
 import { useRef, useState } from "react";
 import { linkHorizontal } from "d3-shape";
 import type { SankeyLink } from "d3-sankey";
-import { ExtendedNodeProperties, SankeyItemType } from "../BeneficiaryPage/SankeyView";
 import SankeyLinkPopover from "./LinkPopover";
+import { ExtendedNodeProperties, SankeyItemType } from "./Node";
 
 type LinkProps = {
   link: SankeyLink<ExtendedNodeProperties, Record<string, any>>;
   color: string;
   maxWidth?: number;
+  minWidth?: number;
   width?: number;
   beneficiary?: string;
 };
@@ -38,12 +39,14 @@ function sankeyLinkHorizontalO() {
   return linkHorizontal().source(horizontalSourceO).target(horizontalTargetO);
 }
 
-export default function Link({ link, color, maxWidth, width, beneficiary }: LinkProps) {
+export default function Link({ link, color, maxWidth, minWidth, width, beneficiary }: LinkProps) {
   const linkWidth = width
     ? width
-    : maxWidth
-      ? (link.value / (link.source as any).value) * maxWidth
-      : link.width;
+    : minWidth && (link.width ?? 0) < minWidth
+      ? minWidth
+      : maxWidth
+        ? (link.value / (link.source as any).value) * maxWidth
+        : link.width;
 
   const path: any = maxWidth
     ? sankeyLinkHorizontalO()(link as any)
@@ -87,7 +90,7 @@ export default function Link({ link, color, maxWidth, width, beneficiary }: Link
          type={source.type}
          id={source.id}
          targetId={source.type === SankeyItemType.Certificate ? target.id : source.id}
-         amount={target.volume}
+         amount={source.type === SankeyItemType.Redemption ? target.volume : source.volume}
          beneficiary={beneficiary}
          period={source.period}
          generator={source.generator}

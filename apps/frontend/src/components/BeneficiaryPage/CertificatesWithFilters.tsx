@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router";
 import { css } from "@emotion/css";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { styled, useTheme } from "@mui/material/styles";
@@ -16,6 +15,7 @@ import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 import EthereumAddress from "../EthereumAddress";
 import { Unit, formatPower, ProductEnumType, getContractTotalVolume } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../FuelType";
+import SecondaryButton from "../SecondaryButton";
 import ButtonRight from "./ButtonRight";
 import SankeyView from "./SankeyView";
 
@@ -265,28 +265,6 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => `
     color: ${theme.palette.primary.main};
   };
 `);
-
-const SecondaryButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'active' })<{ active?: boolean }>(({ theme, active }) => `
-  background-color: ${active ? theme.palette.secondary.main : theme.palette.background.paper};
-  color: ${active ? theme.palette.text.primary : theme.palette.primary.main};
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0px 4px 10px rgba(160, 154, 198, 0.2);
-  border-radius: 5px;
-  padding: 10px 12px;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 20px;
-  & path {
-    fill: ${active && theme.palette.primary.main}
-  }
-  &:hover {
-    background-color: ${theme.palette.secondary.main};
-    color: ${theme.palette.text.primary};
-    & path {
-      fill: ${theme.palette.primary.main}
-    }
-  }
-`)
 
 const SmallText = styled('span')`
   font-size: 14px;
