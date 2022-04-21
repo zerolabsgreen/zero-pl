@@ -26,6 +26,7 @@ interface SankeyLinkPopoverProps {
   location?: string[];
   link?: string;
   targetId: string;
+  hideBtn?: boolean;
 }
 
 const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
@@ -41,7 +42,8 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
   period,
   generator,
   sources,
-  location
+  location,
+  hideBtn = false
 }) => {
   const theme = useTheme()
   const navigate = useNavigate()
@@ -105,16 +107,17 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
             {period}
           </Typography>
         </Flexbox>}
-        <Flexbox>
+       {generator &&
+       <Flexbox>
           <Typography width="40%">
             Generator
           </Typography>
-          <Tooltip title={generator ?? ''}>
+          <Tooltip title={generator}>
             <Typography fontWeight="bold" width="60%" noWrap>
-              {generator ?? '-'}
+              {generator}
             </Typography>
           </Tooltip>
-        </Flexbox>
+        </Flexbox>}
         {sources && <Flexbox>
           <Typography width="40%">
             Sources
@@ -141,9 +144,10 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
             {location}
           </Typography>
         </Flexbox>}
-        <StyledButton onClick={viewItem}>
+       {!hideBtn &&
+       <StyledButton onClick={viewItem}>
           View {type}
-        </StyledButton>
+        </StyledButton>}
       </Wrapper>
     </Popover>
   )

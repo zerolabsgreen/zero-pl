@@ -197,17 +197,19 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
                   <g>
                     {graph &&
                       graph.links.map((link, i) => {
-                        const linkColor = (link.source as any).id === proof.certificate.id
+                        const linkSource = link.source as any as SankeyLink<ExtendedNodeProperties, Record<string, any>>
+                        const linkColor = linkSource.id === proof.certificate.id
                           || (link.target as any).id === proof.certificate.id
-                          || (link.source as any).id === proofContract?.id
-                            ? sankeyColors[(link.source as any).type as keyof(SankeyColors)]
-                            : sankeyNonTargetColors[(link.source as any).type as keyof(SankeyColors)]
+                          || linkSource.id === proofContract?.id
+                            ? sankeyColors[linkSource.type as keyof(SankeyColors)]
+                            : sankeyNonTargetColors[linkSource.type as keyof(SankeyColors)]
                         return (
                           <Link
                             key={`sankey-link-${i}`}
                             link={link}
                             color={linkColor}
                             beneficiary={beneficiary}
+                            hidePopoverBtn={linkSource.type === SankeyItemType.Redemption}
                           />
                         )
                       })

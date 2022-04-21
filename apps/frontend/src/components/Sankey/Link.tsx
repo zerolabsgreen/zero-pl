@@ -11,6 +11,8 @@ type LinkProps = {
   minWidth?: number;
   width?: number;
   beneficiary?: string;
+  hidePopover?: boolean;
+  hidePopoverBtn?: boolean;
 };
 
 function horizontalSourceO(d: any): [number, number] {
@@ -39,7 +41,7 @@ function sankeyLinkHorizontalO() {
   return linkHorizontal().source(horizontalSourceO).target(horizontalTargetO);
 }
 
-export default function Link({ link, color, maxWidth, minWidth, width, beneficiary }: LinkProps) {
+export default function Link({ link, color, maxWidth, minWidth, width, beneficiary, hidePopover = false, hidePopoverBtn = false }: LinkProps) {
   const linkWidth = width
     ? width
     : minWidth && (link.width ?? 0) < minWidth
@@ -82,6 +84,7 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
           strokeWidth: linkWidth && !isNaN(linkWidth) ? linkWidth : 0,
         }}
       />
+      {!hidePopover &&
       <SankeyLinkPopover
          open={popoverOpen}
          anchorEl={popoverAnchor.current}
@@ -96,7 +99,8 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
          generator={source.generator}
          sources={source.energySources}
          location={source.location}
-      />
+         hideBtn={hidePopoverBtn}
+      />}
     </>
   );
 }
