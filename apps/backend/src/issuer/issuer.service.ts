@@ -226,8 +226,8 @@ export class IssuerService {
         if (axiosError.response) {
           switch (axiosError.response.status) {
             case 400:
-              this.logger.error(`issuer API error: ${JSON.stringify(axiosError.response.data)}`);
-              throw new Error(`issuer API error: ${JSON.stringify(axiosError.response.data)}`);
+              this.logger.error(`Tokenization error: ${JSON.stringify(axiosError.response.data)}`);
+              throw new Error(`Tokenization error: ${JSON.stringify(axiosError.response.data)}`);
             case 404:
               this.logger.error(`cert. claim error: no on-chain certificate data for certificate id=${id} to claim from address ${fromAddress}`);
               throw new NotFoundException(`certificate id=${id} not available for claiming from address ${fromAddress}`);

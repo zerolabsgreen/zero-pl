@@ -31,7 +31,7 @@ const config: ConnectionOptions = {
     ),
     `${__dirname}/migrations/*.ts`,
   ],
-  migrationsTableName: 'migrations_issuer_api',
+  migrationsTableName: 'migrations_tokenization',
 };
 
 export = config;

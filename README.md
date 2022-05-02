@@ -10,8 +10,8 @@ yarn
 
 The following will be started:
 
-1. main Postgres instance
-2. Issuer API Postgres instance
+1. Main Postgres instance
+2. Tokenization Postgres instance
 3. Ganache
 
 ```shell

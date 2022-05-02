@@ -236,19 +236,19 @@
       },
       "tags": []
     },
-    "issuer-api": {
-      "root": "apps/issuer-api",
-      "sourceRoot": "apps/issuer-api/src",
+    "tokenization": {
+      "root": "apps/tokenization",
+      "sourceRoot": "apps/tokenization/src",
       "projectType": "application",
       "targets": {
         "build": {
           "executor": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/issuer-api",
-            "main": "apps/issuer-api/src/main.ts",
-            "tsConfig": "apps/issuer-api/tsconfig.app.json",
-            "assets": ["apps/issuer-api/src/assets"],
+            "outputPath": "dist/apps/tokenization",
+            "main": "apps/tokenization/src/main.ts",
+            "tsConfig": "apps/tokenization/tsconfig.app.json",
+            "assets": ["apps/tokenization/src/assets"],
             "generatePackageJson": true
           },
           "configurations": {
@@ -258,8 +258,8 @@
               "inspect": false,
               "fileReplacements": [
                 {
-                  "replace": "apps/issuer-api/src/environments/environment.ts",
-                  "with": "apps/issuer-api/src/environments/environment.prod.ts"
+                  "replace": "apps/tokenization/src/environments/environment.ts",
+                  "with": "apps/tokenization/src/environments/environment.prod.ts"
                 }
               ]
             }
@@ -270,33 +270,33 @@
           "options": {
             "parallel": false,
             "commands": [
-              "cp yarn.lock ./dist/apps/issuer-api/",
-              "cp ./apps/issuer-api/Dockerfile ./dist/apps/issuer-api/",
-              "mkdir -p ./dist/apps/issuer-api/typeorm",
-              "cp -R ./apps/issuer-api/migrations ./dist/apps/issuer-api/typeorm",
-              "cp ./apps/issuer-api/ormconfig-docker.ts ./dist/apps/issuer-api/typeorm/ormconfig.ts",
-              "docker build ./dist/apps/issuer-api/ --pull -t zero-pl-issuer-api",
-              "rm -r ./dist/apps/issuer-api/Dockerfile ./dist/apps/issuer-api/typeorm ./dist/apps/issuer-api/yarn.lock"
+              "cp yarn.lock ./dist/apps/tokenization/",
+              "cp ./apps/tokenization/Dockerfile ./dist/apps/tokenization/",
+              "mkdir -p ./dist/apps/tokenization/typeorm",
+              "cp -R ./apps/tokenization/migrations ./dist/apps/tokenization/typeorm",
+              "cp ./apps/tokenization/ormconfig-docker.ts ./dist/apps/tokenization/typeorm/ormconfig.ts",
+              "docker build ./dist/apps/tokenization/ --pull -t zero-pl-tokenization",
+              "rm -r ./dist/apps/tokenization/Dockerfile ./dist/apps/tokenization/typeorm ./dist/apps/tokenization/yarn.lock"
             ]
           }
         },
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "issuer-api:build"
+            "buildTarget": "tokenization:build"
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/issuer-api/**/*.ts"]
+            "lintFilePatterns": ["apps/tokenization/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/issuer-api"],
+          "outputs": ["coverage/apps/tokenization"],
           "options": {
-            "jestConfig": "apps/issuer-api/jest.config.js",
+            "jestConfig": "apps/tokenization/jest.config.js",
             "passWithNoTests": true
           }
         }

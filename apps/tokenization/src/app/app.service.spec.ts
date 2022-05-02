@@ -14,8 +14,8 @@ describe('AppService', () => {
   });
 
   describe('getData', () => {
-    it('should return "Welcome to issuer-api!"', () => {
-      expect(service.getData()).toEqual({ message: 'Welcome to issuer-api!' });
+    it('should return "Welcome to tokenization!"', () => {
+      expect(service.getData()).toEqual({ message: 'Welcome to tokenization!' });
     });
   });
 });
