@@ -1,14 +1,14 @@
-import { BlockchainPropertiesService } from '@energyweb/issuer-api';
+import { BlockchainPropertiesService } from '@zero-labs/tokenization-api';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Wallet, utils } from 'ethers';
-import { Contracts as IssuerContracts } from '@energyweb/issuer';
+import { CertificateRegistryExtended__factory } from '@zero-labs/tokenization';
 import { getProviderWithFallback } from '@energyweb/utils-general';
 
 import { Repository } from 'typeorm';
 import { AccountDTO } from './account.dto';
 import { Account } from './account.entity';
-import { SignerService } from '../blockchain/get-signer.service';
+import { SignerService } from './get-signer.service';
 
 export class AccountService {
   constructor(
@@ -31,7 +31,7 @@ export class AccountService {
     );
 
     const newAccount = Wallet.fromMnemonic(
-      process.env.MNEMONIC,
+      process.env.USER_MNEMONIC,
       `m/44'/60'/0'/0/${totalAccounts + 1}`
     );
     const newAccountBalance = await newAccount.connect(provider).getBalance();
@@ -45,7 +45,7 @@ export class AccountService {
       await fillUpTx.wait();
     }
 
-    const registryWithSigner = IssuerContracts.factories.RegistryExtendedFactory.connect(
+    const registryWithSigner = CertificateRegistryExtended__factory.connect(
       registry,
       new Wallet(newAccount.privateKey, provider)
     );

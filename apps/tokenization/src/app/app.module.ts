@@ -5,24 +5,21 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import {
-  CertificateModule,
-  entities as CertificateEntities,
-} from '../certificate';
-import {
+  BlockchainProperties,
+  Certificate,
   BlockchainPropertiesModule,
-  entities as BlockchainPropertiesEntities,
-} from '../blockchain';
+  CertificateModule
+} from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
 import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
-import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
 
 const OriginAppTypeOrmModule = () => {
   const entities = [
     Account,
-    ...CertificateEntities,
-    ...BlockchainPropertiesEntities,
+    Certificate,
+    BlockchainProperties,
   ];
 
   return TypeOrmModule.forRoot({
@@ -54,7 +51,7 @@ const OriginAppTypeOrmModule = () => {
         PORT: Joi.number().default(3334),
         LOG_LEVELS: Joi.string().default('log,error,warn,debug,verbose'),
         WEB3: Joi.string().default('http://localhost:8545'),
-        MNEMONIC: Joi.string().required(),
+        USER_MNEMONIC: Joi.string().required(),
         ISSUER_CHAIN_ADDRESS: Joi.string().required(),
       }),
     }),

@@ -3,6 +3,7 @@
 ## Install application
 
 ```shell
+npm config set '//registry.npmjs.org/:_authToken' "<INSERT NPM READ TOKEN HERE>"
 yarn
 ```
 

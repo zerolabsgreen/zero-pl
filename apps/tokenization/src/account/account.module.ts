@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { Account } from './account.entity';
-import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
+import { BlockchainPropertiesModule } from '@zero-labs/tokenization-api';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Account]), ConfigModule, BlockchainPropertiesModule],

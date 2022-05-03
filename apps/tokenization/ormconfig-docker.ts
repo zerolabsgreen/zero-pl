@@ -27,7 +27,7 @@ const config: ConnectionOptions = {
   migrationsRun: true,
   migrations: [
     resolve(
-      `${__dirname}/../node_modules/@energyweb/issuer-api/dist/js/migrations/*.js`
+      `${__dirname}/../node_modules/@zero-labs/tokenization-api/dist/js/migrations/*.js`
     ),
     `${__dirname}/migrations/*.ts`,
   ],

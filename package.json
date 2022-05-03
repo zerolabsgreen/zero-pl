@@ -42,7 +42,7 @@
     "swagger:schema:generate": "cd apps/backend && REDIS_HOST= ISSUER_CHAIN_ADDRESS=foobar DATABASE_URL=postgresql://localhost:5432 TS_NODE_PROJECT=tsconfig.app.json ts-node src/generateSchema.ts",
     "build:api-client": "cd libs/api-client && yarn build",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "migrate:tokenization": "yarn typeorm migration:run --config apps/tokenization/ormconfig.ts",
+    "migrate:tokenization": "DATABASE_URL=$(grep TOKENIZATION_DATABASE_URL .env | cut -d \"=\" -f2 | tr -d '\"') node_modules/typeorm/cli.js migration:run --config node_modules/@zero-labs/tokenization-api/dist/ormconfig.js && yarn typeorm migration:run --config apps/tokenization/ormconfig.ts",
     "migrate:all": "yarn migrate:tokenization && yarn db:migrate:deploy",
     "seed:all:dev": "./seed-dev.sh"
   },
@@ -70,6 +70,7 @@
     "@nestjs/typeorm": "8.0.2",
     "@prisma/client": "3.6.0",
     "@t00nday/nestjs-pdf": "2.0.6",
+    "@zero-labs/tokenization-api": "0.0.7",
     "assert": "2.0.0",
     "axios": "0.24.0",
     "buffer": "6.0.3",

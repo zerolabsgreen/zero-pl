@@ -54,7 +54,7 @@ services:
       SUPERADMIN_API_KEY: somethingsecret
       DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       WEB3: http://ganache:8545
-      MNEMONIC: "chalk park staff buzz chair purchase wise oak receive avoid avoid home"
+      USER_MNEMONIC: "chalk park staff buzz chair purchase wise oak receive avoid avoid home"
       ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
     networks:
       zero-pl:

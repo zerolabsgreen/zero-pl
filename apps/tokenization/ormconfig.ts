@@ -3,11 +3,11 @@ import { URL } from 'url';
 import { resolve } from 'path';
 
 const getDBConnectionOptions = (): ConnectionOptions => {
-  if (!process.env.ISSUER_DATABASE_URL) {
-    throw new Error('ISSUER_DATABASE_URL undefined');
+  if (!process.env.TOKENIZATION_DATABASE_URL) {
+    throw new Error('TOKENIZATION_DATABASE_URL undefined');
   }
 
-  const url = new URL(process.env.ISSUER_DATABASE_URL);
+  const url = new URL(process.env.TOKENIZATION_DATABASE_URL);
   return {
     type: 'postgres',
     host: url.hostname,
@@ -27,11 +27,11 @@ const config: ConnectionOptions = {
   migrationsRun: true,
   migrations: [
     resolve(
-      `${__dirname}/../../node_modules/@energyweb/issuer-api/dist/js/migrations/*.js`
+      `${__dirname}/../../node_modules/@zero-labs/tokenization-api/dist/js/migrations/*.js`
     ),
     `${__dirname}/migrations/*.ts`,
   ],
-  migrationsTableName: 'migrations_issuer_api',
+  migrationsTableName: 'migrations_tokenization',
 };
 
 export = config;

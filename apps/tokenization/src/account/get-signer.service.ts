@@ -1,12 +1,10 @@
 import { Connection } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Wallet } from 'ethers';
-import { BlockchainPropertiesService } from '@energyweb/issuer-api';
-import { getProviderWithFallback } from '@energyweb/utils-general';
+import { BlockchainPropertiesService, getProviderWithFallback } from '@zero-labs/tokenization-api';
 
 @Injectable()
 export class SignerService {
-
     constructor(
         private connection: Connection,
         private readonly blockchainPropertiesService: BlockchainPropertiesService,
