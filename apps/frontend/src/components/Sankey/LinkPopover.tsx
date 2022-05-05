@@ -19,6 +19,9 @@ interface SankeyLinkPopoverProps {
   type?: string;
   id?: string;
   amount?: string;
+  amountTitle?: string;
+  totalAmount?: string;
+  totalAmountTitle?: string;
   beneficiary?: string;
   period?: string;
   generator?: string;
@@ -26,12 +29,18 @@ interface SankeyLinkPopoverProps {
   location?: string[];
   link?: string;
   targetId: string;
+  hideBtn?: boolean;
 }
+
+const defaultAmountTitle = 'Amount'
 
 const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
   anchorEl,
   open,
   amount,
+  amountTitle = defaultAmountTitle,
+  totalAmount,
+  totalAmountTitle = 'Total amount',
   beneficiary,
   handleClose,
   handleOpen,
@@ -41,7 +50,8 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
   period,
   generator,
   sources,
-  location
+  location,
+  hideBtn = false
 }) => {
   const theme = useTheme()
   const navigate = useNavigate()
@@ -49,6 +59,8 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
     const urlType = type === SankeyItemType.Certificate ? 'purchases' : 'contracts'
     return navigate(`/partners/filecoin/${urlType}/${targetId}`)
   }
+  const labelWidth = amountTitle === defaultAmountTitle ? '40%' : '60%'
+  const valueWidth = amountTitle === defaultAmountTitle ? '60%' : '40%'
   return (
     <Popover
       id="sankey-link-popover"
@@ -73,53 +85,63 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
     >
       <Wrapper>
         <Flexbox>
-          <Typography width="40%">
+          <Typography width={labelWidth}>
             {type}
           </Typography>
-          <Typography fontWeight="bold" width="60%">
+          <Typography fontWeight="bold" width={valueWidth}>
             {shortifyEthAddr(id ?? '')}
           </Typography>
         </Flexbox>
         <Flexbox>
-          <Typography width="40%">
-            Amount
+          <Typography width={labelWidth}>
+            {amountTitle}
           </Typography>
-          <Typography fontWeight="bold" width="60%">
+          <Typography fontWeight="bold" width={valueWidth}>
             {amount}
           </Typography>
         </Flexbox>
+       {totalAmount &&
+       <Flexbox>
+          <Typography width={labelWidth}>
+            {totalAmountTitle}
+          </Typography>
+          <Typography fontWeight="bold" width={valueWidth}>
+            {totalAmount}
+          </Typography>
+        </Flexbox>}
         {beneficiary &&
         <Flexbox>
-          <Typography width="40%">
+          <Typography width={labelWidth}>
             Beneficiary
           </Typography>
-          <Typography fontWeight="bold" width="60%">
+          <Typography fontWeight="bold" width={valueWidth}>
             {beneficiary}
           </Typography>
         </Flexbox>}
         {period && <Flexbox>
-          <Typography width="40%">
+          <Typography width={labelWidth}>
             Period
           </Typography>
-          <Typography fontWeight="bold" width="60%">
+          <Typography fontWeight="bold" width={valueWidth}>
             {period}
           </Typography>
         </Flexbox>}
-        <Flexbox>
-          <Typography width="40%">
+       {generator &&
+       <Flexbox>
+          <Typography width={labelWidth}>
             Generator
           </Typography>
-          <Tooltip title={generator ?? ''}>
-            <Typography fontWeight="bold" width="60%" noWrap>
-              {generator ?? '-'}
+          <Tooltip title={generator}>
+            <Typography fontWeight="bold" width={valueWidth} noWrap>
+              {generator}
             </Typography>
           </Tooltip>
-        </Flexbox>
+        </Flexbox>}
         {sources && <Flexbox>
-          <Typography width="40%">
+          <Typography width={labelWidth}>
             Sources
           </Typography>
-          <Box display={'flex'} width="60%">
+          <Box display={'flex'} width={valueWidth}>
             {sources.map(source => (
               <FuelType
                 key={`${id}-${source}`}
@@ -134,16 +156,17 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
         </Flexbox>}
         {location &&
         <Flexbox mt="5px">
-          <Typography width="40%">
+          <Typography width={labelWidth}>
             Location
           </Typography>
-          <Typography fontWeight="bold" width="60%">
+          <Typography fontWeight="bold" width={valueWidth}>
             {location}
           </Typography>
         </Flexbox>}
-        <StyledButton onClick={viewItem}>
+       {!hideBtn &&
+       <StyledButton onClick={viewItem}>
           View {type}
-        </StyledButton>
+        </StyledButton>}
       </Wrapper>
     </Popover>
   )
