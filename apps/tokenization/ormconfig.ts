@@ -1,27 +1,14 @@
-import { ConnectionOptions } from 'typeorm';
-import { URL } from 'url';
+import * as dotenv from "dotenv";
+import { DataSource } from "typeorm";
+
 import { resolve } from 'path';
+import { getDBConnectionOptions } from "./src/app/ormOptions";
 
-const getDBConnectionOptions = (): ConnectionOptions => {
-  if (!process.env.TOKENIZATION_DATABASE_URL) {
-    throw new Error('TOKENIZATION_DATABASE_URL undefined');
-  }
+dotenv.config({
+  path: '.env'
+})
 
-  const url = new URL(process.env.TOKENIZATION_DATABASE_URL);
-  return {
-    type: 'postgres',
-    host: url.hostname,
-    port: parseInt(url.port, 10),
-    username: url.username,
-    password: url.password,
-    database: url.pathname.replace('/', ''),
-    ssl: process.env.DB_SSL_OFF
-      ? false
-      : { rejectUnauthorized: false },
-  };
-};
-
-const config: ConnectionOptions = {
+export const AppDataSource = new DataSource({
   ...getDBConnectionOptions(),
   synchronize: false,
   migrationsRun: true,
@@ -32,6 +19,4 @@ const config: ConnectionOptions = {
     `${__dirname}/migrations/*.ts`,
   ],
   migrationsTableName: 'migrations_tokenization',
-};
-
-export = config;
+});

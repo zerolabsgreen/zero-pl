@@ -3,7 +3,7 @@
 ## Install application
 
 ```shell
-npm config set '//registry.npmjs.org/:_authToken' "<INSERT NPM READ TOKEN HERE>"
+npm config set '//registry.npmjs.org/:_authToken' "<INSERT NPM READ TOKEN HERE>" # Needed to install private NPM packages
 yarn
 ```
 

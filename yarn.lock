@@ -2643,16 +2643,6 @@
     lodash.omit "4.5.0"
     tslib "2.3.1"
 
-"@nestjs/common@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-8.2.3.tgz#77ac1ef59c36dd9ae131f5c5ddabfc6258802d1c"
-  integrity sha512-slXVVMc9tZG6ZaARXkTUsSqZbkEcc0hVKb4mPLxS9mjXmDspUleGQakZ5OzniiEWqzO299BVlEbm6TGyoGbpNg==
-  dependencies:
-    axios "0.24.0"
-    iterare "1.2.1"
-    tslib "2.3.1"
-    uuid "8.3.2"
-
 "@nestjs/common@8.4.4":
   version "8.4.4"
   resolved "https://registry.npmjs.org/@nestjs/common/-/common-8.4.4.tgz#0914c6c0540b5a344c7c8fd6072faa1a49af1158"
@@ -2675,17 +2665,14 @@
     lodash.set "4.3.2"
     uuid "8.3.2"
 
-"@nestjs/core@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.2.3.tgz#26fb3858df586b00362d1bd492ba432698590d67"
-  integrity sha512-CP/Z+uTEdblTZQXRf+xvZHvESZ6v2vxX/YaRcpJDv/ytgxxOafmOJ/RDKSzNOGBkt8kVwYNFpWXzzll4P5AJ0g==
+"@nestjs/config@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@nestjs/config/-/config-2.0.0.tgz#a8fbec48a2b55488ac50ad5ed4cf2df89d398171"
+  integrity sha512-Hi1k/1S5ogsS5c0OtNm72thiLSngijOaLDFaGI5ZPxNGpF23lctPg6ox3pYIOhXVRX/u+eiUIp71gswH2k8YNw==
   dependencies:
-    "@nuxtjs/opencollective" "0.3.2"
-    fast-safe-stringify "2.1.1"
-    iterare "1.2.1"
-    object-hash "2.2.0"
-    path-to-regexp "3.2.0"
-    tslib "2.3.1"
+    dotenv "16.0.0"
+    dotenv-expand "8.0.2"
+    lodash "4.17.21"
     uuid "8.3.2"
 
 "@nestjs/core@8.4.4":
@@ -2786,13 +2773,6 @@
   dependencies:
     optional "0.1.4"
     tslib "2.3.0"
-
-"@nestjs/typeorm@8.0.2":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-8.0.2.tgz#8e9b8422be402e02d6addfe7c779639fbff267af"
-  integrity sha512-UHn4IsRkzm22eNDir/uI+x8gmgo66EO7SxWfVOiPpeLSdrTfZHKYz6q/P9KRgYbwXs8TrywVdIbJhp+4C0tzjQ==
-  dependencies:
-    uuid "8.3.2"
 
 "@nestjs/typeorm@8.0.3":
   version "8.0.3"
@@ -4898,13 +4878,14 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.0.7":
-  version "0.0.7"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.0.7.tgz#3480bcc5b70e5740c493d81b289610229889fe6d"
-  integrity sha512-9RK7j7vrq3F6kf5ag6Bo0WcKBMs0O3VeXbQ5FCLaDz31r1OtD1fyUbAGG9dONvxeiKcK2rmAyhrQLseeGpMkOg==
+"@zero-labs/tokenization-api@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.1.2.tgz#b85929ec50610ea215a342e98395e559b15f3f86"
+  integrity sha512-a4diG+ovy+wQfo4VVvg9fPLggwXaWYvq0M4JTxOs69dvVlm23xog1VdX5wFLK2jQuWgHJVYmWXvERfuRxMYsIQ==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/common" "8.4.4"
+    "@nestjs/config" "2.0.0"
     "@nestjs/core" "8.4.4"
     "@nestjs/passport" "8.2.1"
     "@nestjs/platform-express" "8.4.4"
@@ -4913,6 +4894,7 @@
     "@zero-labs/tokenization" "0.3.2"
     class-transformer "0.5.1"
     class-validator "0.13.2"
+    crypto-js "4.1.1"
     ethers "5.6.4"
     json-to-pretty-yaml "1.2.2"
     passport "0.5.2"
@@ -7010,6 +6992,11 @@ crypto-browserify@3.12.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
+crypto-js@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
+
 crypto-random-string@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
@@ -8039,12 +8026,17 @@ dotenv-expand@5.1.0:
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
   integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
 
+dotenv-expand@8.0.2:
+  version "8.0.2"
+  resolved "https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-8.0.2.tgz#c75c6f695cff061a9ed9a95a520c6cc84b912188"
+  integrity sha512-vKKAk+VOzAWOV/dPIeSYqhgC/TQY+6L6Ibkzfsr8xd1stdBsTuGu9asCOXgbYbBeS+f2Y6lqqEuw7riOA+xEUQ==
+
 dotenv@10.0.0, dotenv@~10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
 
-dotenv@^16.0.0:
+dotenv@16.0.0, dotenv@^16.0.0:
   version "16.0.0"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.0.0.tgz#c619001253be89ebb638d027b609c75c26e47411"
   integrity sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==
@@ -13046,11 +13038,6 @@ object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
-
-object-hash@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.2.0.tgz#5ad518581eefc443bd763472b8ff2e9c2c0d54a5"
-  integrity sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==
 
 object-hash@3.0.0:
   version "3.0.0"

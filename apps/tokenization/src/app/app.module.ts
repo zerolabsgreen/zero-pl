@@ -7,8 +7,12 @@ import * as Joi from 'joi';
 import {
   BlockchainProperties,
   Certificate,
-  BlockchainPropertiesModule,
-  CertificateModule
+  TokenAPIModule,
+  Batch,
+  Generator,
+  TransferSingle,
+  ClaimSingle,
+  PostgresTypeORMAdapter
 } from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
@@ -18,9 +22,18 @@ import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 const OriginAppTypeOrmModule = () => {
   const entities = [
     Account,
-    Certificate,
     BlockchainProperties,
+    Batch,
+    Certificate,
+    Generator,
+    TransferSingle,
+    ClaimSingle,
   ];
+
+  console.log({
+    DATABASE_URL: process.env.DATABASE_URL,
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY
+  })
 
   return TypeOrmModule.forRoot({
     type: 'postgres',
@@ -55,8 +68,7 @@ const OriginAppTypeOrmModule = () => {
         ISSUER_CHAIN_ADDRESS: Joi.string().required(),
       }),
     }),
-    CertificateModule,
-    BlockchainPropertiesModule,
+    TokenAPIModule.register(new PostgresTypeORMAdapter()),
     AccountModule,
   ],
   controllers: [AppController],

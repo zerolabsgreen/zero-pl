@@ -19,7 +19,7 @@ export class SignerService {
         await queryRunner.connect();
 
         const privateKey = await queryRunner.query(
-            `SELECT "platformOperatorPrivateKey" FROM public.issuer_signer;`
+            `SELECT "platformOperatorPrivateKey" FROM public.blockchain_properties;;`
         );
 
         await queryRunner.release();

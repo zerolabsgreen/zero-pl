@@ -4,7 +4,7 @@
     "esModuleInterop": true
   },
   "files": [],
-  "include": [],
+  "include": ["ormconfig.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"
