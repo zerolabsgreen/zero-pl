@@ -54,7 +54,11 @@ export const createSankeyData = (
     id: redemptionStatement.id,
     targetIds: purchases.map(p => p.certificate.id),
     type: SankeyItemType.Redemption,
-    volume: '',
+    volume: contracts.length > 1 ? formatPower(purchases.reduce(
+      (prev, current) => prev.add(BigNumber.from(current.certificate.energyWh)),
+      BigNumber.from(0)).toString(),
+      { includeUnit: true, unit: Unit.MWh }
+    ) : '',
   }]
 
   const certificatesNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({

@@ -94,6 +94,9 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
          id={source.id}
          targetId={source.type === SankeyItemType.Certificate ? target.id : source.id}
          amount={source.type === SankeyItemType.Redemption ? target.volume : source.volume}
+         amountTitle={source.type === SankeyItemType.Redemption ? 'Certificate volume' : undefined}
+         totalAmount={source.type === SankeyItemType.Redemption ? source.volume : undefined}
+         totalAmountTitle={source.type === SankeyItemType.Redemption ? 'Redemption volume' : undefined}
          beneficiary={beneficiary}
          period={source.period}
          generator={source.generator}
