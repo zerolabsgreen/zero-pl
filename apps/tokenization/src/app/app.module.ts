@@ -30,11 +30,6 @@ const OriginAppTypeOrmModule = () => {
     ClaimSingle,
   ];
 
-  console.log({
-    DATABASE_URL: process.env.DATABASE_URL,
-    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY
-  })
-
   return TypeOrmModule.forRoot({
     type: 'postgres',
     url: process.env.DATABASE_URL,
