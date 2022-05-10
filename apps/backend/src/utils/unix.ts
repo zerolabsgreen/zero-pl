@@ -1,0 +1,1 @@
+export const dateToUnix = (date: Date) => Math.floor(date.getTime() / 1000);

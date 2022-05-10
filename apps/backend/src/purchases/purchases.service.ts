@@ -71,11 +71,9 @@ export class PurchasesService {
           throw new NotFoundException(`buyerId=${purchase.buyerId} not found`);
         }
 
-        // TODO: Re-enable later after we re-enable blockchain interactions
-
-        // if (!buyerData.blockchainAddress) {
-        //   throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
-        // }
+        if (!buyerData.blockchainAddress) {
+          throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
+        }
 
         if (filecoinNodes && filecoinNodes[0]) {
 
@@ -120,12 +118,9 @@ export class PurchasesService {
 
           const filecoinNodeData = await this.prisma.filecoinNode.findUnique({ where: { id: filecoinNode.id } });
 
-          // TODO: Re-enable later after we re-enable blockchain interactions
-
-          // if (!filecoinNodeData.blockchainAddress) {
-          //   throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
-          // }
-
+          if (!filecoinNodeData.blockchainAddress) {
+            throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
+          }
 
           accountToRedeemFrom = filecoinNodeData.blockchainAddress;
         } else {
@@ -318,87 +313,87 @@ export class PurchasesService {
     return dtos;
   }
 
-  async getChainEvents(id: string) {
-    const purchase = await this.prisma.purchase.findUnique({ where: { id } });
+  // async getChainEvents(id: string) {
+  //   const purchase = await this.prisma.purchase.findUnique({ where: { id } });
 
-    if (!purchase) {
-      throw new NotFoundException(`${id} purchase not found`);
-    }
+  //   if (!purchase) {
+  //     throw new NotFoundException(`${id} purchase not found`);
+  //   }
 
-    const cacheKey = `purchase:${id}:chain-events`;
+  //   const cacheKey = `purchase:${id}:chain-events`;
 
-    const purchaseEventsCached = await this.cacheManager.get(cacheKey);
+  //   const purchaseEventsCached = await this.cacheManager.get(cacheKey);
 
-    const certificate = await this.prisma.certificate.findUnique({ where: { id: purchase.certificateId } });
+  //   const certificate = await this.prisma.certificate.findUnique({ where: { id: purchase.certificateId } });
 
-    if (!certificate) {
-      throw new NotFoundException(`${purchase.certificateId} certificate not found`);
-    }
+  //   if (!certificate) {
+  //     throw new NotFoundException(`${purchase.certificateId} certificate not found`);
+  //   }
 
-    if (purchaseEventsCached) {
-      this.logger.debug(`cache hit (cacheKey=${cacheKey})`);
-      return purchaseEventsCached;
-    } else {
-      this.logger.debug(`cache miss (cacheKey=${cacheKey})`);
+  //   if (purchaseEventsCached) {
+  //     this.logger.debug(`cache hit (cacheKey=${cacheKey})`);
+  //     return purchaseEventsCached;
+  //   } else {
+  //     this.logger.debug(`cache miss (cacheKey=${cacheKey})`);
 
-      const issuerApiCerData = await this.issuerService.getCertificateByTransactionHash(certificate.txHash);
+  //     const issuerApiCerData = await this.issuerService.getCertificateByTransactionHash(certificate.txHash);
 
-      const events = (await this.issuerService.getCertificateEvents(issuerApiCerData.id))
-        .filter((event) => event.name === 'TransferSingle')
-        .map(e => ({
-          ...e,
-          date: new Date(e.timestamp * 1000),
-          recs: e.value ? BigInt(e.value.hex).toString() : undefined
-        }))
-        .map((event) => pick(event, [
-          'name',
-          'timestamp',
-          'transactionHash',
-          'blockHash',
-          'from',
-          'to',
-          'recs'
-        ]));
+  //     const events = (await this.issuerService.getCertificateEvents(issuerApiCerData.id))
+  //       .filter((event) => event.name === 'TransferSingle')
+  //       .map(e => ({
+  //         ...e,
+  //         date: new Date(e.timestamp * 1000),
+  //         recs: e.value ? BigInt(e.value.hex).toString() : undefined
+  //       }))
+  //       .map((event) => pick(event, [
+  //         'name',
+  //         'timestamp',
+  //         'transactionHash',
+  //         'blockHash',
+  //         'from',
+  //         'to',
+  //         'recs'
+  //       ]));
 
-      const lastTransactionHash = purchase.txHash;
+  //     const lastTransactionHash = purchase.txHash;
 
-      const indexOfClaimTransaction = events.findIndex((event) => {
-        return event.to === '0x0000000000000000000000000000000000000000' && event.transactionHash === lastTransactionHash;
-      });
+  //     const indexOfClaimTransaction = events.findIndex((event) => {
+  //       return event.to === '0x0000000000000000000000000000000000000000' && event.transactionHash === lastTransactionHash;
+  //     });
 
-      const purchaseEvents = [];
+  //     const purchaseEvents = [];
 
-      if (indexOfClaimTransaction > -1) {
-        events[indexOfClaimTransaction].name = 'Certificate Redemption';
-        purchaseEvents.unshift(events[indexOfClaimTransaction]);
-      }
+  //     if (indexOfClaimTransaction > -1) {
+  //       events[indexOfClaimTransaction].name = 'Certificate Redemption';
+  //       purchaseEvents.unshift(events[indexOfClaimTransaction]);
+  //     }
 
-      let cursor = indexOfClaimTransaction - 1;
+  //     let cursor = indexOfClaimTransaction - 1;
 
-      while (cursor > -1) {
-        const currentEvent = events[cursor];
-        const lastMatchedEvent = purchaseEvents[0];
+  //     while (cursor > -1) {
+  //       const currentEvent = events[cursor];
+  //       const lastMatchedEvent = purchaseEvents[0];
 
-        if (currentEvent.recs === events[indexOfClaimTransaction].recs && currentEvent.to === lastMatchedEvent.from) {
-          currentEvent.name = 'Transfer of Ownership';
-          purchaseEvents.unshift(currentEvent);
-        }
+  //       if (currentEvent.recs === events[indexOfClaimTransaction].recs && currentEvent.to === lastMatchedEvent.from) {
+  //         currentEvent.name = 'Transfer of Ownership';
+  //         purchaseEvents.unshift(currentEvent);
+  //       }
 
-        cursor--;
-      }
+  //       cursor--;
+  //     }
 
-      events[1].name = 'Transfer of Ownership';
-      purchaseEvents.unshift(events[1]); // transfer to escrow
-      events[0].name = 'On Chain Registration';
-      purchaseEvents.unshift(events[0]); // cert. issuance
+  //     events[1].name = 'Transfer of Ownership';
+  //     purchaseEvents.unshift(events[1]); // transfer to escrow
+  //     events[0].name = 'On Chain Registration';
+  //     purchaseEvents.unshift(events[0]); // cert. issuance
 
-      const ttl = this.configService.get('CHAIN_EVENTS_TTL');
-      this.logger.debug(`saving data to cache (cacheKey=${cacheKey}, ttl=${ttl}s)`);
-      this.cacheManager.set(cacheKey, purchaseEvents, { ttl });
+  //     const ttl = this.configService.get('CHAIN_EVENTS_TTL');
+  //     this.logger.debug(`saving data to cache (cacheKey=${cacheKey}, ttl=${ttl}s)`);
+  //     this.cacheManager.set(cacheKey, purchaseEvents, { ttl });
 
-      return purchaseEvents;
-    }
-  }
+  //     return purchaseEvents;
+  //   }
+  // }
 }
 
 export const purchaseEventsSchema = {

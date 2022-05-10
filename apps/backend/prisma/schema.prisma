@@ -32,7 +32,7 @@ model File {
   fileName  String
   mimeType  String
   content   Bytes
-  purchases FilesOnPurchases[]
+  purchases FilesOnPurchases[] // TODO: Double-check if we really need this binding
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -67,6 +67,13 @@ model Seller {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+model Batch {
+  id                        String @id @default(uuid())
+  redemptionStatementId     String? @unique()
+  onchainId                 BigInt?
+  certificates              Certificate[]
+}
+
 model Certificate {
   id                            String               @id @default(uuid())
   energyWh                      BigInt               @default(0)
@@ -90,6 +97,9 @@ model Certificate {
   commissioningDate             DateTime?
   label                         LabelEnumType?
   certificateCid                String?
+
+  batch                         Batch? @relation(fields: [batchId], references: [id])
+  batchId                       String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

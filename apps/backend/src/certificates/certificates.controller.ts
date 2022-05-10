@@ -70,10 +70,4 @@ export class CertificatesController {
   remove(@Param('id') id: string) {
     return this.certificatesService.remove(id);
   }
-
-  @Post()
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
-  syncOnChain(@Param('id') id: string) {
-    return this.certificatesService.syncOnChain(id);
-  }
 }

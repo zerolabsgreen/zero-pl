@@ -9,12 +9,17 @@ import { DateTime, Duration } from "luxon";
 import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 import { FilesService } from '../files/files.service';
+import { IssuerService } from '../issuer/issuer.service';
 
 @Injectable()
 export class FilecoinNodesService {
   private readonly logger = new Logger(FilecoinNodesService.name, { timestamp: true });
 
-  constructor(private prisma: PrismaService, private filesService: FilesService) {}
+  constructor(
+    private prisma: PrismaService,
+    private issuerService: IssuerService,
+    private filesService: FilesService
+  ) {}
 
   async create(createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
     let newFilecoinNode: FilecoinNode;
@@ -26,27 +31,25 @@ export class FilecoinNodesService {
         throw err;
       }
 
-      // TODO: Re-enable with a proper setup for creating blockchain accounts
+      let blockchainAddress: string;
 
-      // let blockchainAddress: string;
+      try {
+        blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
+        this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for filecoin node (${newFilecoinNode.id})`);
+      } catch (err) {
+        this.logger.error(`error gathering blockchain account: ${err}`);
+        throw err;
+      }
 
-      // try {
-      //   blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-      //   this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for filecoin node (${newFilecoinNode.id})`);
-      // } catch (err) {
-      //   this.logger.error(`error gathering blockchain account: ${err}`);
-      //   throw err;
-      // }
-
-      // try {
-      //   await prisma.filecoinNode.update({
-      //     data: { blockchainAddress },
-      //     where: { id: newFilecoinNode.id }
-      //   });
-      // } catch (err) {
-      //   this.logger.error(`error setting blockchain address for buyer ${newFilecoinNode.id}: ${err}`);
-      //   throw err;
-      // }
+      try {
+        await prisma.filecoinNode.update({
+          data: { blockchainAddress },
+          where: { id: newFilecoinNode.id }
+        });
+      } catch (err) {
+        this.logger.error(`error setting blockchain address for buyer ${newFilecoinNode.id}: ${err}`);
+        throw err;
+      }
 
     }, { timeout: 60000 }).catch((err) => {
       this.logger.error('rolling back transaction');
