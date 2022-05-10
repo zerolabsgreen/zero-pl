@@ -43,8 +43,8 @@ export class FileMetadataDto implements File {
   static toDto(dbEntity: PartialBy<File, 'content'> & { purchases: FilesOnPurchases[] }): FileMetadataDto {
     return {
       ...dbEntity,
-      purchases: dbEntity.purchases.map(p => p.purchaseId),
-      fileType: dbEntity.purchases.pop()?.fileType ?? undefined,
+      purchases: dbEntity.purchases?.map(p => p.purchaseId) ?? undefined,
+      fileType: dbEntity.purchases?.pop()?.fileType ?? undefined,
       content: dbEntity.content ?? undefined
     };
   }
