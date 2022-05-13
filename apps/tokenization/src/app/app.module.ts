@@ -18,6 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
 import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
+import { AccountController } from '../account/account.controller';
 
 const OriginAppTypeOrmModule = () => {
   const entities = [
@@ -41,6 +42,8 @@ const OriginAppTypeOrmModule = () => {
   });
 };
 
+const storageAdapter = new PostgresTypeORMAdapter();
+
 @Module({
   imports: [
     OriginAppTypeOrmModule(),
@@ -63,8 +66,8 @@ const OriginAppTypeOrmModule = () => {
         ISSUER_CHAIN_ADDRESS: Joi.string().required(),
       }),
     }),
-    TokenAPIModule.register(new PostgresTypeORMAdapter()),
-    AccountModule,
+    AccountModule.register(storageAdapter),
+    TokenAPIModule.register(storageAdapter),
   ],
   controllers: [AppController],
   providers: [AppService],

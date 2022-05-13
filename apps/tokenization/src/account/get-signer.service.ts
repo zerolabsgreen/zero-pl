@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Wallet } from 'ethers';
-import { BlockchainPropertiesService, getProviderWithFallback } from '@zero-labs/tokenization-api';
+import { BlockchainPropertiesService, decrypt, getProviderWithFallback } from '@zero-labs/tokenization-api';
 
 @Injectable()
 export class SignerService {
@@ -18,13 +18,17 @@ export class SignerService {
 
         await queryRunner.connect();
 
-        const privateKey = await queryRunner.query(
+        const encryptedPrivateKey = (await queryRunner.query(
             `SELECT "platformOperatorPrivateKey" FROM public.blockchain_properties;;`
-        );
+        )).pop()?.platformOperatorPrivateKey;
+
+        if (!encryptedPrivateKey) {
+            throw new NotFoundException(`Unable to get the platformOperatorPrivateKey`);
+        }
+
+        const privateKey = decrypt(encryptedPrivateKey, process.env.ENCRYPTION_KEY);
 
         await queryRunner.release();
-
-        console.log(privateKey);
 
         return new Wallet(privateKey, provider);
     }

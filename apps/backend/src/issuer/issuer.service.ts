@@ -85,13 +85,13 @@ export class IssuerService {
     lastAttempt += Math.floor((Date.now() - lastAttempt) / checkingInterval) * checkingInterval;
 
     try {
-      const responseData = (
+      const response = (
         await this.axiosInstance.post('/batch').catch((err) => {
           this.logger.error(`POST /batch error response: ${err}`);
           this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
           throw err;
         })
-      ).data;
+      );
 
       // waiting for transaction to be mined
       const batchId = await polly()
@@ -100,9 +100,9 @@ export class IssuerService {
           await new Promise(resolve => setTimeout(resolve, Math.max(0, checkingInterval - (Date.now() - lastAttempt))));
 
           lastAttempt = Date.now();
-          const certData = await this.getBatchByTransactionHash(responseData.txHash);
+          const certData = await this.getBatchByTransactionHash(response.data.txHash);
           if (!certData) {
-            this.logger.debug(`transaction ${responseData.txHash} not mined yet`);
+            this.logger.debug(`transaction ${response.data.txHash} not mined yet`);
             throw new Error('not mined yet');
           }
 
@@ -167,23 +167,24 @@ export class IssuerService {
 
   async getBatchByTransactionHash(txHash: string): Promise<number> {
     try {
-      this.logger.debug(`getting chain data for the certificate (txHash=${txHash})`);
-      return (await this.axiosInstance.get(
+      this.logger.debug(`getting chain data for the batch (txHash=${txHash})`);
+      const response = (await this.axiosInstance.get(
         `/batch/id/${txHash}`
-      )).data[0];
+      ));
+      return response.data;
     } catch (err) {
       if (err.isAxiosError) {
         const axiosError = err as AxiosError;
 
         if (axiosError.response) {
           if (axiosError.response.status === 404) {
-            this.logger.debug(`no certificate data for txHash=${txHash}`);
+            this.logger.debug(`no batch data for txHash=${txHash}`);
             return null;
           }
         }
       }
 
-      this.logger.error(`error getting certificate by transaction hash: ${err}`);
+      this.logger.error(`error getting batch by transaction hash: ${err}`);
 
       throw err;
     }

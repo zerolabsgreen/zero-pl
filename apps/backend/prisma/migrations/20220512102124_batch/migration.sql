@@ -1,11 +1,10 @@
 -- AlterTable
-ALTER TABLE "Certificate" ADD COLUMN     "batchId" TEXT;
+ALTER TABLE "Certificate" ADD COLUMN     "batchId" BIGINT;
 
 -- CreateTable
 CREATE TABLE "Batch" (
-    "id" TEXT NOT NULL,
+    "id" BIGINT NOT NULL,
     "redemptionStatementId" TEXT,
-    "onchainId" BIGINT,
 
     CONSTRAINT "Batch_pkey" PRIMARY KEY ("id")
 );

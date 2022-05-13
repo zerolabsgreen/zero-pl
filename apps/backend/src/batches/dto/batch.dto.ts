@@ -9,9 +9,6 @@ export class BatchDto {
   @ApiProperty({ example: '863d48bb-15da-4eaf-8040-b6cb66e22023' })
   redemptionStatementId: string;
 
-  @ApiProperty({ type: String, example: "179" })
-  onchainId: string;
-
   @ApiProperty({ type: [CertificateDto] })
   certificates: CertificateDto[];
 
@@ -24,7 +21,7 @@ export class BatchDto {
   ): BatchDto {
     return {
       ...dbEntity,
-      onchainId: dbEntity.onchainId.toString(),
+      id: dbEntity.id?.toString() ?? undefined,
       certificates: dbEntity.certificates.map(c => CertificateDto.toDto(c))
     };
   }

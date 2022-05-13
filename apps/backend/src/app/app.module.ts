@@ -17,9 +17,9 @@ import { FilecoinNodesModule } from "../filecoin-nodes/filecoin-nodes.module";
 import { OrdersModule } from "../orders/orders.module";
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 import { EmailModule } from '../email/email.module';
-import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
 import { ContractsModule } from '../contracts/contracts.module';
 import { ApiKeysModule } from '../apikeys/apikeys.module';
+import { BatchModule } from '../batches/batch.module';
 
 @Module({
   imports: [
@@ -62,6 +62,7 @@ import { ApiKeysModule } from '../apikeys/apikeys.module';
     PrismaModule,
     AuthModule,
     ApiKeysModule,
+    BatchModule,
     FilesModule,
     PurchasesModule,
     BuyersModule,

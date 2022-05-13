@@ -21,8 +21,8 @@ import { ApiKeyPermissions } from '@prisma/client';
 import { SetRedemptionStatementDto } from './dto/set-redemption-statement.dto';
 import { MintDto } from './dto/mint.dto';
 
-@Controller('/partners/filecoin/certificates')
-@ApiTags('Filecoin certificates')
+@Controller('/partners/filecoin/batches')
+@ApiTags('Filecoin Batches')
 @UseGuards(AuthGuard('api-key'))
 @ApiSecurity('api-key', ['api-key'])
 @UseInterceptors(ClassSerializerInterceptor, NoDataInterceptor)
@@ -32,13 +32,12 @@ export class BatchController {
 
   @Post()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
-  @ApiBody({ type: BatchDto })
   @ApiCreatedResponse({
       type: [BatchDto],
-      description: 'Creates certificates'
+      description: 'Creates a batch and returns an ID'
   })
-  create(@Body() batchDto: BatchDto) {
-    return this.batchService.create(batchDto);
+  create() {
+    return this.batchService.create();
   }
 
   @Get()
@@ -55,25 +54,20 @@ export class BatchController {
     return this.batchService.findOne(id);
   }
 
-  @Patch(':id/redemption-statement')
+  @Post(':id/redemption-statement')
   @ApiBody({ type: SetRedemptionStatementDto })
+  @ApiCreatedResponse({
+    type: String,
+    description: 'Transaction hash'
+  })
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   setRedemptionStatement(
     @Param('id') id: string,
-    @Body() dto: SetRedemptionStatementDto
-  ) {
-    return this.batchService.setRedemptionStatement(id, dto.redemptionStatementId);
+    @Body() { redemptionStatementId }: SetRedemptionStatementDto
+  ): Promise<string> {
+    return this.batchService.setRedemptionStatement(id, redemptionStatementId);
   }
 
-  @Patch(':id:/generate-on-chain-id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
-  @ApiOkResponse({ type: Number })
-  generateOnChainId(
-    @Param('id') id: string,
-  ): Promise<number> {
-    return this.batchService.generateOnChainId(id);
-  }
-  
   @Post(':id/mint')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: MintDto })
@@ -83,7 +77,9 @@ export class BatchController {
   })
   mint(
     @Param('id') id: string,
-    @Body() { certificateIds }: MintDto) {
-    return this.batchService.mint(id, certificateIds);
+    @Body() { certificateIds }: MintDto
+  ): Promise<string>
+  {
+    return this.batchService.mint(id, certificateIds ?? []);
   }
 }

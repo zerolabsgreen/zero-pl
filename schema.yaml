@@ -367,7 +367,7 @@ components:
         data:
           type: "string"
           description: "Minting data"
-          example: "0xdd5b8de5001aeeb1cde13251b1c82e1c67ac961b29923ba2b3e896771d27a634"
+          example: "0x00df5c521f5d25ba56acc14845175557bd312d83ce21ba38cebe96f46769d04a"
       required:
         - "to"
         - "amount"

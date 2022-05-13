@@ -65,7 +65,7 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File
   ): Promise<FileMetadataDto> {
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
-    return this.filesService.create(file.originalname, file.buffer, dto.purchaseIds.split(','), dto.fileType as FileType, file.mimetype);
+    return this.filesService.create(file.originalname, file.buffer, dto.purchaseIds?.split(',') ?? [], dto.fileType as FileType, file.mimetype);
   }
 
   @Get()

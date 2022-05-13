@@ -3,7 +3,7 @@ import { BadRequestException, ConflictException, Injectable, Logger, NotFoundExc
 import { PrismaService } from '../prisma/prisma.service';
 import { BatchDto } from './dto/batch.dto';
 import { IssuerService } from '../issuer/issuer.service';
-import { Batch, ProductEnumType } from '@prisma/client';
+import { Batch, FileType } from '@prisma/client';
 import { FilesService } from '../files/files.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { SellersService } from '../sellers/sellers.service';
@@ -22,18 +22,20 @@ export class BatchService {
     private sellersService: SellersService
   ) {}
 
-  async create(batchDto: BatchDto): Promise<BatchDto> {
-    this.logger.log(`received request to create a redemption statement: ${JSON.stringify(batchDto)}`);
+  async create(): Promise<BatchDto> {
+    this.logger.log(`received a request to create a batch...`);
+
+    const onchainId = await this.generateOnChainId();
   
     let newBatch: Batch;
 
     try {
       newBatch = await this.prisma.batch.create(
-        { data: { ...batchDto, onchainId: BigInt(batchDto.onchainId) } }
+        { data: { id: onchainId } }
       );
-      this.logger.debug(`created a new redemption statement: ${JSON.stringify(batchDto)}`);
+      this.logger.debug(`created a new batch with ID ${onchainId}`);
     } catch (err) {
-      this.logger.error(`error creating a new redemption statement: ${err}`);
+      this.logger.error(`error creating a new batch: ${err}`);
       throw err;
     };
 
@@ -58,7 +60,7 @@ export class BatchService {
 
   async findOne(id: string): Promise<BatchDto | null> {
     const dbRecord = await this.prisma.batch.findUnique({
-      where: { id },
+      where: { id: BigInt(id) },
       include: {
         certificates: true
       },
@@ -68,15 +70,15 @@ export class BatchService {
     return BatchDto.toDto(dbRecord);
   }
 
-  async setRedemptionStatement(batchId: string, redemptionStatementFileId: string): Promise<void> {
+  async setRedemptionStatement(batchId: string, redemptionStatementFileId: string): Promise<string> {
+    if (!redemptionStatementFileId) {
+      throw new NotFoundException(`Please provide a valid redemption statement ID. Got: ${redemptionStatementFileId}`);
+    }
+
     const batch = await this.findOne(batchId);
 
     if (batch.redemptionStatementId) {
       throw new ConflictException(`Batch ${batchId} already has a redemption statement set.`);
-    }
-
-    if (!batch.onchainId) {
-      throw new PreconditionFailedException(`Batch ${batchId} doesn't have an on-chain ID. Please create one.`);
     }
 
     const alreadySetToSomeBatch = await this.prisma.batch.findMany({ 
@@ -93,29 +95,29 @@ export class BatchService {
 
     await this.prisma.batch.update({
       data: { redemptionStatementId: redemptionStatement.id },
-      where: { id: batch.id }
+      where: { id: BigInt(batch.id) }
     });
 
-    await this.setRedemptionStatementOnChain(batch.id, redemptionStatement.id);
+    const txHash = await this.setRedemptionStatementOnChain(batch.id, redemptionStatement.id);
+
+    return txHash;
   }
 
-  private async setRedemptionStatementOnChain(onChainBatchId: string, redemptionStatementId: string) {
+  private async setRedemptionStatementOnChain(onChainBatchId: string, redemptionStatementId: string): Promise<string> {
     const redemptionStatement = await this.filesService.findOne(redemptionStatementId);
 
     const hashSum = crypto.createHash('sha256');
     hashSum.update(redemptionStatement.content);
 
     const hex = hashSum.digest('hex');
-
-    await this.issuerService.setRedemptionStatement(Number(onChainBatchId), {
+    
+    return await this.issuerService.setRedemptionStatement(Number(onChainBatchId), {
       value: hex,
       storagePointer: `/api/files/${redemptionStatementId}`,
     });
   }
 
-  async generateOnChainId(batchId: string): Promise<number> {
-    const batch = await this.findOne(batchId);
-
+  async generateOnChainId(): Promise<number> {
     let onchainId: number;
 
     try {
@@ -127,18 +129,6 @@ export class BatchService {
       throw err;
     }
 
-    try {
-      await this.prisma.batch.update({
-        data: { onchainId },
-        where: { id: batch.id }
-      });
-
-      this.logger.debug(`Assigned on-chain ID ${onchainId} to batch ${batch.id}`);
-    } catch (err) {
-      this.logger.error(`error assigning on-chain ID ${onchainId} to batch ${batch.id}: ${err}`);
-      throw err;
-    }
-
     return onchainId;
   }
   
@@ -147,21 +137,22 @@ export class BatchService {
     certificateIds: string[]
   ): Promise<string> {
     const batch = await this.findOne(batchId);
-    const certificates = await this.certificatesService.find(certificateIds);
 
+    const certificates = await this.certificatesService.find(certificateIds);
+    
     if (certificates.length !== certificateIds.length) {
       throw new BadRequestException(`Non-existing Certificate ID in array`);
     }
 
     const mintingData = await Promise.all(certificates.map(async (c): Promise<MintDTO> => {
       const seller = await this.sellersService.findOne(c.initialSellerId);
-    
+
       return {
         to: seller.blockchainAddress,
         amount: c.energyWh,
         certificate: {
-          generationStartTime: dateToUnix(c.generationStart), // TODO: Add timezone
-          generationEndTime: dateToUnix(c.generationEnd), // TODO: Add timezone
+          generationStartTime: dateToUnix(new Date(c.generationStart)), // TODO: Add timezone
+          generationEndTime: dateToUnix(new Date(c.generationEnd)), // TODO: Add timezone
           productType: c.productType,
           generator: {
             id: c.generatorId,
@@ -169,17 +160,28 @@ export class BatchService {
             energySource: c.energySource,
             region: c.region,
             country: c.country,
-            commissioningDate: dateToUnix(c.commissioningDate), // TODO: Add timezone
+            commissioningDate: dateToUnix(new Date(c.commissioningDate)), // TODO: Add timezone
             capacity: c.nameplateCapacityW.toString(),
           },
         },
-        data: '',
+        data: '0x',
       };
     }));
 
-    return await this.issuerService.mint(
-      Number(batch.onchainId), 
+    const txHash = await this.issuerService.mint(
+      Number(batch.id), 
       mintingData
     );
+
+    await this.prisma.batch.update({
+      data: { 
+        certificates: {
+          connect: certificateIds.map(id => ({ id}))
+        }
+      },
+      where: { id: BigInt(batch.id) }
+    });
+
+    return txHash; 
   }
 }

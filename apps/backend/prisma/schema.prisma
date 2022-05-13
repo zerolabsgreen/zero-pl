@@ -68,9 +68,8 @@ model Seller {
 }
 
 model Batch {
-  id                        String @id @default(uuid())
+  id                        BigInt @id 
   redemptionStatementId     String? @unique()
-  onchainId                 BigInt?
   certificates              Certificate[]
 }
 
@@ -99,7 +98,7 @@ model Certificate {
   certificateCid                String?
 
   batch                         Batch? @relation(fields: [batchId], references: [id])
-  batchId                       String?
+  batchId                       BigInt?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
