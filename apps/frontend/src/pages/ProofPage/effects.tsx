@@ -28,7 +28,7 @@ export const useProductPageEffects = () => {
     id: data?.certificate.id ?? '',
     proofId: <EthereumAddress shortify clipboard address={data?.certificate?.id ?? ''} />,
     product: data?.certificate?.productType ?? '',
-    beneficiary: data?.filecoinNodes?.map(node => node.id)?.join(', ') ?? '',
+    beneficiary: data?.filecoinNode?.id ?? '',
     amount: data?.certificate?.energyWh ? formatPower(data.certificate.energyWh, { unit: Unit.MWh, includeUnit: true }) : '',
     period: (
     <>{dayjs(data?.certificate?.generationStart).isValid()

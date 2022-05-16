@@ -53,7 +53,7 @@ export const ProofPage = () => {
                   fromDate: data.certificate.generationStart,
                   toDate: data.certificate.generationEnd,
                 }}
-                filecoinMinerIdList={data.filecoinNodes}
+                filecoinMinerIdList={[data.filecoinNode]}
                 buyer={data.buyer}
                 seller={data.seller}
               />
