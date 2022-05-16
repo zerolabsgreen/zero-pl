@@ -32,6 +32,9 @@ export class PurchaseDto implements Purchase {
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
   contractId: string;
 
+  @ApiPropertyOptional({ type: String, example: 'f1234' })
+  filecoinNodeId: string;
+
   @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
   createdAt: Date;
 
@@ -54,6 +57,7 @@ export class PurchaseDto implements Purchase {
       reportingEnd: p.reportingEnd, 
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
       contractId: p.contractId,
+      filecoinNodeId: p.filecoinNodeId,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt
     };

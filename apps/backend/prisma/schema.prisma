@@ -95,10 +95,10 @@ model Certificate {
   nameplateCapacityW            Int?
   commissioningDate             DateTime?
   label                         LabelEnumType?
-  certificateCid                String?
 
   batch                         Batch? @relation(fields: [batchId], references: [id])
   batchId                       BigInt?
+  onchainId                     BigInt? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -109,7 +109,7 @@ model FilecoinNode {
   Buyer             Buyer?                     @relation(fields: [buyerId], references: [id])
   buyerId           String
   blockchainAddress String?
-  purchases         FilecoinNodesOnPurchases[]
+  purchases         Purchase[]
   contracts         Contract[]
 
   createdAt DateTime @default(now())
@@ -132,7 +132,8 @@ model Purchase {
   reportingStartTimezoneOffset Int?
   reportingEnd                 DateTime?
   reportingEndTimezoneOffset   Int?
-  filecoinNodes                FilecoinNodesOnPurchases[]
+  filecoinNode                 FilecoinNode?               @relation(fields: [filecoinNodeId], references: [id])
+  filecoinNodeId               String?
   Contract                     Contract?                  @relation(fields: [contractId], references: [id])
   contractId                   String?
 
@@ -140,21 +141,6 @@ model Purchase {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([id, buyerId])
-}
-
-model FilecoinNodesOnPurchases {
-  purchase   Purchase @relation(fields: [purchaseId, buyerId], references: [id, buyerId])
-  purchaseId String
-
-  filecoinNode   FilecoinNode @relation(fields: [filecoinNodeId, buyerId], references: [id, buyerId])
-  filecoinNodeId String
-  buyerId        String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  @@id([purchaseId, filecoinNodeId, buyerId])
-  @@unique([purchaseId, filecoinNodeId])
 }
 
 model FilesOnPurchases {

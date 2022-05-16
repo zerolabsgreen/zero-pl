@@ -190,7 +190,7 @@ export class IssuerService {
     }
   }
 
-  async transferCertificate(transferCertificateDTO: TransferCertificateDTO) {
+  async transferCertificate(transferCertificateDTO: TransferCertificateDTO): Promise<string> {
     const { id, fromAddress } = transferCertificateDTO;
 
     const requestPayload = {
@@ -211,7 +211,7 @@ export class IssuerService {
         throw err;
       });
 
-      return res.data;
+      return res.data.txHash;
     } catch (err) {
       if (err.isAxiosError) {
         const axiosError = err as AxiosError;
@@ -230,7 +230,7 @@ export class IssuerService {
     }
   }
 
-  async claimCertificate(claimCertificateDTO: ClaimCertificateDTO) {
+  async claimCertificate(claimCertificateDTO: ClaimCertificateDTO): Promise<string> {
     let lastAttempt: number = Date.now();
     const timeout = 60000;
     const checkingInterval = 1000;
@@ -265,7 +265,7 @@ export class IssuerService {
           );
         });
 
-      return res.data;
+      return res.data.txHash;
     } catch (err) {
       if (err.isAxiosError) {
         const axiosError = err as AxiosError;

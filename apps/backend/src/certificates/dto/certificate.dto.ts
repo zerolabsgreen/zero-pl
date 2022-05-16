@@ -66,33 +66,35 @@ export class CertificateDto {
   @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
   updatedAt: Date;
 
-  @ApiPropertyOptional({ example: 'Certificate_CID' })
-  certificateCid?: string;
-
   @ApiPropertyOptional({ example: '123' })
   batchId?: string;
+
+  @ApiPropertyOptional({ example: '321' })
+  onchainId?: string;
 
   constructor(partial: Partial<CertificateDto>) {
     Object.assign(this, partial);
   }
 
   static toDbEntity(dto: Partial<CertificateDto>): Partial<Certificate> {
-    const { batchId, energyWh, ...stripped } = dto;
+    const { onchainId, batchId, energyWh, ...stripped } = dto;
 
     return {
       ...stripped,
       energyWh: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined,
-      batchId: batchId ? BigNumber.from(batchId).toBigInt() : undefined
+      batchId: batchId ? BigNumber.from(batchId).toBigInt() : undefined,
+      onchainId: onchainId ? BigNumber.from(onchainId).toBigInt() : undefined
     };
   }
 
   static toDto(dbEntity: Certificate): CertificateDto {
-    const { batchId, energyWh, ...stripped } = dbEntity;
+    const { onchainId, batchId, energyWh, ...stripped } = dbEntity;
 
     return {
       ...stripped,
       energyWh: energyWh ? BigNumber.from(energyWh).toString() : undefined,
-      batchId: batchId ? BigNumber.from(batchId).toString() : undefined
+      batchId: batchId ? BigNumber.from(batchId).toString() : undefined,
+      onchainId: onchainId ? BigNumber.from(onchainId).toString() : undefined
     };
   }
 

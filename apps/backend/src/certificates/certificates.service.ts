@@ -24,15 +24,22 @@ export class CertificatesService {
       for (const createCertificateDto of createCertificateDtos) {
         let newCertificate: Certificate;
 
-        const { energyWh, nameplateCapacityW, ...newCertificateData } = createCertificateDto;
+        const { onchainId, batchId, initialSellerId, energyWh, nameplateCapacityW, ...newCertificateData } = createCertificateDto;
 
-        if (!(await this.prisma.seller.findUnique({ where: { id: newCertificateData.initialSellerId } }))) {
-          this.logger.warn(`attempt to create a certificate for non-existing sellerId=${newCertificateData.initialSellerId}`);
-          throw new NotFoundException(`sellerId=${newCertificateData.initialSellerId} not found`);
+        if (!(await this.prisma.seller.findUnique({ where: { id: initialSellerId } }))) {
+          this.logger.warn(`attempt to create a certificate for non-existing sellerId=${initialSellerId}`);
+          throw new NotFoundException(`sellerId=${initialSellerId} not found`);
         }
 
         try {
-          newCertificate = await prisma.certificate.create({ data: { ...newCertificateData, energyWh: BigInt(energyWh), nameplateCapacityW, } });
+          newCertificate = await prisma.certificate.create({ data: {
+            ...newCertificateData,
+            energyWh: BigInt(energyWh),
+            nameplateCapacityW,
+            onchainId: BigInt(onchainId),
+            seller: { connect: { id: initialSellerId } },
+            batch: { connect: { id: Number(batchId) }}
+          }});
           this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
         } catch (err) {
           this.logger.error(`error creating a new certificate: ${err}`);

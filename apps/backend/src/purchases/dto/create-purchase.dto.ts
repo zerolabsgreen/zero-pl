@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Purchase } from '@prisma/client';
-import { Type } from 'class-transformer';
 import {
   IsInt,
   IsISO8601,
@@ -8,16 +7,9 @@ import {
   IsString,
   IsUUID,
   Max,
-  Min,
-  ValidateNested
+  Min
 } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
-
-class FilecoinNodeSimple {
-  @ApiProperty({ example: 'f0112027' })
-  @IsString()
-  id: string;
-}
 
 class RecsAnnuallyDTO {
   @ApiProperty({ example: 2021 })
@@ -32,7 +24,7 @@ class RecsAnnuallyDTO {
 }
 
 export class 
-CreatePurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd' | 'createdAt' | 'updatedAt' | 'txHash'> {
+CreatePurchaseDto implements Omit<Purchase, 'filecoinNode' | 'reportingStart' | 'reportingEnd' | 'createdAt' | 'updatedAt' | 'txHash'> {
   @ApiProperty({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
   @IsOptional()
@@ -76,10 +68,9 @@ CreatePurchaseDto implements Omit<Purchase, 'reportingStart' | 'reportingEnd' | 
   @IsOptional()
   reportingEndTimezoneOffset;
 
-  @ApiPropertyOptional({ type: [FilecoinNodeSimple] })
-  @ValidateNested()
-  @Type(() => FilecoinNodeSimple)
-  filecoinNodes: FilecoinNodeSimple[];
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  filecoinNodeId: string;
 
   @ApiPropertyOptional({ type: String })
   @IsOptional()

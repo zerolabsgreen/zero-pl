@@ -16,7 +16,9 @@ import { firstValueFrom } from 'rxjs';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
+import { SellersService } from '../sellers/sellers.service';
+import { dateToUnix } from '../utils/unix';
 
 @Injectable()
 export class PurchasesService {
@@ -27,6 +29,7 @@ export class PurchasesService {
     private configService: ConfigService,
     private certificatesService: CertificatesService,
     private issuerService: IssuerService,
+    private sellersService: SellersService,
     private buyersService: BuyersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private pdfService: PDFService,
@@ -43,19 +46,17 @@ export class PurchasesService {
     await this.prisma.$transaction(async (prisma) => {
       for (const createPurchaseDto of createPurchaseDtos) {
 
-        const { filecoinNodes, ...purchase } = createPurchaseDto;
+        const { filecoinNodeId, ...purchase } = createPurchaseDto;
 
-        if (filecoinNodes && filecoinNodes.length > 1) {
-          throw new BadRequestException('only one filecoin node per transaction allowed');
+        if (!filecoinNodeId) {
+          throw new BadRequestException(`filecoinNodeId need to be set`)
         }
 
-        if (filecoinNodes && filecoinNodes.length > 0) {
-          const existingFilecoinNodes = await this.prisma.filecoinNode.findMany({ where: { id: { in: filecoinNodes.map(n => n.id) } } });
-          if (filecoinNodes.length !== existingFilecoinNodes.length) {
-            const nonExistingFilecoinNodes = filecoinNodes.filter(n => existingFilecoinNodes.findIndex((en) => en.id === n.id) < 0)
-            this.logger.error(`purchase submitted for non-existing filecoin nodes: ${nonExistingFilecoinNodes.map(n=>n.id).join()}`);
-            throw new NotFoundException();
-          }
+        const existingFilecoinNode = await this.prisma.filecoinNode.findFirst({ where: { id: filecoinNodeId } });
+
+        if (!existingFilecoinNode) {
+          this.logger.error(`purchase submitted for non-existing filecoin node: ${filecoinNodeId}`);
+          throw new NotFoundException();
         }
 
         const certData = await this.certificatesService.findOne(purchase.certificateId);
@@ -64,6 +65,7 @@ export class PurchasesService {
           throw new BadRequestException(`certificate has to be owned by transaction seller`);
         }
 
+        const sellerData = await this.sellersService.findOne(purchase.sellerId);
         const buyerData = await this.buyersService.findOne(purchase.buyerId);
 
         if (!buyerData) {
@@ -75,67 +77,58 @@ export class PurchasesService {
           throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
         }
 
-        if (filecoinNodes && filecoinNodes[0]) {
 
-          const filecoinNodesNotOwned = (await this.prisma.filecoinNode.findMany({
-            where: {
-              id: { in: filecoinNodes.map(n => n.id) },
-              buyerId: { not: purchase.buyerId }
-            }
-          }));
-
-          if (filecoinNodesNotOwned.length > 0) {
-            throw new BadRequestException(`filecoin nodes (${filecoinNodesNotOwned.map(n => n.id)}) have to be owned by the buyer`);
+        const filecoinNodeNotOwned = (await this.prisma.filecoinNode.findFirst({
+          where: {
+            id: filecoinNodeId,
+            buyerId: { not: purchase.buyerId }
           }
+        }));
+
+        if (!filecoinNodeNotOwned) {
+          throw new BadRequestException(`filecoin node (${filecoinNodeId}) has to be owned by the buyer`);
         }
 
         const newRecord = await prisma.purchase.create({
-          data: purchase
+          data: {
+            ...purchase,
+            filecoinNodeId: filecoinNodeId
+          }
         }).catch(err => {
           this.logger.error(`error creating a new purchase: ${err}`);
           throw err;
         });
 
-        if (filecoinNodes) {
-          await prisma.filecoinNodesOnPurchases.createMany({
-            data: filecoinNodes.map((n) => ({
-              buyerId: newRecord.buyerId,
-              purchaseId: newRecord.id,
-              filecoinNodeId: n.id
-            }))
-          }).catch(err => {
-            this.logger.error(`error linking filecoin nodes to the new purchase: ${err}`);
-            throw err;
-          });
-        }
-
         await this.createAttestationForPurchases([newRecord.id]);
 
-        let accountToRedeemFrom: string;
-
-        if (filecoinNodes && filecoinNodes[0]) {
-          const filecoinNode = filecoinNodes[0];
-
-          const filecoinNodeData = await this.prisma.filecoinNode.findUnique({ where: { id: filecoinNode.id } });
-
-          if (!filecoinNodeData.blockchainAddress) {
-            throw new Error(`filecoin node ${filecoinNode.id} has no blockchain address assigned`);
-          }
-
-          accountToRedeemFrom = filecoinNodeData.blockchainAddress;
-        } else {
-          this.logger.debug(`no fielcoin node defined for purchase`);
-
-          accountToRedeemFrom = buyerData.blockchainAddress;
-        }
+        await this.issuerService.transferCertificate({
+          id: Number(certData.onchainId),
+          fromAddress: sellerData.blockchainAddress,
+          toAddress: buyerData.blockchainAddress,
+          amount: certData.energyWh,
+        });
 
         const beneficiary = buyerData.name;
+
+        const txHash = await this.issuerService.claimCertificate({
+          id: Number(certData.onchainId),
+          fromAddress: buyerData.blockchainAddress,
+          amount: certData.energyWh,
+          claimData: {
+            beneficiary,
+            location: '', // TODO: Check what this should be set to
+            countryCode: '', // TODO: Check what this should be set to
+            periodStartDate: dateToUnix(new Date(createPurchaseDto.reportingStart)).toString(), // TODO: Add timezone
+            periodEndDate: dateToUnix(new Date(createPurchaseDto.reportingEnd)).toString(),
+            purpose: `Decarbonizing Filecoin Mining Operation`
+          }
+        });
 
         try {
           await prisma.certificate.update({
             data: {
               beneficiary,
-              redemptionDate: new Date() // TO-DO: Replace with the exact blockchain timestamp of the claiming action
+              redemptionDate: new Date() // TODO: Replace with the exact blockchain timestamp of the claiming action
             },
             where: { id: certData.id }
           });
@@ -175,7 +168,7 @@ export class PurchasesService {
       include: {
         seller: true,
         buyer: { include: { filecoinNodes: true } },
-        filecoinNodes: { include: { filecoinNode: true } },
+        filecoinNode: true,
         certificate: true,
         files: {
           select: {
@@ -199,7 +192,6 @@ export class PurchasesService {
 
     return FullPurchaseDto.toDto({
       ...data,
-      filecoinNodes: data.filecoinNodes.map((r) => r.filecoinNode),
       files: data.files.map(f => {
         const { purchases, ...file } = f.file;
 
@@ -214,46 +206,29 @@ export class PurchasesService {
   }
 
   async update(id: string, updatePurchaseDto: UpdatePurchaseDto) {
-    const { filecoinNodes, ...purchase } = updatePurchaseDto;
+    const existingRecord = await this.prisma.purchase.findUnique({ where: { id } });
+
+    if (!existingRecord) {
+      throw new NotFoundException();
+    }
 
     return await this.prisma.$transaction(async (prisma) => {
-      if (filecoinNodes) {
-        const existingRecord = await prisma.purchase.findUnique({ where: { id } });
-
-        if (!existingRecord) {
-          throw new NotFoundException();
-        }
-
-        await prisma.filecoinNodesOnPurchases.deleteMany({
-          where: { purchaseId: id }
-        });
-
-        await prisma.filecoinNodesOnPurchases.createMany({
-          data: filecoinNodes.map((n) => ({
-            buyerId: existingRecord.buyerId,
-            purchaseId: id,
-            filecoinNodeId: n.id
-          }))
-        });
-      }
-
       await this.prisma.purchase.update({
         where: { id },
-        data: purchase
+        data: updatePurchaseDto
       });
 
       const data = await prisma.purchase.findUnique({
         where: { id },
-        include: { filecoinNodes: { select: { filecoinNode: true } } }
+        include: { filecoinNode: true }
       });
 
-      return { ...data, filecoinNodes: data.filecoinNodes.map(n => n.filecoinNode) };
+      return data;
     });
   }
 
   async remove(id: string): Promise<boolean> {
     await this.prisma.$transaction([
-      this.prisma.filecoinNodesOnPurchases.deleteMany({ where: { purchaseId: id } }),
       this.prisma.purchase.delete({ where: { id } })
     ]);
 
@@ -270,7 +245,7 @@ export class PurchasesService {
         where: { id },
         include: {
           certificate: true,
-          filecoinNodes: true,
+          filecoinNode: true,
           files: true
         }
       });
@@ -287,7 +262,7 @@ export class PurchasesService {
 
       const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', {
         locals: {
-          minerId: savedPurchase.filecoinNodes.map(n => n.filecoinNodeId).join(', '),
+          minerId: savedPurchase.filecoinNodeId,
           orderQuantity: BigNumber.from(savedPurchase.certificate.energyWh).div(1e6).toString(),
           country: savedPurchase.certificate.country.toString(),
           state: savedPurchase.certificate.region,

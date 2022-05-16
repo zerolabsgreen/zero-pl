@@ -123,11 +123,7 @@ export class FilecoinNodesService {
       include: {
         purchases: {
           include: {
-            purchase: {
-              include: {
-                certificate: true
-              }
-            }
+            certificate: true
           }
         }
       }
@@ -147,19 +143,19 @@ export class FilecoinNodesService {
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/nodes/${data.id}/beneficiary`,
       dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/nodes/${data.id}/transactions`,
       recsTotal: data.purchases.reduce(
-        (total, transaction) =>
+        (total, purchase) =>
           total.add(
-            BigNumber.from(transaction.purchase.certificate.energyWh).mul(1000000)
+            BigNumber.from(purchase.certificate.energyWh).mul(1000000)
           ), BigNumber.from(0)
         ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
-        const redemptionStatement = allRedemptionStatements.find(rs => rs.purchases.includes(p.purchase.id))
+        const redemptionStatement = allRedemptionStatements.find(rs => rs.purchases.includes(p.id))
         return {
-          id: p.purchase.id,
-          pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${p.purchase.id}`,
-          dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.purchase.id}`,
+          id: p.id,
+          pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${p.id}`,
+          dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.id}`,
           downloadUrl: redemptionStatement?.id ? `${process.env.API_BASE_URL}/api/files/${redemptionStatement.id}` : null,
-          ...pick(p.purchase, [
+          ...pick(p, [
             'sellerId',
             'annually',
             'reportingStart',
@@ -172,13 +168,13 @@ export class FilecoinNodesService {
             'createdAt',
             'updatedAt'
           ]),
-          reportingStartLocal: toDateStringWithOffset(p.purchase.reportingStart, p.purchase.reportingStartTimezoneOffset),
-          reportingEndLocal: toDateStringWithOffset(p.purchase.reportingEnd, p.purchase.reportingEndTimezoneOffset),
+          reportingStartLocal: toDateStringWithOffset(p.reportingStart, p.reportingStartTimezoneOffset),
+          reportingEndLocal: toDateStringWithOffset(p.reportingEnd, p.reportingEndTimezoneOffset),
           generation: {
-            ...p.purchase.certificate,
-            energyWh: BigNumber.from(p.purchase.certificate.energyWh).toNumber(),
-            generationStartLocal: toDateStringWithOffset(p.purchase.certificate.generationStart, p.purchase.certificate.generationStartTimezoneOffset),
-            generationEndLocal: toDateStringWithOffset(p.purchase.certificate.generationEnd, p.purchase.certificate.generationEndTimezoneOffset)
+            ...p.certificate,
+            energyWh: BigNumber.from(p.certificate.energyWh).toNumber(),
+            generationStartLocal: toDateStringWithOffset(p.certificate.generationStart, p.certificate.generationStartTimezoneOffset),
+            generationEndLocal: toDateStringWithOffset(p.certificate.generationEnd, p.certificate.generationEndTimezoneOffset)
           }
         };
       })
