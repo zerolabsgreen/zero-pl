@@ -87,10 +87,10 @@ export const exampleData = {
             "url": "https://proofs-api.zerolabs.green/api/files/d52cf9e9-8a50-48e9-83e3-6753c14178d5"
         },
         {
-            "id": "648c16b3-6a33-48d5-a222-ba1906ec81a5",
+            "id": "b2c523d7-f352-4ce2-827a-819197bbf04c",
             "fileName": "Green-e_Attestation.pdf",
             "mimeType": "application/pdf",
-            "url": "https://proofs-api.zerolabs.green/api/files/648c16b3-6a33-48d5-a222-ba1906ec81a5"
+            "url": "https://proofs-api.zerolabs.green/api/files/b2c523d7-f352-4ce2-827a-819197bbf04c"
         }
     ],
     "pageUrl": "https://proofs.zerolabs.green/partners/filecoin/purchases/5253751e-9072-4c05-a3ae-e42428baa429"

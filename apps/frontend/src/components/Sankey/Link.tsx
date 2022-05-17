@@ -11,6 +11,8 @@ type LinkProps = {
   minWidth?: number;
   width?: number;
   beneficiary?: string;
+  hidePopover?: boolean;
+  hidePopoverBtn?: boolean;
 };
 
 function horizontalSourceO(d: any): [number, number] {
@@ -39,7 +41,7 @@ function sankeyLinkHorizontalO() {
   return linkHorizontal().source(horizontalSourceO).target(horizontalTargetO);
 }
 
-export default function Link({ link, color, maxWidth, minWidth, width, beneficiary }: LinkProps) {
+export default function Link({ link, color, maxWidth, minWidth, width, beneficiary, hidePopover = false, hidePopoverBtn = false }: LinkProps) {
   const linkWidth = width
     ? width
     : minWidth && (link.width ?? 0) < minWidth
@@ -82,6 +84,7 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
           strokeWidth: linkWidth && !isNaN(linkWidth) ? linkWidth : 0,
         }}
       />
+      {!hidePopover &&
       <SankeyLinkPopover
          open={popoverOpen}
          anchorEl={popoverAnchor.current}
@@ -91,12 +94,16 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
          id={source.id}
          targetId={source.type === SankeyItemType.Certificate ? target.id : source.id}
          amount={source.type === SankeyItemType.Redemption ? target.volume : source.volume}
+         amountTitle={source.type === SankeyItemType.Redemption ? 'Certificate volume' : undefined}
+         totalAmount={source.type === SankeyItemType.Redemption ? source.volume : undefined}
+         totalAmountTitle={source.type === SankeyItemType.Redemption ? 'Redemption volume' : undefined}
          beneficiary={beneficiary}
          period={source.period}
          generator={source.generator}
          sources={source.energySources}
          location={source.location}
-      />
+         hideBtn={hidePopoverBtn}
+      />}
     </>
   );
 }
