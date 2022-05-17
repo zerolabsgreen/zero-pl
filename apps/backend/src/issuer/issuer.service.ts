@@ -5,10 +5,25 @@ import { pick } from 'lodash';
 import polly from 'polly-js';
 
 type TxHash = string;
+type UnixTimestamp = number;
 
 interface ISetRedemptionStatementDTO {
   value: string;
   storagePointer?: string; 
+}
+
+export interface TxReceiptDTO {
+  to: string;
+  from: string;
+  contractAddress: string;
+  gasUsed: string;
+  blockHash: string;
+  transactionHash: string;
+  blockNumber: number;
+  confirmations: number;
+  cumulativeGasUsed: string;
+  effectiveGasPrice: string;
+  timestamp: UnixTimestamp;
 }
 
 export interface MintDTO {
@@ -144,7 +159,9 @@ export class IssuerService {
   async mint(
     batchId: number,
     dto: MintDTO[]
-  ): Promise<TxHash> {
+  ): Promise<number[]> {
+    let txHash: string;
+
     try {
       const responseData = (
         await this.axiosInstance.post(
@@ -157,9 +174,29 @@ export class IssuerService {
         })
       ).data;
 
-      return responseData.txHash;
+      txHash = responseData.txHash;
     } catch (err) {
       this.logger.error(`error minting: ${err}`);
+      this.logger.error(`payload: ${err.message}`);
+      throw err;
+    }
+
+    await this.waitForTxMined(txHash);
+
+    try {
+      const ids = (
+        await this.axiosInstance.get(
+          `/certificate/id/${txHash}`
+        ).catch((err) => {
+          this.logger.error(`GET /certificate/id/${txHash} error response: ${err}`);
+          this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+          throw err;
+        })
+      ).data;
+
+      return ids;
+    } catch (err) {
+      this.logger.error(`error getting certificate IDs: ${err}`);
       this.logger.error(`payload: ${err.message}`);
       throw err;
     }
@@ -309,5 +346,37 @@ export class IssuerService {
     //   throw err;
     // }
     return [];
+  }
+
+  public async waitForTxMined(txHash: string): Promise<TxReceiptDTO> {
+    let lastAttempt: number = Date.now();
+    const timeout = 90000;
+    const checkingInterval = 2000;
+
+    const numberOfRetries = Math.floor((lastAttempt - Date.now() + timeout) / checkingInterval);
+    lastAttempt += Math.floor((Date.now() - lastAttempt) / checkingInterval) * checkingInterval;
+
+    await polly()
+      .logger((err) => {
+        this.logger.debug(err.response?.data?.message || err);
+      })
+      .handle((err) => {
+        return !!(
+          err.isAxiosError &&
+          err.response &&
+          err.response.status === 400
+        );
+      })
+      .retry(numberOfRetries)
+      .executeForPromise(async () => {
+        await new Promise(resolve => setTimeout(resolve, Math.max(0, checkingInterval - (Date.now() - lastAttempt))));
+
+        lastAttempt = Date.now();
+        await this.axiosInstance.get(
+          `/blockchain/${txHash}`
+        );
+      });
+
+      return (await this.axiosInstance.get(`/blockchain/${txHash}`)).data;
   }
 }

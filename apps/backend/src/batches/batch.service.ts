@@ -3,12 +3,13 @@ import { BadRequestException, ConflictException, Injectable, Logger, NotFoundExc
 import { PrismaService } from '../prisma/prisma.service';
 import { BatchDto } from './dto/batch.dto';
 import { IssuerService } from '../issuer/issuer.service';
-import { Batch, FileType } from '@prisma/client';
+import { Batch } from '@prisma/client';
 import { FilesService } from '../files/files.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { SellersService } from '../sellers/sellers.service';
 import { MintDTO } from '../issuer/issuer.service';
 import { dateToUnix } from '../utils/unix';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BatchService {
@@ -19,7 +20,8 @@ export class BatchService {
     private issuerService: IssuerService,
     private filesService: FilesService,
     private certificatesService: CertificatesService,
-    private sellersService: SellersService
+    private sellersService: SellersService,
+    private readonly configService: ConfigService
   ) {}
 
   async create(): Promise<BatchDto> {
@@ -135,7 +137,7 @@ export class BatchService {
   async mint(
     batchId: string,
     certificateIds: string[]
-  ): Promise<string> {
+  ): Promise<number[]> {
     const batch = await this.findOne(batchId);
 
     const certificates = await this.certificatesService.find(certificateIds);
@@ -168,20 +170,36 @@ export class BatchService {
       };
     }));
 
-    const txHash = await this.issuerService.mint(
+    const onchainCertificateIds = await this.issuerService.mint(
       Number(batch.id), 
       mintingData
     );
 
-    await this.prisma.batch.update({
-      data: { 
-        certificates: {
-          connect: certificateIds.map(id => ({ id}))
-        }
-      },
-      where: { id: BigInt(batch.id) }
+    await this.prisma.$transaction(async (prisma) => {
+      await prisma.batch.update({
+        data: { 
+          certificates: {
+            connect: certificateIds.map(id => ({ id}))
+          }
+        },
+        where: { id: BigInt(batch.id) }
+      });
+
+      for (let i = 0; i < certificateIds.length; i++) {
+        await prisma.certificate.update({
+          data: {
+            onchainId: onchainCertificateIds[i]
+          },
+          where: {
+            id: certificateIds[i]
+          }
+        });
+      }
+    }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
+      this.logger.error('rolling back transaction');
+      throw err;
     });
 
-    return txHash; 
+    return onchainCertificateIds; 
   }
 }

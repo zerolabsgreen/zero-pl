@@ -124,11 +124,13 @@ export class PurchasesService {
           }
         });
 
+        const receipt = await this.issuerService.waitForTxMined(txHash);
+
         try {
           await prisma.certificate.update({
             data: {
               beneficiary,
-              redemptionDate: new Date() // TODO: Replace with the exact blockchain timestamp of the claiming action
+              redemptionDate: new Date(receipt.timestamp * 1000)
             },
             where: { id: certData.id }
           });
