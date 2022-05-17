@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { FilecoinNode } from "@prisma/client"
+import { CountryEnumType, FilecoinNode } from "@prisma/client"
 
 export class FilecoinNodeDto implements FilecoinNode {
   @ApiProperty({ example: "f0112027" })
@@ -10,6 +10,12 @@ export class FilecoinNodeDto implements FilecoinNode {
 
   @ApiPropertyOptional({ example: '0x9442ED348b161af888e6cB999951aE8b961F7B4B' })
   blockchainAddress: string;
+
+  @ApiPropertyOptional({ example: 'Frankfurt am Main' })
+  region: string;
+  
+  @ApiPropertyOptional({ example: CountryEnumType.DE })
+  country: CountryEnumType;
 
   @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
   createdAt: Date;

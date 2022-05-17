@@ -102,6 +102,8 @@ model FilecoinNode {
   blockchainAddress String?
   purchases         FilecoinNodesOnPurchases[]
   contracts         Contract[]
+  region            String?
+  country           CountryEnumType?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

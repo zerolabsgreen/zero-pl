@@ -45,7 +45,9 @@ curl -w "\n" -s -X 'POST' \
   -H 'Content-Type: application/json' \
   -d '{
   "id": "f00001",
-  "buyerId": "00000000-0000-0000-0000-000000000002"
+  "buyerId": "00000000-0000-0000-0000-000000000002",
+  "country": "CN",
+  "region": "BJ"
 }'
 
 echo
