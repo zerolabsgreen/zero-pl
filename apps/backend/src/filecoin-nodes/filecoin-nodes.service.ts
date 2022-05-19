@@ -3,13 +3,12 @@ import { CreateFilecoinNodeDto } from './dto/create-filecoin-node.dto';
 import { UpdateFilecoinNodeDto } from './dto/update-filecoin-node.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilecoinNodeDto } from './dto/filecoin-node.dto';
-import { FilecoinNode, FileType } from '@prisma/client';
+import { FileType } from '@prisma/client';
 import { pick } from 'lodash';
 import { DateTime, Duration } from "luxon";
 import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 import { FilesService } from '../files/files.service';
-import { IssuerService } from '../issuer/issuer.service';
 
 @Injectable()
 export class FilecoinNodesService {
@@ -17,46 +16,18 @@ export class FilecoinNodesService {
 
   constructor(
     private prisma: PrismaService,
-    private issuerService: IssuerService,
     private filesService: FilesService
   ) {}
 
   async create(createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
-    let newFilecoinNode: FilecoinNode;
-    await this.prisma.$transaction(async (prisma) => {
-      try {
-        newFilecoinNode = await prisma.filecoinNode.create({ data: createFilecoinNodeDto });
-      } catch (err) {
-        this.logger.error(`error creating a new filecoin node: ${err}`);
-        throw err;
-      }
+    try {
+      const newFilecoinNode = await this.prisma.filecoinNode.create({ data: createFilecoinNodeDto });
 
-      let blockchainAddress: string;
-
-      try {
-        blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-        this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for filecoin node (${newFilecoinNode.id})`);
-      } catch (err) {
-        this.logger.error(`error gathering blockchain account: ${err}`);
-        throw err;
-      }
-
-      try {
-        await prisma.filecoinNode.update({
-          data: { blockchainAddress },
-          where: { id: newFilecoinNode.id }
-        });
-      } catch (err) {
-        this.logger.error(`error setting blockchain address for buyer ${newFilecoinNode.id}: ${err}`);
-        throw err;
-      }
-
-    }, { timeout: 60000 }).catch((err) => {
-      this.logger.error('rolling back transaction');
+      return new FilecoinNodeDto(newFilecoinNode);
+    } catch (err) {
+      this.logger.error(`error creating a new filecoin node: ${err}`);
       throw err;
-    });
-
-    return new FilecoinNodeDto(newFilecoinNode);
+    }
   }
 
   async findAll(): Promise<FilecoinNodeDto[]> {

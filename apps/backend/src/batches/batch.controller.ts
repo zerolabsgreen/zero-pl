@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
   Post,
   UseGuards,
   UseInterceptors,
@@ -21,7 +20,7 @@ import { ApiKeyPermissions } from '@prisma/client';
 import { SetRedemptionStatementDto } from './dto/set-redemption-statement.dto';
 import { MintDto } from './dto/mint.dto';
 
-@Controller('/partners/filecoin/batches')
+@Controller('/partners/filecoin/batch')
 @ApiTags('Filecoin Batches')
 @UseGuards(AuthGuard('api-key'))
 @ApiSecurity('api-key', ['api-key'])
@@ -72,13 +71,13 @@ export class BatchController {
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: MintDto })
   @ApiCreatedResponse({
-      type: String,
-      description: 'Transaction hash'
+      type: [Number],
+      description: 'Certificate on-chain IDs'
   })
   mint(
     @Param('id') id: string,
     @Body() { certificateIds }: MintDto
-  ): Promise<string>
+  ): Promise<number[]>
   {
     return this.batchService.mint(id, certificateIds ?? []);
   }

@@ -18,7 +18,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
 import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
-import { AccountController } from '../account/account.controller';
 
 const OriginAppTypeOrmModule = () => {
   const entities = [

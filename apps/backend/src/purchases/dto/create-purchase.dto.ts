@@ -23,8 +23,7 @@ class RecsAnnuallyDTO {
   amount: number;
 }
 
-export class 
-CreatePurchaseDto implements Omit<Purchase, 'filecoinNode' | 'reportingStart' | 'reportingEnd' | 'createdAt' | 'updatedAt' | 'txHash'> {
+export class CreatePurchaseDto {
   @ApiProperty({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
   @IsOptional()
@@ -42,33 +41,31 @@ CreatePurchaseDto implements Omit<Purchase, 'filecoinNode' | 'reportingStart' | 
   @IsUUID()
   sellerId: string;
 
-  @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
+  @ApiProperty({ example: '2020-01-01T00:00:00.000Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  @IsOptional()
   reportingStart: string;
 
-  @ApiPropertyOptional({ example: 180 })
+  @ApiPropertyOptional({ example: 180, default: 0 })
   @IsInt()
   @Min(-780)
   @Max(780)
   @IsOptional()
-  reportingStartTimezoneOffset;
+  reportingStartTimezoneOffset?: number;
 
-  @ApiPropertyOptional({ example: '2020-12-31T23:59:59.999Z' })
+  @ApiProperty({ example: '2020-12-31T23:59:59.999Z' })
   @IsISO8601({ strict: true })
   @IsDatetimePrismaCompatible()
-  @IsOptional()
   reportingEnd: string;
 
-  @ApiPropertyOptional({ example: 180 })
+  @ApiPropertyOptional({ example: 180, default: 0 })
   @IsInt()
   @Min(-780)
   @Max(780)
   @IsOptional()
-  reportingEndTimezoneOffset;
+  reportingEndTimezoneOffset?: number;
 
-  @ApiPropertyOptional({ type: String })
+  @ApiProperty({ type: String })
   @IsString()
   filecoinNodeId: string;
 

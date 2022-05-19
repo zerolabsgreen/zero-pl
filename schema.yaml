@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 paths:
-  /blockchain-properties:
+  /blockchain/properties:
     get:
       operationId: "BlockchainPropertiesController_get"
       parameters: []
@@ -12,7 +12,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/BlockchainPropertiesDTO"
       tags:
-        - "blockchain-properties"
+        - "blockchain"
+  /blockchain/{txHash}:
+    get:
+      operationId: "BlockchainPropertiesController_getTransaction"
+      parameters:
+        - name: "txHash"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns the receipt for the transaction"
+          content:
+            application/json:
+              schema:
+                type: "string"
+      tags:
+        - "blockchain"
   /batch:
     post:
       operationId: "BatchController_create"
@@ -25,7 +43,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TransactionPendingDTO"
       tags:
-        - "batches"
+        - "batch"
     get:
       operationId: "BatchController_getAll"
       parameters: []
@@ -39,10 +57,10 @@ paths:
                 items:
                   $ref: "#/components/schemas/BatchDTO"
       tags:
-        - "batches"
+        - "batch"
   /batch/id/{txHash}:
     get:
-      operationId: "BatchController_getBatchId"
+      operationId: "BatchController_getBatchesCreatedIn"
       parameters:
         - name: "txHash"
           required: true
@@ -51,13 +69,15 @@ paths:
             type: "string"
       responses:
         200:
-          description: "Returns the batch ID that was created in the transaction"
+          description: "Returns batch IDs that were created in the transaction"
           content:
             application/json:
               schema:
-                type: "string"
+                type: "array"
+                items:
+                  type: "string"
       tags:
-        - "batches"
+        - "batch"
   /batch/{id}:
     get:
       operationId: "BatchController_get"
@@ -75,7 +95,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/BatchDTO"
       tags:
-        - "batches"
+        - "batch"
   /batch/redemption-statement/{batchId}:
     post:
       operationId: "BatchController_setRedemptionStatement"
@@ -99,7 +119,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TransactionPendingDTO"
       tags:
-        - "batches"
+        - "batch"
   /batch/mint/{batchId}:
     post:
       operationId: "BatchController_mint"
@@ -125,7 +145,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TransactionPendingDTO"
       tags:
-        - "batches"
+        - "batch"
   /certificate/{id}:
     get:
       operationId: "CertificateController_get"
@@ -207,6 +227,26 @@ paths:
                 $ref: "#/components/schemas/TransactionPendingDTO"
       tags:
         - "certificates"
+  /certificate/id/{txHash}:
+    get:
+      operationId: "CertificateController_getCertificatesCreatedIn"
+      parameters:
+        - name: "txHash"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns certificate IDs that were created in the transaction"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "string"
+      tags:
+        - "certificates"
 info:
   title: "Zero - Tokenization Module API"
   description: ""
@@ -231,6 +271,9 @@ components:
         batchFactory:
           type: "string"
           example: "0x6c8d8D6c8a52Dc6ed1b89F9292e4dC88b20421ac"
+        platformOperatorAddress:
+          type: "string"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
         rpcNode:
           type: "string"
           example: "https://rpc.energyweb.org"
@@ -242,6 +285,7 @@ components:
         - "registry"
         - "topic"
         - "batchFactory"
+        - "platformOperatorAddress"
         - "rpcNode"
     TransactionPendingDTO:
       type: "object"
@@ -367,7 +411,7 @@ components:
         data:
           type: "string"
           description: "Minting data"
-          example: "0x00df5c521f5d25ba56acc14845175557bd312d83ce21ba38cebe96f46769d04a"
+          example: "0xd1aea9ecbbc91014936f4fe284732458ef8cdc5724715477e3613a286fcbf5a0"
       required:
         - "to"
         - "amount"

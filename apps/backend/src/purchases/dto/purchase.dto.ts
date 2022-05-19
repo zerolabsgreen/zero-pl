@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Purchase } from '@prisma/client';
 
-export class PurchaseDto implements Purchase {
+export class PurchaseDto {
   @ApiProperty({ example: '4bfce36e-3fcd-4a41-b752-94a5298b8eb6' })
   id: string;
 
@@ -17,22 +17,22 @@ export class PurchaseDto implements Purchase {
   @ApiProperty({ type: String, example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
   certificateId: string;
 
-  @ApiPropertyOptional({ example: '2020-01-01T00:00:00.000Z' })
+  @ApiProperty({ example: '2020-01-01T00:00:00.000Z' })
   reportingStart: Date;
 
   @ApiPropertyOptional({ example: 180 })
-  reportingStartTimezoneOffset;
+  reportingStartTimezoneOffset?: number;
 
-  @ApiPropertyOptional({ example: '2020-12-31T23:59:59.999Z' })
+  @ApiProperty({ example: '2020-12-31T23:59:59.999Z' })
   reportingEnd: Date;
 
   @ApiPropertyOptional({ example: 180 })
-  reportingEndTimezoneOffset;
+  reportingEndTimezoneOffset?: number;
 
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
-  contractId: string;
+  contractId?: string;
 
-  @ApiPropertyOptional({ type: String, example: 'f1234' })
+  @ApiProperty({ type: String, example: 'f1234' })
   filecoinNodeId: string;
 
   @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })

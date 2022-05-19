@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
@@ -65,6 +66,9 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File
   ): Promise<FileMetadataDto> {
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
+    if (!file) {
+      throw new BadRequestException(`Please provide a file`);
+    }
     return this.filesService.create(file.originalname, file.buffer, dto.purchaseIds?.split(',') ?? [], dto.fileType as FileType, file.mimetype);
   }
 

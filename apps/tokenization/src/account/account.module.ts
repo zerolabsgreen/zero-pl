@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { BlockchainPropertiesModule, BlockchainPropertiesService, IStorageAdapter } from '@zero-labs/tokenization-api';
+import { BlockchainPropertiesService, IStorageAdapter } from '@zero-labs/tokenization-api';
 
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
@@ -12,8 +12,8 @@ import { SignerService } from './get-signer.service';
 export class AccountModule {
   static register(storageAdapter: IStorageAdapter): DynamicModule {
     return {
-      module: BlockchainPropertiesModule,
-      imports: [TypeOrmModule.forFeature([Account]), ConfigModule, BlockchainPropertiesModule],
+      module: AccountModule,
+      imports: [TypeOrmModule.forFeature([Account]), ConfigModule],
       controllers: [AccountController],
       providers: [
         {

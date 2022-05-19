@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException, PreconditionFailedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BatchDto } from './dto/batch.dto';
 import { IssuerService } from '../issuer/issuer.service';
@@ -37,7 +37,7 @@ export class BatchService {
       );
       this.logger.debug(`created a new batch with ID ${onchainId}`);
     } catch (err) {
-      this.logger.error(`error creating a new batch: ${err}`);
+      this.logger.error(`error creating a new batch: ${err.message}`);
       throw err;
     };
 
@@ -125,9 +125,9 @@ export class BatchService {
     try {
       onchainId = await this.issuerService.createBatch();
 
-      this.logger.debug(`create a new on-chain batch with ID ${onchainId}`);
+      this.logger.debug(`created a new on-chain batch with ID ${onchainId}`);
     } catch (err) {
-      this.logger.error(`error creating a new batch on chain: ${err}`);
+      this.logger.error(`error creating a new batch on chain: ${err.message}`);
       throw err;
     }
 
@@ -188,7 +188,7 @@ export class BatchService {
       for (let i = 0; i < certificateIds.length; i++) {
         await prisma.certificate.update({
           data: {
-            onchainId: onchainCertificateIds[i]
+            onchainId: BigInt(onchainCertificateIds[i])
           },
           where: {
             id: certificateIds[i]

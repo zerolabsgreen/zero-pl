@@ -1,5 +1,4 @@
-import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
-import { pick } from 'lodash';
+import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException, ConflictException, PreconditionFailedException } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { FileType } from '@prisma/client';
 import { PDFService } from '@t00nday/nestjs-pdf';
@@ -16,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { SellersService } from '../sellers/sellers.service';
 import { dateToUnix } from '../utils/unix';
 
@@ -65,6 +64,10 @@ export class PurchasesService {
           throw new BadRequestException(`certificate has to be owned by transaction seller`);
         }
 
+        if (!certData.onchainId) {
+          throw new PreconditionFailedException(`Certificate ${certData.id} does not have an on-chain ID set yet. Please mint the certificate on-chain.`);
+        }
+
         const sellerData = await this.sellersService.findOne(purchase.sellerId);
         const buyerData = await this.buyersService.findOne(purchase.buyerId);
 
@@ -77,19 +80,21 @@ export class PurchasesService {
           throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
         }
 
-
-        const filecoinNodeNotOwned = (await this.prisma.filecoinNode.findFirst({
+        const filecoinNodesOwned = (await this.prisma.filecoinNode.findMany({
           where: {
             id: filecoinNodeId,
-            buyerId: { not: purchase.buyerId }
+            buyerId: purchase.buyerId
+          },
+          select: {
+            id: true
           }
         }));
 
-        if (!filecoinNodeNotOwned) {
-          throw new BadRequestException(`filecoin node (${filecoinNodeId}) has to be owned by the buyer`);
+        if (!filecoinNodesOwned.map(f => f.id).includes(filecoinNodeId)) {
+          throw new BadRequestException(`filecoin node (${filecoinNodeId}) has to be owned by the buyer (${buyerData.id})`);
         }
 
-        const newRecord = await prisma.purchase.create({
+        const newPurchase = await prisma.purchase.create({
           data: {
             ...purchase,
             filecoinNodeId: filecoinNodeId
@@ -99,12 +104,10 @@ export class PurchasesService {
           throw err;
         });
 
-        await this.createAttestationForPurchases([newRecord.id]);
-
         await this.issuerService.transferCertificate({
           id: Number(certData.onchainId),
-          fromAddress: sellerData.blockchainAddress,
-          toAddress: buyerData.blockchainAddress,
+          from: sellerData.blockchainAddress,
+          to: buyerData.blockchainAddress,
           amount: certData.energyWh,
         });
 
@@ -112,19 +115,23 @@ export class PurchasesService {
 
         const txHash = await this.issuerService.claimCertificate({
           id: Number(certData.onchainId),
-          fromAddress: buyerData.blockchainAddress,
+          from: buyerData.blockchainAddress,
           amount: certData.energyWh,
           claimData: {
             beneficiary,
-            location: '', // TODO: Check what this should be set to
-            countryCode: '', // TODO: Check what this should be set to
+            region: existingFilecoinNode.region,
+            countryCode: existingFilecoinNode.country,
             periodStartDate: dateToUnix(new Date(createPurchaseDto.reportingStart)).toString(), // TODO: Add timezone
-            periodEndDate: dateToUnix(new Date(createPurchaseDto.reportingEnd)).toString(),
-            purpose: `Decarbonizing Filecoin Mining Operation`
+            periodEndDate: dateToUnix(new Date(createPurchaseDto.reportingEnd)).toString(), // TODO: Add timeizone
+            purpose: `Decarbonizing Filecoin Mining Operation`,
+            consumptionEntityID: existingFilecoinNode.id,
+            proofID: newPurchase.id
           }
         });
 
         const receipt = await this.issuerService.waitForTxMined(txHash);
+
+        await this.createAttestationForPurchases([newPurchase.id]);
 
         try {
           await prisma.certificate.update({
@@ -141,7 +148,7 @@ export class PurchasesService {
           throw err;
         }
 
-        purchases.push(await this.findOne(newRecord.id));
+        purchases.push(await this.findOne(newPurchase.id));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');

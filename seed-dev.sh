@@ -1,5 +1,6 @@
 X_API_KEY=$(grep SUPERADMIN_API_KEY .env | cut -d "=" -f2 | tr -d '"');
 PORT=$(grep -e "^PORT=" .env | cut -d "=" -f2 | tr -d '"');
+TOKENIZATION_PORT=$(grep -e "^TOKENIZATION_PORT=" .env | cut -d "=" -f2 | tr -d '"');
 
 echo
 echo "creating sellerId=00000000-0000-0000-0000-000000000001"
@@ -96,6 +97,38 @@ curl -w "\n" -s -X 'POST' \
 }]'
 
 echo
+echo "creating a batch"
+BATCH_ID=$(curl -w "\n" -s -X 'POST' "http://localhost:$PORT/api/partners/filecoin/batch" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' |  jq -r '.id')
+echo "created batch $BATCH_ID"
+
+echo
+echo "storing the redemption statement file"
+FILE_ID=$(curl -w "\n" -s -X 'POST' "http://localhost:3333/api/files" -H "X-API-KEY: somethingsecret" -F 'file=@examples/redemption-statement.pdf;type=application/pdf' | jq -r '.id')
+echo "created file $FILE_ID"
+
+echo
+echo "setting the redemption statement"
+curl -w "\n" -s -X 'POST' \
+  "http://localhost:$PORT/api/partners/filecoin/batch/$BATCH_ID/redemption-statement" \
+  -H "X-API-KEY: $X_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d @- <<END;
+{
+    "redemptionStatementId": "$FILE_ID"
+}
+END
+
+echo
+echo "minting certificates on-chain"
+curl -w "\n" -s -X 'POST' \
+  "http://localhost:$PORT/api/partners/filecoin/batch/$BATCH_ID/mint" \
+  -H "X-API-KEY: $X_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "certificateIds": ["00000000-0000-0000-0000-000000000333"]
+    }'
+
+echo
 echo "creating a contract"
 curl -w "\n" -s -X 'POST' \
   "http://localhost:$PORT/api/partners/filecoin/contracts" \
@@ -133,16 +166,8 @@ curl -w "\n" -s -X 'POST' \
   "certificateId": "00000000-0000-0000-0000-000000000333",
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "buyerId":  "00000000-0000-0000-0000-000000000002",
-  "filecoinNodes": [{"id": "f00001"}],
-  "contractId": "00000000-0000-0000-0000-000000666666"
-},{
-  "id": "00000000-0000-0000-0000-000000555555",
-  "certificateId": "00000000-0000-0000-0000-000000000777",
-  "sellerId": "00000000-0000-0000-0000-000000000001",
-  "buyerId":  "00000000-0000-0000-0000-000000000003",
-  "reportingStart": "2020-11-01T00:00:00.000+03:00",
-  "reportingStartTimezoneOffset": 180,
-  "reportingEnd": "2021-06-01T23:59:59.999+03:00",
-  "reportingEndTimezoneOffset": 180,
-  "filecoinNodes": [{"id": "f00002"}]
+  "filecoinNodeId": "f00001",
+  "contractId": "00000000-0000-0000-0000-000000666666",
+  "reportingStart": "2020-01-01T00:00:00.000Z",
+  "reportingEnd": "2020-12-31T23:59:59.999Z"
 }]'
