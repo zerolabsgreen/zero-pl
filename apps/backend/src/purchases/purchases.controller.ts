@@ -77,6 +77,14 @@ export class PurchasesController {
     return this.purchasesService.remove(id);
   }
 
+  @Get(':id/blockchain-events')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
+  @ApiOkResponse({ schema: purchaseEventsSchema })
+  @ApiParam({ name: 'id', type: String })
+  async getBlockchainEvents(@Param('id') id: string) {
+    return []; // this.purchasesService.getChainEvents(id); TODO: RE-ENABLE 
+  }
+
   @Post('/generate/attestations')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: GenerateAttestationsDto })
