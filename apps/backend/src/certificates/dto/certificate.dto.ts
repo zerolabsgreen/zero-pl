@@ -57,6 +57,9 @@ export class CertificateDto {
   @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
   commissioningDate?: Date;
 
+  @ApiPropertyOptional({ example: 180 })
+  commissioningDateTimezoneOffset?: number;
+
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   label?: LabelEnumType;
 

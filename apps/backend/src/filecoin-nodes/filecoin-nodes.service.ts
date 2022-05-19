@@ -5,10 +5,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { FilecoinNodeDto } from './dto/filecoin-node.dto';
 import { FileType } from '@prisma/client';
 import { pick } from 'lodash';
-import { DateTime, Duration } from "luxon";
 import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 import { FilesService } from '../files/files.service';
+import { toDateStringWithOffset } from '../utils/date';
 
 @Injectable()
 export class FilecoinNodesService {
@@ -228,19 +228,3 @@ export const transactionsSchema = {
     }
   }
 };
-
-function toDateStringWithOffset(date: Date, offsetInMinutes: number): string {
-  return DateTime.fromJSDate(date).setZone(offsetToOffsetString(offsetInMinutes)).toISO();
-}
-
-function offsetToOffsetString(offsetInMinutes: number): string {
-  if (offsetInMinutes === 0) {
-    return 'UTC';
-  }
-
-  const dur = Duration.fromObject({ minutes: offsetInMinutes });
-
-  const { hours, minutes } = dur.shiftTo('hours', 'minutes').toObject();
-
-  return `UTC${offsetInMinutes > 0 ? '+' : '-'}${Math.abs(hours).toString()}:${Math.abs(minutes).toString().padStart(2, '0')}`;
-}

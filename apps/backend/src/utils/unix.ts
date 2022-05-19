@@ -1,1 +1,3 @@
-export const dateToUnix = (date: Date) => Math.floor(date.getTime() / 1000);
+import { DateTime } from "luxon";
+
+export const dateTimeToUnix = (dateTime: DateTime) => dateTime.toSeconds();

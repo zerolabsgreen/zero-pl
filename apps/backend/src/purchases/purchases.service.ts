@@ -17,7 +17,8 @@ import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
 import { BigNumber } from 'ethers';
 import { SellersService } from '../sellers/sellers.service';
-import { dateToUnix } from '../utils/unix';
+import { dateTimeToUnix } from '../utils/unix';
+import { toDateTimeWithOffset } from '../utils/date';
 
 @Injectable()
 export class PurchasesService {
@@ -121,8 +122,18 @@ export class PurchasesService {
             beneficiary,
             region: existingFilecoinNode.region,
             countryCode: existingFilecoinNode.country,
-            periodStartDate: dateToUnix(new Date(createPurchaseDto.reportingStart)).toString(), // TODO: Add timezone
-            periodEndDate: dateToUnix(new Date(createPurchaseDto.reportingEnd)).toString(), // TODO: Add timeizone
+            periodStartDate: dateTimeToUnix(
+              toDateTimeWithOffset(
+                createPurchaseDto.reportingStart,
+                createPurchaseDto.reportingStartTimezoneOffset ?? 0
+              )
+            ).toString(),
+            periodEndDate: dateTimeToUnix(
+              toDateTimeWithOffset(
+                createPurchaseDto.reportingEnd,
+                createPurchaseDto.reportingEndTimezoneOffset ?? 0
+              )
+            ).toString(),
             purpose: `Decarbonizing Filecoin Mining Operation`,
             consumptionEntityID: existingFilecoinNode.id,
             proofID: newPurchase.id

@@ -8,8 +8,9 @@ import { FilesService } from '../files/files.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { SellersService } from '../sellers/sellers.service';
 import { MintDTO } from '../issuer/issuer.service';
-import { dateToUnix } from '../utils/unix';
+import { dateTimeToUnix } from '../utils/unix';
 import { ConfigService } from '@nestjs/config';
+import { toDateTimeWithOffset } from '../utils/date';
 
 @Injectable()
 export class BatchService {
@@ -153,8 +154,18 @@ export class BatchService {
         to: seller.blockchainAddress,
         amount: c.energyWh,
         certificate: {
-          generationStartTime: dateToUnix(new Date(c.generationStart)), // TODO: Add timezone
-          generationEndTime: dateToUnix(new Date(c.generationEnd)), // TODO: Add timezone
+          generationStartTime: dateTimeToUnix(
+            toDateTimeWithOffset(
+              c.generationStart.toISOString(),
+              c.generationStartTimezoneOffset ?? 0
+            )
+          ),
+          generationEndTime: dateTimeToUnix(
+            toDateTimeWithOffset(
+              c.generationEnd.toISOString(),
+              c.generationEndTimezoneOffset ?? 0
+            )
+          ),
           productType: c.productType,
           generator: {
             id: c.generatorId,
@@ -162,7 +173,12 @@ export class BatchService {
             energySource: c.energySource,
             region: c.region,
             country: c.country,
-            commissioningDate: dateToUnix(new Date(c.commissioningDate)), // TODO: Add timezone
+            commissioningDate: dateTimeToUnix(
+              toDateTimeWithOffset(
+                c.commissioningDate.toISOString(),
+                c.commissioningDateTimezoneOffset ?? 0
+              )
+            ),
             capacity: c.nameplateCapacityW.toString(),
           },
         },

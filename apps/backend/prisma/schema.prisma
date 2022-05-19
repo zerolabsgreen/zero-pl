@@ -94,6 +94,7 @@ model Certificate {
   redemptionDate                DateTime?
   nameplateCapacityW            Int?
   commissioningDate             DateTime?
+  commissioningDateTimezoneOffset   Int?
   label                         LabelEnumType?
 
   batch                         Batch? @relation(fields: [batchId], references: [id])
