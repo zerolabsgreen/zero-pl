@@ -35,6 +35,15 @@ export class PurchaseDto {
   @ApiProperty({ type: String, example: 'f1234' })
   filecoinNodeId: string;
 
+  @ApiPropertyOptional({ example: 'Decarbonizing Filecoin Mining Operation' })
+  purpose?: string;
+
+  @ApiPropertyOptional({ example: 'Some Corp Ltd.' })
+  beneficiary?: string;
+
+  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
+  redemptionDate?: Date;
+
   @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
   createdAt: Date;
 
@@ -58,6 +67,9 @@ export class PurchaseDto {
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
       contractId: p.contractId,
       filecoinNodeId: p.filecoinNodeId,
+      beneficiary: p.beneficiary,
+      purpose: p.purpose,
+      redemptionDate: p.redemptionDate,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt
     };

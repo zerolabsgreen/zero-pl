@@ -15,7 +15,6 @@ export const certificateInfoTableHeaders: TableHeader = {
   generatorId: { label: 'Generator ID', infoText: 'ID of the device generating the energy and EACs' },
   energySource: { label: 'Energy Source', infoText: 'Renewable energy source, e.g. wind, hydro, solar, etc.' },
   region: { label: 'Region', infoText: 'Location of the device generating the energy and EACs' },
-  redemptionDate: { label: 'Redemption date', infoText: 'The date of EAC redemption' },
   seller: { label: 'Seller', infoText: 'ID of the EAC seller' }
 }
 
@@ -41,9 +40,6 @@ export const useProductPageEffects = () => {
     generatorId: data?.certificate?.generatorId ?? '',
     energySource: <FuelType fuelType={data?.certificate?.energySource as FuelTypeEnum} />,
     region: `${data?.certificate?.country}, ${data?.certificate?.region}`,
-    redemptionDate: dayjs(data?.certificate?.redemptionDate).isValid()
-      ? dayjs(data?.certificate?.redemptionDate).utc().format('YYYY-MM-DD')
-      : '-',
     seller: <EthereumAddress shortify clipboard address={data?.certificate?.initialSellerId ?? ''} />
   }]
 
