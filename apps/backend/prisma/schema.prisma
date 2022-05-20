@@ -96,6 +96,7 @@ model Certificate {
   commissioningDate             DateTime?
   commissioningDateTimezoneOffset   Int?
   label                         LabelEnumType?
+  certificateCid                String?
 
   batch                         Batch? @relation(fields: [batchId], references: [id])
   batchId                       BigInt?

@@ -69,6 +69,9 @@ export class CertificateDto {
   @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
   updatedAt: Date;
 
+  @ApiPropertyOptional({ example: 'Certificate_CID' })
+  certificateCid?: string;
+
   @ApiPropertyOptional({ example: '123' })
   batchId?: string;
 

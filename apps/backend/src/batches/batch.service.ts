@@ -173,12 +173,12 @@ export class BatchService {
             energySource: c.energySource,
             region: c.region,
             country: c.country,
-            commissioningDate: dateTimeToUnix(
+            commissioningDate: c.commissioningDate ? dateTimeToUnix(
               toDateTimeWithOffset(
                 c.commissioningDate.toISOString(),
                 c.commissioningDateTimezoneOffset ?? 0
               )
-            ),
+            ) : 0,
             capacity: c.nameplateCapacityW.toString(),
           },
         },
