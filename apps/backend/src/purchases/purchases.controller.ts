@@ -82,7 +82,7 @@ export class PurchasesController {
   @ApiOkResponse({ schema: purchaseEventsSchema })
   @ApiParam({ name: 'id', type: String })
   async getBlockchainEvents(@Param('id') id: string) {
-    return this.purchasesService.getChainEvents(id);
+    return []; // this.purchasesService.getChainEvents(id); TODO: RE-ENABLE 
   }
 
   @Post('/generate/attestations')

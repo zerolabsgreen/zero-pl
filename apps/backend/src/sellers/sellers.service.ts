@@ -29,27 +29,25 @@ export class SellersService {
         throw err;
       }
 
-      // TODO: Re-enable with a proper setup for creating blockchain accounts
+      let blockchainAddress: string;
 
-      // let blockchainAddress: string;
+      try {
+        blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
+        this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for ${newSeller.id}`);
+      } catch (err) {
+        this.logger.error(`error gathering blockchain account: ${err}`);
+        throw err;
+      }
 
-      // try {
-      //   blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-      //   this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for ${newSeller.id}`);
-      // } catch (err) {
-      //   this.logger.error(`error gathering blockchain account: ${err}`);
-      //   throw err;
-      // }
-
-      // try {
-      //   await prisma.seller.update({
-      //     data: { blockchainAddress },
-      //     where: { id: newSeller.id }
-      //   });
-      // } catch (err) {
-      //   this.logger.error(`error setting blockchain address for seller ${newSeller.id}: ${err}`);
-      //   throw err;
-      // }
+      try {
+        await prisma.seller.update({
+          data: { blockchainAddress },
+          where: { id: newSeller.id }
+        });
+      } catch (err) {
+        this.logger.error(`error setting blockchain address for seller ${newSeller.id}: ${err}`);
+        throw err;
+      }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
       throw err;

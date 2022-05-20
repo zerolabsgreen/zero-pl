@@ -28,6 +28,9 @@ jobs:
       with:
         node-version: '16'
 
+    - name: Set NPM_TOKEN
+      run: npm config set '//registry.npmjs.org/:_authToken' "${{ secrets.NPM_TOKEN }}"
+
     - name: Install application
       run: yarn
 

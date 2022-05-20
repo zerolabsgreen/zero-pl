@@ -28,7 +28,7 @@ export const PurchasePage = () => {
             }}
             buyerId={transactionsData[0]?.buyer.id}
             buyerName={transactionsData[0]?.buyer.name}
-            filecoinMinerIdList={transactionsData[0]?.filecoinNodes}
+            filecoinMinerIdList={[transactionsData[0]?.filecoinNode]}
           />
           <Grid container>
             <Grid item xs={12}>

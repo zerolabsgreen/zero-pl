@@ -15,17 +15,17 @@ services:
     networks:
       - dev
 
-  db-issuer-api:
+  db-tokenization:
     image: postgres:13-alpine
     restart: unless-stopped
     ports:
       - '5433:5432'
     volumes:
-      - dev-pg-data-issuer:/var/lib/postgresql/data
+      - dev-pg-data-tokenization:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: issuer
+      POSTGRES_DB: tokenization
     networks:
       - dev
 
@@ -57,7 +57,7 @@ services:
 
 volumes:
   dev-pg-data-main:
-  dev-pg-data-issuer:
+  dev-pg-data-tokenization:
   dev-ganache-data:
 
 networks:

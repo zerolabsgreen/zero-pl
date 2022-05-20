@@ -167,7 +167,7 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
   const validContractIds = contractsIds.filter(c => Boolean(c))
   const { contracts } = useContractsByIds(validContractIds)
 
-  const beneficiary = proof.filecoinNodes.map(node => node.id)?.join(', ')
+  const beneficiary = proof.filecoinNode?.id
   const isLoading = isContractLoading || isFileLoading
 
   if (proofContract && redemptionStatement && !isLoading) {

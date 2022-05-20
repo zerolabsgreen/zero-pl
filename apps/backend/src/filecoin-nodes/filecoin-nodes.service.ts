@@ -3,57 +3,31 @@ import { CreateFilecoinNodeDto } from './dto/create-filecoin-node.dto';
 import { UpdateFilecoinNodeDto } from './dto/update-filecoin-node.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilecoinNodeDto } from './dto/filecoin-node.dto';
-import { FilecoinNode, FileType } from '@prisma/client';
+import { FileType } from '@prisma/client';
 import { pick } from 'lodash';
-import { DateTime, Duration } from "luxon";
 import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 import { FilesService } from '../files/files.service';
+import { toDateStringWithOffset } from '../utils/date';
 
 @Injectable()
 export class FilecoinNodesService {
   private readonly logger = new Logger(FilecoinNodesService.name, { timestamp: true });
 
-  constructor(private prisma: PrismaService, private filesService: FilesService) {}
+  constructor(
+    private prisma: PrismaService,
+    private filesService: FilesService
+  ) {}
 
   async create(createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
-    let newFilecoinNode: FilecoinNode;
-    await this.prisma.$transaction(async (prisma) => {
-      try {
-        newFilecoinNode = await prisma.filecoinNode.create({ data: createFilecoinNodeDto });
-      } catch (err) {
-        this.logger.error(`error creating a new filecoin node: ${err}`);
-        throw err;
-      }
+    try {
+      const newFilecoinNode = await this.prisma.filecoinNode.create({ data: createFilecoinNodeDto });
 
-      // TODO: Re-enable with a proper setup for creating blockchain accounts
-
-      // let blockchainAddress: string;
-
-      // try {
-      //   blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-      //   this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for filecoin node (${newFilecoinNode.id})`);
-      // } catch (err) {
-      //   this.logger.error(`error gathering blockchain account: ${err}`);
-      //   throw err;
-      // }
-
-      // try {
-      //   await prisma.filecoinNode.update({
-      //     data: { blockchainAddress },
-      //     where: { id: newFilecoinNode.id }
-      //   });
-      // } catch (err) {
-      //   this.logger.error(`error setting blockchain address for buyer ${newFilecoinNode.id}: ${err}`);
-      //   throw err;
-      // }
-
-    }, { timeout: 60000 }).catch((err) => {
-      this.logger.error('rolling back transaction');
+      return new FilecoinNodeDto(newFilecoinNode);
+    } catch (err) {
+      this.logger.error(`error creating a new filecoin node: ${err}`);
       throw err;
-    });
-
-    return new FilecoinNodeDto(newFilecoinNode);
+    }
   }
 
   async findAll(): Promise<FilecoinNodeDto[]> {
@@ -120,11 +94,7 @@ export class FilecoinNodesService {
       include: {
         purchases: {
           include: {
-            purchase: {
-              include: {
-                certificate: true
-              }
-            }
+            certificate: true
           }
         }
       }
@@ -144,19 +114,19 @@ export class FilecoinNodesService {
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/nodes/${data.id}/beneficiary`,
       dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/nodes/${data.id}/transactions`,
       recsTotal: data.purchases.reduce(
-        (total, transaction) =>
+        (total, purchase) =>
           total.add(
-            BigNumber.from(transaction.purchase.certificate.energyWh).mul(1000000)
+            BigNumber.from(purchase.certificate.energyWh).mul(1000000)
           ), BigNumber.from(0)
         ).toNumber() / 1e6,
       transactions: data.purchases.map((p) => {
-        const redemptionStatement = allRedemptionStatements.find(rs => rs.purchases.includes(p.purchase.id))
+        const redemptionStatement = allRedemptionStatements.find(rs => rs.purchases.includes(p.id))
         return {
-          id: p.purchase.id,
-          pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${p.purchase.id}`,
-          dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.purchase.id}`,
+          id: p.id,
+          pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${p.id}`,
+          dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.id}`,
           downloadUrl: redemptionStatement?.id ? `${process.env.API_BASE_URL}/api/files/${redemptionStatement.id}` : null,
-          ...pick(p.purchase, [
+          ...pick(p, [
             'sellerId',
             'annually',
             'reportingStart',
@@ -169,13 +139,13 @@ export class FilecoinNodesService {
             'createdAt',
             'updatedAt'
           ]),
-          reportingStartLocal: toDateStringWithOffset(p.purchase.reportingStart, p.purchase.reportingStartTimezoneOffset),
-          reportingEndLocal: toDateStringWithOffset(p.purchase.reportingEnd, p.purchase.reportingEndTimezoneOffset),
+          reportingStartLocal: toDateStringWithOffset(p.reportingStart, p.reportingStartTimezoneOffset),
+          reportingEndLocal: toDateStringWithOffset(p.reportingEnd, p.reportingEndTimezoneOffset),
           generation: {
-            ...p.purchase.certificate,
-            energyWh: BigNumber.from(p.purchase.certificate.energyWh).toNumber(),
-            generationStartLocal: toDateStringWithOffset(p.purchase.certificate.generationStart, p.purchase.certificate.generationStartTimezoneOffset),
-            generationEndLocal: toDateStringWithOffset(p.purchase.certificate.generationEnd, p.purchase.certificate.generationEndTimezoneOffset)
+            ...p.certificate,
+            energyWh: BigNumber.from(p.certificate.energyWh).toNumber(),
+            generationStartLocal: toDateStringWithOffset(p.certificate.generationStart, p.certificate.generationStartTimezoneOffset),
+            generationEndLocal: toDateStringWithOffset(p.certificate.generationEnd, p.certificate.generationEndTimezoneOffset)
           }
         };
       })
@@ -258,19 +228,3 @@ export const transactionsSchema = {
     }
   }
 };
-
-function toDateStringWithOffset(date: Date, offsetInMinutes: number): string {
-  return DateTime.fromJSDate(date).setZone(offsetToOffsetString(offsetInMinutes)).toISO();
-}
-
-function offsetToOffsetString(offsetInMinutes: number): string {
-  if (offsetInMinutes === 0) {
-    return 'UTC';
-  }
-
-  const dur = Duration.fromObject({ minutes: offsetInMinutes });
-
-  const { hours, minutes } = dur.shiftTo('hours', 'minutes').toObject();
-
-  return `UTC${offsetInMinutes > 0 ? '+' : '-'}${Math.abs(hours).toString()}:${Math.abs(minutes).toString().padStart(2, '0')}`;
-}

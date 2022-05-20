@@ -1,0 +1,528 @@
+openapi: "3.0.0"
+paths:
+  /blockchain/properties:
+    get:
+      operationId: "BlockchainPropertiesController_get"
+      parameters: []
+      responses:
+        200:
+          description: "Returns blockchain properties"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockchainPropertiesDTO"
+      tags:
+        - "blockchain"
+  /blockchain/{txHash}:
+    get:
+      operationId: "BlockchainPropertiesController_getTransaction"
+      parameters:
+        - name: "txHash"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns the receipt for the transaction"
+          content:
+            application/json:
+              schema:
+                type: "string"
+      tags:
+        - "blockchain"
+  /batch:
+    post:
+      operationId: "BatchController_create"
+      parameters: []
+      responses:
+        201:
+          description: "Creates a batch and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "batch"
+    get:
+      operationId: "BatchController_getAll"
+      parameters: []
+      responses:
+        200:
+          description: "Returns all batches"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/BatchDTO"
+      tags:
+        - "batch"
+  /batch/id/{txHash}:
+    get:
+      operationId: "BatchController_getBatchesCreatedIn"
+      parameters:
+        - name: "txHash"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns batch IDs that were created in the transaction"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "string"
+      tags:
+        - "batch"
+  /batch/{id}:
+    get:
+      operationId: "BatchController_get"
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns the batch"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchDTO"
+      tags:
+        - "batch"
+  /batch/redemption-statement/{batchId}:
+    post:
+      operationId: "BatchController_setRedemptionStatement"
+      parameters:
+        - name: "batchId"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetRedemptionStatementDTO"
+      responses:
+        201:
+          description: "Sets a redemption statement to a batch and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "batch"
+  /batch/mint/{batchId}:
+    post:
+      operationId: "BatchController_mint"
+      parameters:
+        - name: "batchId"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/MintCertificateDTO"
+      responses:
+        201:
+          description: "Mints certificates from a batch and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "batch"
+  /certificate/{id}:
+    get:
+      operationId: "CertificateController_get"
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns a Certificate"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CertificateWithOwnersDTO"
+      tags:
+        - "certificates"
+  /certificate:
+    get:
+      operationId: "CertificateController_getAll"
+      parameters: []
+      responses:
+        200:
+          description: "Returns all Certificates"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/CertificateWithOwnersDTO"
+      tags:
+        - "certificates"
+  /certificate/transfer/{id}:
+    post:
+      operationId: "CertificateController_transfer"
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferCertificateDTO"
+      responses:
+        201:
+          description: "Transfers the certificate and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "certificates"
+  /certificate/claim/{id}:
+    post:
+      operationId: "CertificateController_claim"
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaimCertificateDTO"
+      responses:
+        201:
+          description: "Claims and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "certificates"
+  /certificate/id/{txHash}:
+    get:
+      operationId: "CertificateController_getCertificatesCreatedIn"
+      parameters:
+        - name: "txHash"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns certificate IDs that were created in the transaction"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "string"
+      tags:
+        - "certificates"
+info:
+  title: "Zero - Tokenization Module API"
+  description: ""
+  version: "0.1"
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    BlockchainPropertiesDTO:
+      type: "object"
+      properties:
+        netId:
+          type: "number"
+          example: 246
+        registry:
+          type: "string"
+          example: "0xe42a4Ee279B36e137b4D395B232808bEE8E42C2D"
+        topic:
+          type: "string"
+          example: 0
+        batchFactory:
+          type: "string"
+          example: "0x6c8d8D6c8a52Dc6ed1b89F9292e4dC88b20421ac"
+        platformOperatorAddress:
+          type: "string"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+        rpcNode:
+          type: "string"
+          example: "https://rpc.energyweb.org"
+        rpcNodeFallback:
+          type: "string"
+          example: "https://rpc2.energyweb.org"
+      required:
+        - "netId"
+        - "registry"
+        - "topic"
+        - "batchFactory"
+        - "platformOperatorAddress"
+        - "rpcNode"
+    TransactionPendingDTO:
+      type: "object"
+      properties:
+        txHash:
+          type: "string"
+          description: "Transaction hash"
+          example: "0xb79c048b1d44e146925cf55705aa8f84422d7d5e3d858993467c241cad0caf4b"
+      required:
+        - "txHash"
+    BatchDTO:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "Batch ID"
+          example: "1"
+        txHash:
+          type: "string"
+          description: "Transaction hash in which the batch was created"
+          example: "0xb79c048b1d44e146925cf55705aa8f84422d7d5e3d858993467c241cad0caf4b"
+        certificateIds:
+          description: "Certificates minted from this batch"
+          example:
+            - "1"
+            - "2"
+          type: "array"
+          items:
+            type: "string"
+        redemptionStatement:
+          type: "string"
+          description: "Redemption statement"
+          example: "0xba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+      required:
+        - "id"
+        - "txHash"
+        - "certificateIds"
+    SetRedemptionStatementDTO:
+      type: "object"
+      properties:
+        value:
+          type: "string"
+          description: "Redemption statement value"
+          example: "0xba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        storagePointer:
+          type: "string"
+          description: "Storage pointer"
+          example: "https://storage.example.com/api/file/1"
+      required:
+        - "value"
+    GeneratorDTO:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "Generator Id"
+          example: "SOL-123"
+        name:
+          type: "string"
+          description: "Generator Name"
+          example: "Solar Farm 123"
+        energySource:
+          type: "string"
+          example: "SOLAR"
+        region:
+          type: "string"
+          example: "EU"
+        country:
+          type: "string"
+          example: "HR"
+        commissioningDate:
+          type: "number"
+          description: "Unix timestamp of commissioning date"
+          example: 1636154471
+        capacity:
+          type: "string"
+          example: "5000000"
+      required:
+        - "id"
+        - "name"
+        - "energySource"
+        - "region"
+        - "country"
+        - "commissioningDate"
+        - "capacity"
+    CertificateWithoutIdDTO:
+      type: "object"
+      properties:
+        generationStartTime:
+          type: "number"
+          description: "Unix timestamp"
+          example: 1636154471
+        generationEndTime:
+          type: "number"
+          description: "Unix timestamp"
+          example: 1636154471
+        productType:
+          type: "string"
+          description: "Type of product"
+          example: "IREC"
+        generator:
+          $ref: "#/components/schemas/GeneratorDTO"
+      required:
+        - "generationStartTime"
+        - "generationEndTime"
+        - "productType"
+        - "generator"
+    MintCertificateDTO:
+      type: "object"
+      properties:
+        to:
+          type: "string"
+          description: "Ethereum address to mint to"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+        amount:
+          type: "string"
+          description: "Amount"
+          example: "1000000"
+        certificate:
+          description: "Certificate data"
+          allOf:
+            - $ref: "#/components/schemas/CertificateWithoutIdDTO"
+        data:
+          type: "string"
+          description: "Minting data"
+          example: "0x76c4bb6fd3691e546145e50559e998129b5cb5f2f01cd1de81bd83e4c020b484"
+      required:
+        - "to"
+        - "amount"
+        - "certificate"
+        - "data"
+    CertificateWithOwnersDTO:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "Certificate Id"
+          example: "1"
+        generationStartTime:
+          type: "number"
+          description: "Unix timestamp"
+          example: 1636154471
+        generationEndTime:
+          type: "number"
+          description: "Unix timestamp"
+          example: 1636154471
+        productType:
+          type: "string"
+          description: "Type of product"
+          example: "IREC"
+        generator:
+          $ref: "#/components/schemas/GeneratorDTO"
+        owners:
+          type: "object"
+        claimed:
+          type: "object"
+      required:
+        - "id"
+        - "generationStartTime"
+        - "generationEndTime"
+        - "productType"
+        - "generator"
+        - "owners"
+        - "claimed"
+    TransferCertificateDTO:
+      type: "object"
+      properties:
+        from:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        to:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        amount:
+          type: "string"
+          example: 1000000
+      required:
+        - "from"
+        - "to"
+    ClaimDataDTO:
+      type: "object"
+      properties:
+        beneficiary:
+          type: "string"
+          example: "Beneficiary One"
+        region:
+          type: "string"
+          example: "CA"
+        countryCode:
+          type: "string"
+          example: "US"
+        periodStartDate:
+          type: "string"
+          example: "2021-11-08T17:11:11.883Z"
+          description: "ISO String"
+        periodEndDate:
+          type: "string"
+          example: "2021-11-08T17:11:11.883Z"
+          description: "ISO String"
+        purpose:
+          type: "string"
+          example: "claiming"
+        consumptionEntityID:
+          type: "string"
+          example: "CONS-123"
+        proofID:
+          type: "string"
+          example: "123"
+      required:
+        - "beneficiary"
+        - "region"
+        - "countryCode"
+        - "periodStartDate"
+        - "periodEndDate"
+        - "purpose"
+        - "consumptionEntityID"
+        - "proofID"
+    ClaimCertificateDTO:
+      type: "object"
+      properties:
+        claimData:
+          description: "Information about the claim"
+          allOf:
+            - $ref: "#/components/schemas/ClaimDataDTO"
+        from:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        to:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        amount:
+          type: "string"
+          example: 1000000
+      required:
+        - "claimData"
+        - "from"

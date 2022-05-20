@@ -44,7 +44,7 @@ const ProofExamplePage = () => {
                   fromDate: exampleData.certificate.generationStart,
                   toDate: exampleData.certificate.generationEnd,
                 }}
-                filecoinMinerIdList={exampleData.filecoinNodes}
+                filecoinMinerIdList={[exampleData.filecoinNode]}
                 buyer={exampleData.buyer}
                 seller={exampleData.seller}
                 disableMinerIdLink={true}

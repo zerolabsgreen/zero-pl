@@ -8,6 +8,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import * as process from 'process';
 import { PDFModule } from '@t00nday/nestjs-pdf';
 import { FilesModule } from '../files/files.module';
+import { SellersModule } from '../sellers/sellers.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FilesModule } from '../files/files.module';
     }),
     FilesModule,
     BuyersModule,
+    SellersModule,
     CacheModule.registerAsync({
       useFactory: () => {
         if (process.env.REDIS_HOST && process.env.REDIS_PORT) {

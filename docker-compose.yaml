@@ -30,7 +30,7 @@ services:
       UPLOADED_FILE_SIZE_LIMIT: 200000
       UI_BASE_URL: http://localhost:8080
       API_BASE_URL: http://localhost:3333
-      ISSUER_API_BASE_URL: http://issuer-api:3333
+      TOKENIZATION_BASE_URL: http://tokenization:3333
       FILES_BASE_URL: http://localhost:3333/api/files
       ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
       REDIS_HOST: redis
@@ -40,11 +40,11 @@ services:
     networks:
       zero-pl:
 
-  issuer-api:
-    image: zero-pl-issuer-api
+  tokenization:
+    image: zero-pl-tokenization
     restart: unless-stopped
     depends_on:
-      - db-issuer
+      - db-tokenization
       - ganache
     ports:
       - '127.0.0.1:3334:3333'
@@ -52,9 +52,9 @@ services:
       PORT: 3333
       LOG_LEVELS: "log,error,warn,debug,verbose"
       SUPERADMIN_API_KEY: somethingsecret
-      DATABASE_URL: "postgresql://postgres:postgres@db-issuer:5432/issuer"
+      DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       WEB3: http://ganache:8545
-      MNEMONIC: "chalk park staff buzz chair purchase wise oak receive avoid avoid home"
+      USER_MNEMONIC: "chalk park staff buzz chair purchase wise oak receive avoid avoid home"
       ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
     networks:
       zero-pl:
@@ -89,17 +89,17 @@ services:
     networks:
       zero-pl:
 
-  db-issuer:
+  db-tokenization:
     image: postgres:13-alpine
     restart: unless-stopped
     ports:
       - '127.0.0.1:5433:5432'
     volumes:
-    - zero-pl-pg-data-issuer:/var/lib/postgresql/data
+    - zero-pl-pg-data-tokenization:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: issuer
+      POSTGRES_DB: tokenization
     networks:
       zero-pl:
 
@@ -124,7 +124,7 @@ services:
 
 volumes:
   zero-pl-pg-data:
-  zero-pl-pg-data-issuer:
+  zero-pl-pg-data-tokenization:
   zero-pl-backend-tmp:
   ganache-data:
   redis-data:

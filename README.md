@@ -3,6 +3,7 @@
 ## Install application
 
 ```shell
+npm config set '//registry.npmjs.org/:_authToken' "<INSERT NPM READ TOKEN HERE>" # Needed to install private NPM packages
 yarn
 ```
 
@@ -10,8 +11,8 @@ yarn
 
 The following will be started:
 
-1. main Postgres instance
-2. Issuer API Postgres instance
+1. Main Postgres instance
+2. Tokenization Postgres instance
 3. Ganache
 
 ```shell

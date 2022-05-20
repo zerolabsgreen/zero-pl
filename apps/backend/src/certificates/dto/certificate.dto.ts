@@ -21,7 +21,7 @@ export class CertificateDto {
   @ApiProperty({ example: CountryEnumType.DE })
   country: CountryEnumType;
 
-  @ApiProperty()
+  @ApiProperty({ example: '1000000'})
   energyWh: string;
 
   @ApiProperty({ example: EnergySourceEnumType.SOLAR })
@@ -57,6 +57,9 @@ export class CertificateDto {
   @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
   commissioningDate?: Date;
 
+  @ApiPropertyOptional({ example: 180 })
+  commissioningDateTimezoneOffset?: number;
+
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   label?: LabelEnumType;
 
@@ -69,25 +72,35 @@ export class CertificateDto {
   @ApiPropertyOptional({ example: 'Certificate_CID' })
   certificateCid?: string;
 
+  @ApiPropertyOptional({ example: '123' })
+  batchId?: string;
+
+  @ApiPropertyOptional({ example: '321' })
+  onchainId?: string;
+
   constructor(partial: Partial<CertificateDto>) {
     Object.assign(this, partial);
   }
 
   static toDbEntity(dto: Partial<CertificateDto>): Partial<Certificate> {
-    const {energyWh, ...stripped} = dto;
+    const { onchainId, batchId, energyWh, ...stripped } = dto;
 
     return {
       ...stripped,
-      energyWh: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined
+      energyWh: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined,
+      batchId: batchId ? BigNumber.from(batchId).toBigInt() : undefined,
+      onchainId: onchainId ? BigNumber.from(onchainId).toBigInt() : undefined
     };
   }
 
   static toDto(dbEntity: Certificate): CertificateDto {
-    const { energyWh, ...stripped } = dbEntity;
+    const { onchainId, batchId, energyWh, ...stripped } = dbEntity;
 
     return {
       ...stripped,
-      energyWh: energyWh ? BigNumber.from(energyWh).toString() : undefined
+      energyWh: energyWh ? BigNumber.from(energyWh).toString() : undefined,
+      batchId: batchId ? BigNumber.from(batchId).toString() : undefined,
+      onchainId: onchainId ? BigNumber.from(onchainId).toString() : undefined
     };
   }
 

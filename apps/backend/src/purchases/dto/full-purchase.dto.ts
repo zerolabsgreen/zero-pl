@@ -14,7 +14,7 @@ class File extends PartialType(PickType(FileMetadataDto, ['id', 'fileName', 'mim
 export type FullPurchaseEntity = Purchase & {
   seller: Seller,
   buyer: Buyer,
-  filecoinNodes: FilecoinNode[],
+  filecoinNode: FilecoinNode,
   certificate: Certificate,
   files: any
 };
@@ -50,8 +50,8 @@ export class FullPurchaseDto {
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset;
 
-  @ApiProperty({ type: [FilecoinNodeDto] })
-  filecoinNodes: FilecoinNodeDto[];
+  @ApiProperty({ type: FilecoinNodeDto })
+  filecoinNode: FilecoinNodeDto;
 
   @ApiProperty({ type: [File] })
   files: File[];
@@ -71,7 +71,7 @@ export class FullPurchaseDto {
       certificate: CertificateDto.toDto(purchase.certificate),
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${purchase.id}`,
       files: purchase.files.map(f => ({ ...f.file, url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
-      filecoinNodes: purchase.filecoinNodes,
+      filecoinNode: purchase.filecoinNode,
       contractId: purchase.contractId,
     };
   }

@@ -17,9 +17,9 @@ import { FilecoinNodesModule } from "../filecoin-nodes/filecoin-nodes.module";
 import { OrdersModule } from "../orders/orders.module";
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 import { EmailModule } from '../email/email.module';
-import { HttpsRedirectMiddleware } from '../middlewares/https-redirect.middleware';
 import { ContractsModule } from '../contracts/contracts.module';
 import { ApiKeysModule } from '../apikeys/apikeys.module';
+import { BatchModule } from '../batches/batch.module';
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { ApiKeysModule } from '../apikeys/apikeys.module';
         UI_BASE_URL: Joi.string().uri().default('http://localhost:3000'),
         API_BASE_URL: Joi.string().uri().default('http://localhost:3333'),
         FILES_BASE_URL: Joi.string().uri().default('http://localhost:3333/api/files'),
-        ISSUER_API_BASE_URL: Joi.string().default('http://localhost:3334'),
+        TOKENIZATION_BASE_URL: Joi.string().default('http://localhost:3334'),
         ISSUER_CHAIN_ADDRESS: Joi.string().required(),
         PG_TRANSACTION_TIMEOUT: Joi.number().default(120000),
         CHAIN_EVENTS_TTL: Joi.number().default(300),
@@ -62,6 +62,7 @@ import { ApiKeysModule } from '../apikeys/apikeys.module';
     PrismaModule,
     AuthModule,
     ApiKeysModule,
+    BatchModule,
     FilesModule,
     PurchasesModule,
     BuyersModule,
