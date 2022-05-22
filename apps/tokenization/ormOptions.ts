@@ -4,6 +4,8 @@ import { URL } from 'url';
 export const getDBConnectionOptions = (): PostgresConnectionOptions => {
     if (!process.env.TOKENIZATION_DATABASE_URL) {
       throw new Error('TOKENIZATION_DATABASE_URL undefined');
+    } else {
+      console.log(`Connecting to ${process.env.TOKENIZATION_DATABASE_URL} with SSL OFF: ${!!process.env.DB_SSL_OFF}...`);
     }
   
     const url = new URL(process.env.TOKENIZATION_DATABASE_URL);
