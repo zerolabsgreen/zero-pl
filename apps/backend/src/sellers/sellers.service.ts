@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
 import { SellerDto } from './dto/seller.dto';
@@ -28,26 +28,7 @@ export class SellersService {
         this.logger.error(`error creating a new seller: ${err}`);
         throw err;
       }
-
-      let blockchainAddress: string;
-
-      try {
-        blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-        this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for ${newSeller.id}`);
-      } catch (err) {
-        this.logger.error(`error gathering blockchain account: ${err}`);
-        throw err;
-      }
-
-      try {
-        await prisma.seller.update({
-          data: { blockchainAddress },
-          where: { id: newSeller.id }
-        });
-      } catch (err) {
-        this.logger.error(`error setting blockchain address for seller ${newSeller.id}: ${err}`);
-        throw err;
-      }
+      await this.assignBlockchainAccount(newSeller.id);
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
       throw err;
@@ -81,5 +62,33 @@ export class SellersService {
     await this.prisma.seller.delete({ where: { id } });
 
     return true;
+  }
+
+  async assignBlockchainAccount(id: string): Promise<Seller> {
+    const seller = await this.findOne(id);
+
+    if (seller.blockchainAddress) {
+      throw new ConflictException(`Seller ${id} already has a blockchain address attached`);
+    }
+
+    let blockchainAddress: string;
+
+    try {
+      blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
+      this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for seller (${id})`);
+    } catch (err) {
+      this.logger.error(`error gathering blockchain account: ${err}`);
+      throw err;
+    }
+
+    try {
+      return await this.prisma.seller.update({
+        data: { blockchainAddress },
+        where: { id }
+      });
+    } catch (err) {
+      this.logger.error(`error setting blockchain address for buyer ${id}: ${err}`);
+      throw err;
+    }
   }
 }

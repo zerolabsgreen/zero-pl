@@ -15,7 +15,7 @@ import {
 import { BuyersService } from './buyers.service';
 import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { BuyerDto } from "./dto/buyer.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
@@ -55,8 +55,16 @@ export class BuyersController {
   @Patch(':id')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   @ApiOkResponse({ type: BuyerDto })
+  @ApiParam({ name: 'id', type: String })
   update(@Param('id') id: string, @Body() updateBuyerDto: UpdateBuyerDto): Promise<BuyerDto> {
     return this.buyersService.update(id, updateBuyerDto);
+  }
+
+  @Patch(':id/blockchain-account')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiParam({ name: 'id', type: String })
+  attachBlockchainAccount(@Param('id') id: string): Promise<BuyerDto> {
+    return this.buyersService.assignBlockchainAccount(id);
   }
 
   @Delete(':id')

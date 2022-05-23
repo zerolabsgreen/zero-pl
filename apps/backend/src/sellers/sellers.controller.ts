@@ -61,6 +61,13 @@ export class SellersController {
     return this.sellersService.update(id, updateSellerDto);
   }
 
+  @Patch(':id/blockchain-account')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiParam({ name: 'id', type: String })
+  attachBlockchainAccount(@Param('id') id: string): Promise<SellerDto> {
+    return this.sellersService.assignBlockchainAccount(id);
+  }
+
   @Delete(':id')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.DELETE]))
   @ApiParam({ name: 'id', type: String })

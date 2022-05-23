@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 import { BuyerDto } from './dto/buyer.dto';
@@ -31,25 +31,7 @@ export class BuyersService {
         throw err;
       }
 
-      let blockchainAddress: string;
-
-      try {
-        blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
-        this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for buyer (${newBuyer.id})`);
-      } catch (err) {
-        this.logger.error(`error gathering blockchain account: ${err}`);
-        throw err;
-      }
-
-      try {
-        await prisma.buyer.update({
-          data: { blockchainAddress },
-          where: { id: newBuyer.id }
-        });
-      } catch (err) {
-        this.logger.error(`error setting blockchain address for buyer ${newBuyer.id}: ${err}`);
-        throw err;
-      }
+      await this.assignBlockchainAccount(newBuyer.id);
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
       throw err;
@@ -89,5 +71,33 @@ export class BuyersService {
     await this.prisma.buyer.delete({ where: { id } });
 
     return true;
+  }
+
+  async assignBlockchainAccount(id: string): Promise<Buyer> {
+    const buyer = await this.findOne(id);
+
+    if (buyer.blockchainAddress) {
+      throw new ConflictException(`Buyer ${id} already has a blockchain address attached`);
+    }
+
+    let blockchainAddress: string;
+
+    try {
+      blockchainAddress = (await this.issuerService.getAccount()).blockchainAddress;
+      this.logger.debug(`gathered blockchainAddress: ${blockchainAddress} for buyer (${id})`);
+    } catch (err) {
+      this.logger.error(`error gathering blockchain account: ${err}`);
+      throw err;
+    }
+
+    try {
+      return await this.prisma.buyer.update({
+        data: { blockchainAddress },
+        where: { id }
+      });
+    } catch (err) {
+      this.logger.error(`error setting blockchain address for buyer ${id}: ${err}`);
+      throw err;
+    }
   }
 }
