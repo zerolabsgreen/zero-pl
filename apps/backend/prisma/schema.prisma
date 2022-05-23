@@ -90,8 +90,6 @@ model Certificate {
   purchase                      Purchase[]
   seller                        Seller               @relation(fields: [initialSellerId], references: [id])
   initialSellerId               String
-  beneficiary                   String?
-  redemptionDate                DateTime?
   nameplateCapacityW            Int?
   commissioningDate             DateTime?
   commissioningDateTimezoneOffset   Int?
@@ -140,6 +138,9 @@ model Purchase {
   filecoinNodeId               String?
   Contract                     Contract?                  @relation(fields: [contractId], references: [id])
   contractId                   String?
+  beneficiary                  String?
+  purpose                      String?
+  redemptionDate               DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

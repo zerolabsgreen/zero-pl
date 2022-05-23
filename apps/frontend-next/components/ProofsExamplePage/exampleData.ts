@@ -51,13 +51,11 @@ export const exampleData = {
             }
         ]
     },
-    "filecoinNodes": [
-        {
-            "id": "f0763337",
-            "buyerId": "53fb6148-eb21-42de-91d6-f6195d028520",
-            "blockchainAddress": null
-        }
-    ],
+    "filecoinNode": {
+        "id": "f0763337",
+        "buyerId": "53fb6148-eb21-42de-91d6-f6195d028520",
+        "blockchainAddress": null
+    },
     "certificate": {
         "id": "55a057a4-8955-4d5b-96df-3ac0d56aa197",
         "energy": "108000000",

@@ -11,6 +11,8 @@ export const exampleData = {
     "reportingStartTimezoneOffset": -360,
     "reportingEnd": "2021-12-31T23:59:59.999Z",
     "reportingEndTimezoneOffset": -360,
+    "beneficiary": "Buyer 2",
+    "redemptionDate": "2022-01-24T15:16:08.564Z",
     "seller": {
         "id": "8c0a45ce-1594-4107-baf0-ce8846b34afd",
         "name": "3Degrees Group, Inc",
@@ -51,13 +53,11 @@ export const exampleData = {
             }
         ]
     },
-    "filecoinNodes": [
-        {
-            "id": "f0763337",
-            "buyerId": "53fb6148-eb21-42de-91d6-f6195d028520",
-            "blockchainAddress": null
-        }
-    ],
+    "filecoinNode": {
+        "id": "f0763337",
+        "buyerId": "53fb6148-eb21-42de-91d6-f6195d028520",
+        "blockchainAddress": null
+    },
     "certificate": {
         "id": "w55a057a4-8955-4d5b-96df-3ac0d56aa197",
         "energyWh": "108000000",
@@ -73,8 +73,6 @@ export const exampleData = {
         "generationEndTimezoneOffset": -360,
         "txHash": null,
         "initialSellerId": "8c0a45ce-1594-4107-baf0-ce8846b34afd",
-        "beneficiary": "Buyer 2",
-        "redemptionDate": "2022-01-24T15:16:08.564Z",
         "capacity": 1850000,
         "commissioningDate": "2014-09-01T00:00:00.000Z",
         "label": null

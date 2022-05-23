@@ -50,6 +50,15 @@ export class FullPurchaseDto {
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset;
 
+  @ApiProperty({ example: 'Decarbonizing Filecoin Mining Operation' })
+  purpose: string;
+
+  @ApiProperty({ example: 'Some Corp Ltd.' })
+  beneficiary: string;
+
+  @ApiProperty({ example: '2021-06-30T23:59:59.999Z' })
+  redemptionDate: Date;
+
   @ApiProperty({ type: FilecoinNodeDto })
   filecoinNode: FilecoinNodeDto;
 

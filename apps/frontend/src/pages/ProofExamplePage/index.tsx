@@ -107,7 +107,7 @@ const certificateInfoTableData: TableRowData<CertificateDto['id']>[] = [{
   id: exampleData.certificate.id ?? '',
   proofId: <EthereumAddress shortify clipboard address={exampleData.certificate.id ?? ''} />,
   product: exampleData.certificate.productType ?? '',
-  beneficiary: exampleData.certificate.beneficiary ?? '',
+  beneficiary: exampleData.beneficiary ?? '',
   amount: exampleData.certificate?.energyWh ? formatPower(exampleData.certificate.energyWh, { unit: Unit.MWh, includeUnit: true }) : '',
   period: (
   <>{dayjs(exampleData.certificate.generationStart).isValid()

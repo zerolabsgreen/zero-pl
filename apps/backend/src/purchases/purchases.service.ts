@@ -112,14 +112,12 @@ export class PurchasesService {
           amount: certData.energyWh,
         });
 
-        const beneficiary = buyerData.name;
-
         const txHash = await this.issuerService.claimCertificate({
           id: Number(certData.onchainId),
           from: buyerData.blockchainAddress,
           amount: certData.energyWh,
           claimData: {
-            beneficiary,
+            beneficiary: newPurchase.beneficiary ?? buyerData.name,
             region: existingFilecoinNode.region,
             countryCode: existingFilecoinNode.country,
             periodStartDate: dateTimeToUnix(
@@ -134,7 +132,7 @@ export class PurchasesService {
                 createPurchaseDto.reportingEndTimezoneOffset ?? 0
               )
             ).toString(),
-            purpose: `Decarbonizing Filecoin Mining Operation`,
+            purpose: newPurchase.purpose ?? `Decarbonizing Filecoin Mining Operation`,
             consumptionEntityID: existingFilecoinNode.id,
             proofID: newPurchase.id
           }
@@ -145,17 +143,16 @@ export class PurchasesService {
         await this.createAttestationForPurchases([newPurchase.id]);
 
         try {
-          await prisma.certificate.update({
+          await prisma.purchase.update({
             data: {
-              beneficiary,
               redemptionDate: new Date(receipt.timestamp * 1000)
             },
-            where: { id: certData.id }
+            where: { id: newPurchase.id }
           });
 
-          this.logger.debug(`set claim data for the certificate: ${certData.id}`);
+          this.logger.debug(`set redemption data for purchase: ${newPurchase.id}`);
         } catch (err) {
-          this.logger.error(`error setting claim data for the certificate: ${certData.id}: ${err}`);
+          this.logger.error(`error setting redemption data for purchase: ${newPurchase.id}: ${err}`);
           throw err;
         }
 
