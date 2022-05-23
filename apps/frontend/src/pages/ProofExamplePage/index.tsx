@@ -107,6 +107,7 @@ const certificateInfoTableData: TableRowData<CertificateDto['id']>[] = [{
   id: exampleData.certificate.id ?? '',
   proofId: <EthereumAddress shortify clipboard address={exampleData.certificate.id ?? ''} />,
   product: exampleData.certificate.productType ?? '',
+  beneficiary: exampleData.beneficiary ?? '',
   amount: exampleData.certificate?.energyWh ? formatPower(exampleData.certificate.energyWh, { unit: Unit.MWh, includeUnit: true }) : '',
   period: (
   <>{dayjs(exampleData.certificate.generationStart).isValid()
@@ -124,6 +125,7 @@ const certificateInfoTableData: TableRowData<CertificateDto['id']>[] = [{
 
 const certificateInfoTableHeaders: TableHeader = {
   proofId: { label: 'Proof ID', infoText: 'Proof ID represents the identifier of proof in EW Zero marketplace' },
+  beneficiary: { label: 'Beneficiary', infoText: 'The ID of the redemption beneficiary' },
   product: { label: 'Product', infoText: 'Type of purchased EAC' },
   amount: { label: 'Amount', infoText: 'The number of EACs the buyer has bought and redeemed for their renewable energy consumption claims. 1 REC normally equals to 1 MWh of electricity produced with clean energy' },
   period: { label: 'Period', infoText: ' The “vintage”, or the dates between which the clean energy was produced. EACs require to certify consumption in a specific time frame to avoid double accounting' },
