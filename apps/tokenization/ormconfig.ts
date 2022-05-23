@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
 import { resolve } from 'path';
-import { getDBConnectionOptions } from "./src/app/ormOptions";
+import { getDBConnectionOptions } from "./ormOptions";
 
 dotenv.config({
   path: '.env'
@@ -20,3 +20,4 @@ export const AppDataSource = new DataSource({
   ],
   migrationsTableName: 'migrations_tokenization',
 });
+

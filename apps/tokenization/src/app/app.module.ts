@@ -62,7 +62,6 @@ const storageAdapter = new PostgresTypeORMAdapter();
         LOG_LEVELS: Joi.string().default('log,error,warn,debug,verbose'),
         WEB3: Joi.string().default('http://localhost:8545'),
         USER_MNEMONIC: Joi.string().required(),
-        ISSUER_CHAIN_ADDRESS: Joi.string().required(),
       }),
     }),
     AccountModule.register(storageAdapter),

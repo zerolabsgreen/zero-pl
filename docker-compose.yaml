@@ -4,37 +4,28 @@ services:
   frontend:
     image: zero-pl-frontend
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       - backend
     ports:
       - '8080:80'
-    environment:
-      API_BASE_URL: http://localhost:3333
     networks:
       zero-pl:
 
   backend:
     image: zero-pl-backend
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       - db
     ports:
       - '3333:3333'
     command: "/bin/sh -c \"prisma migrate deploy && node main.js\""
     environment:
-      LOG_LEVELS: "log,error,warn,debug,verbose"
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/zero-protocol-labs"
-      SUPERADMIN_API_KEY: somethingsecret
-      CORS_ORIGIN: "*"
-      CORS_MAX_AGE: 900
-      UPLOADED_FILE_SIZE_LIMIT: 200000
-      UI_BASE_URL: http://localhost:8080
-      API_BASE_URL: http://localhost:3333
       TOKENIZATION_BASE_URL: http://tokenization:3333
-      FILES_BASE_URL: http://localhost:3333/api/files
-      ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
     volumes:
       - 'zero-pl-backend-tmp:/tmp'
     networks:
@@ -43,19 +34,16 @@ services:
   tokenization:
     image: zero-pl-tokenization
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       - db-tokenization
       - ganache
     ports:
       - '127.0.0.1:3334:3333'
     environment:
-      PORT: 3333
-      LOG_LEVELS: "log,error,warn,debug,verbose"
-      SUPERADMIN_API_KEY: somethingsecret
+      TOKENIZATION_DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
-      WEB3: http://ganache:8545
-      USER_MNEMONIC: "chalk park staff buzz chair purchase wise oak receive avoid avoid home"
-      ISSUER_CHAIN_ADDRESS: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
     networks:
       zero-pl:
 

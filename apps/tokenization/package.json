@@ -1,7 +1,7 @@
 {
   "scripts": {
     "typeorm": "node --require /usr/local/share/.config/yarn/global/node_modules/ts-node/register ./node_modules/typeorm/cli.js",
-    "migrate": "yarn typeorm migration:run -f typeorm/ormconfig.ts"
+    "migrate": "typeorm migration:run --dataSource node_modules/@zero-labs/tokenization-api/dist/ormconfig.js && yarn typeorm migration:run --dataSource ormconfig.ts"
   },
   "dependencies": {
     "passport": "0.5.0"

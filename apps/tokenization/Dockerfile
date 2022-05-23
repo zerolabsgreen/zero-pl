@@ -1,11 +1,12 @@
 FROM node:lts-alpine
 ENV NODE_ENV=production
-ENV PORT=3333
-EXPOSE 3333/tcp
+ARG NPM_TOKEN
 WORKDIR /app
 RUN apk --no-cache add bash
 RUN yarn global add ts-node typescript
-COPY ["./package.json", "./yarn.lock", "./"]
+COPY ["./package.json", "./yarn.lock", "./typeorm/ormconfig.ts", "./typeorm/ormOptions.ts", "./"]
+
+RUN npm config set '//registry.npmjs.org/:_authToken' "$NPM_TOKEN"
 RUN yarn install
 COPY . .
 
