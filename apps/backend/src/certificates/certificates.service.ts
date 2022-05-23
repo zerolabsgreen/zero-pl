@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CertificateDto } from './dto/certificate.dto';
 import { Certificate } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Injectable()
 export class CertificatesService {
@@ -58,8 +59,25 @@ export class CertificatesService {
     return certificates;
   }
 
-  async findAll(): Promise<CertificateDto[]> {
-    return (await this.prisma.certificate.findMany()).map((dbRecord) => CertificateDto.toDto(dbRecord));
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<CertificateDto>> {
+    const total = await this.prisma.certificate.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
+    const certificates =  (await this.prisma.certificate.findMany({
+      skip,
+      take
+    })).map((dbRecord) => CertificateDto.toDto(dbRecord));
+
+    return {
+      data: certificates,
+      total,
+      count: certificates.length
+    };
   }
 
   async find(certificateIds: string[]): Promise<CertificateDto[]> {

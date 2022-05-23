@@ -7,6 +7,7 @@ import { OrderItemTimeframeDto } from './dto/order-item-timeframe.dto';
 import { EmailService } from '../email/email.service';
 import { ConfigService } from '@nestjs/config';
 import { ConfirmOrderDto } from './dto/confirm-order.dto';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Injectable()
 export class OrdersService {
@@ -75,8 +76,25 @@ export class OrdersService {
     }));
   }
 
-  async findAll() {
-    return (await this.prisma.order.findMany({ orderBy: { createdAt: 'asc' } })).map(r => new OrderDto(r));
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<OrderDto>> {
+    const total = await this.prisma.order.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
+    const orders = (await this.prisma.order.findMany({
+      take,
+      skip,
+      orderBy: { createdAt: 'asc' }})).map(r => new OrderDto(r));
+
+    return {
+      data: orders,
+      total,
+      count: orders.length
+    };
   }
 
   async findOne(id: string) {

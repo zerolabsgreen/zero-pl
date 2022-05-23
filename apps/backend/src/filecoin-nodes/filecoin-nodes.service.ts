@@ -9,6 +9,7 @@ import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 import { FilesService } from '../files/files.service';
 import { toDateStringWithOffset } from '../utils/date';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Injectable()
 export class FilecoinNodesService {
@@ -30,8 +31,25 @@ export class FilecoinNodesService {
     }
   }
 
-  async findAll(): Promise<FilecoinNodeDto[]> {
-    return (await this.prisma.filecoinNode.findMany()).map((r) => new FilecoinNodeDto(r));
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<FilecoinNodeDto>> {
+    const total = await this.prisma.filecoinNode.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
+    const filecoinNodes = (await this.prisma.filecoinNode.findMany({
+      skip,
+      take
+    })).map((r) => new FilecoinNodeDto(r));
+
+    return {
+      data: filecoinNodes,
+      total,
+      count: filecoinNodes.length
+    };
   }
 
   async findOne(id: string): Promise<FilecoinNodeDto> {
@@ -104,7 +122,7 @@ export class FilecoinNodesService {
       return null;
     }
 
-    const allFiles = await this.filesService.findAll()
+    const { data: allFiles } = await this.filesService.findAll();
     const allRedemptionStatements = allFiles.filter(f => f.fileType === FileType.REDEMPTION_STATEMENT) ?? []
 
     // should be typed

@@ -6,6 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { IssuerService } from '../issuer/issuer.service';
 import { Buyer } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Injectable()
 export class BuyersService {
@@ -40,13 +41,28 @@ export class BuyersService {
     return new BuyerDto(await this.prisma.buyer.findUnique({ where: { id: newBuyer.id } }));
   }
 
-  async findAll(): Promise<BuyerDto[]> {
-    return (await this.prisma.buyer.findMany(
-      {
-        include: {
-          filecoinNodes: true
-        } 
-      })).map((r) => BuyerDto.toDto(r));
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<BuyerDto>> {
+    const total = await this.prisma.buyer.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
+    const buyers = (await this.prisma.buyer.findMany({
+      take,
+      skip,
+      include: {
+        filecoinNodes: true
+      } 
+    })).map((r) => BuyerDto.toDto(r));
+
+    return {
+      data: buyers,
+      total,
+      count: buyers.length
+    };
   }
 
   async findOne(id: string): Promise<BuyerDto> {
