@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseGuards,
@@ -17,7 +18,7 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { FileMetadataDto } from "./dto/file-metadata.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express, Response } from 'express';
@@ -26,6 +27,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { ApiKeyPermissions, FileType } from '@prisma/client';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('files')
 @ApiTags('files')
@@ -74,10 +76,15 @@ export class FilesController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [FileMetadataDto] })
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
   @UseInterceptors(NoDataInterceptor)
-  findAll(): Promise<FileMetadataDto[]> {
-    return this.filesService.findAll();
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<FileMetadataDto>> {
+    return this.filesService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

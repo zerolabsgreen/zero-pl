@@ -8,6 +8,7 @@ import {
   ParseArrayPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -17,11 +18,12 @@ import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { FindContractDto } from './dto/find-contract.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('/partners/filecoin/contracts')
 @ApiTags('Filecoin contracts')
@@ -47,10 +49,14 @@ export class ContractsController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [FindContractDto] })
-  findAll(): Promise<FindContractDto[]> {
-    return this.contractsService.findAll()
-      .then((contracts) => contracts.map((contract) => FindContractDto.toDto(contract)));
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<FindContractDto>> {
+    return this.contractsService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

@@ -6,7 +6,10 @@ import { ConfigService } from '@nestjs/config';
 import { BuyersService } from '../buyers/buyers.service';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
-import { ContractDto } from './dto/contract.dto';
+import { ContractDto, ContractEntityWithRelations } from './dto/contract.dto';
+import { Contract } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
+import { FindContractDto } from './dto/find-contract.dto';
 
 @Injectable()
 export class ContractsService {
@@ -94,8 +97,18 @@ export class ContractsService {
     return contracts;
   }
 
-  async findAll(): Promise<ContractDto[]> {
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<FindContractDto>> {
+    const total = await this.prisma.contract.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
     const contracts = await this.prisma.contract.findMany({
+      skip,
+      take,
       include: {
         seller: true,
         buyer: true,
@@ -104,7 +117,11 @@ export class ContractsService {
       }
     });
 
-    return contracts.map(contract => ContractDto.toDto(contract));
+    return {
+      data: contracts.map(c => FindContractDto.toDto(ContractDto.toDto(c))),
+      total,
+      count: contracts.length
+    };
   }
 
   async findOne(id: string): Promise<ContractDto> {

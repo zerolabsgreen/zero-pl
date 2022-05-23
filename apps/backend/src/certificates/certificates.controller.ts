@@ -4,11 +4,11 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseArrayPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -17,12 +17,13 @@ import {
 import { CertificatesService } from './certificates.service';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { CertificateDto } from "./dto/certificate.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('/partners/filecoin/certificates')
 @ApiTags('Filecoin certificates')
@@ -46,9 +47,14 @@ export class CertificatesController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [CertificateDto] })
-  findAll() {
-    return this.certificatesService.findAll();
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<CertificateDto>>  {
+    return this.certificatesService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

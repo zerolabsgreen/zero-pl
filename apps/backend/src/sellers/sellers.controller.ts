@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -15,12 +16,13 @@ import {
 import { SellersService } from './sellers.service';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { SellerDto } from "./dto/seller.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('/partners/filecoin/sellers')
 @ApiTags('Filecoin sellers')
@@ -41,9 +43,14 @@ export class SellersController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [SellerDto] })
-  findAll(): Promise<SellerDto[]> {
-    return this.sellersService.findAll();
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<SellerDto>> {
+    return this.sellersService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')
