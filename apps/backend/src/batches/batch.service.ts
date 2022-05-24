@@ -124,7 +124,7 @@ export class BatchService {
   }
 
   private async setRedemptionStatementOnChain(onChainBatchId: string, redemptionStatementId: string): Promise<string> {
-    const redemptionStatement = await this.filesService.findOne(redemptionStatementId);
+    const redemptionStatement = await this.filesService.findOneRaw(redemptionStatementId);
 
     const hashSum = crypto.createHash('sha256');
     hashSum.update(redemptionStatement.content);

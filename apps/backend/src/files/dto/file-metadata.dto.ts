@@ -5,7 +5,7 @@ import { File, FilesOnPurchases, FileType } from '@prisma/client'
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 
 @Exclude()
-export class FileMetadataDto implements File {
+export class FileMetadataDto implements Omit<File, 'content'> {
   @ApiProperty({ example: '5ff1cb39-da8b-4f0a-a17d-a5d00ea85a60' })
   @Expose()
   id: string;
@@ -34,18 +34,19 @@ export class FileMetadataDto implements File {
   @Expose()
   fileType: FileType;
 
-  content: Buffer;
-
   constructor(partial: Partial<FileMetadataDto>) {
     Object.assign(this, partial);
   }
 
   static toDto(dbEntity: PartialBy<File, 'content'> & { purchases: FilesOnPurchases[] }): FileMetadataDto {
     return {
-      ...dbEntity,
+      id: dbEntity.id,
+      fileName: dbEntity.fileName,
+      mimeType: dbEntity.mimeType,
+      createdAt: dbEntity.createdAt,
+      updatedAt: dbEntity.updatedAt,
       purchases: dbEntity.purchases?.map(p => p.purchaseId) ?? undefined,
-      fileType: dbEntity.purchases?.pop()?.fileType ?? undefined,
-      content: dbEntity.content ?? undefined
+      fileType: dbEntity.purchases?.pop()?.fileType ?? undefined
     };
   }
 }

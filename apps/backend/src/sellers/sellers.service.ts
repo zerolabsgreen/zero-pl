@@ -29,7 +29,7 @@ export class SellersService {
         this.logger.error(`error creating a new seller: ${err}`);
         throw err;
       }
-      await this.assignBlockchainAccount(newSeller.id);
+      await this.assignBlockchainAccount(newSeller.id, prisma);
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
       throw err;
@@ -82,8 +82,9 @@ export class SellersService {
     return true;
   }
 
-  async assignBlockchainAccount(id: string): Promise<Seller> {
-    const seller = await this.findOne(id);
+  async assignBlockchainAccount(id: string, prismaClient?: any): Promise<Seller> {
+    const prisma = prismaClient ?? this.prisma;
+    const seller = await prisma.seller.findUnique({ where: { id } });
 
     if (seller.blockchainAddress) {
       throw new ConflictException(`Seller ${id} already has a blockchain address attached`);
@@ -100,7 +101,7 @@ export class SellersService {
     }
 
     try {
-      return await this.prisma.seller.update({
+      return await prisma.seller.update({
         data: { blockchainAddress },
         where: { id }
       });

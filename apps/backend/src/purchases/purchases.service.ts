@@ -139,23 +139,8 @@ export class PurchasesService {
           }
         });
 
-        const receipt = await this.issuerService.waitForTxMined(txHash);
-
+        await this.issuerService.waitForTxMined(txHash);
         await this.createAttestationForPurchases([newPurchase.id]);
-
-        try {
-          await prisma.purchase.update({
-            data: {
-              redemptionDate: new Date(receipt.timestamp * 1000)
-            },
-            where: { id: newPurchase.id }
-          });
-
-          this.logger.debug(`set redemption data for purchase: ${newPurchase.id}`);
-        } catch (err) {
-          this.logger.error(`error setting redemption data for purchase: ${newPurchase.id}: ${err}`);
-          throw err;
-        }
 
         purchases.push(await this.findOne(newPurchase.id));
       }

@@ -1,4 +1,4 @@
-import { File } from '@energyweb/zero-protocol-labs-api-client';
+import { FileMetadataDto } from '@energyweb/zero-protocol-labs-api-client';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
@@ -7,7 +7,7 @@ import PaperBox from '../PaperBox';
 
 export interface DownloadSectionProps {
   title: string;
-  fileList: File[];
+  fileList: (FileMetadataDto & { url?: string })[];
 }
 
 const shortifyFileName = (fileName: string) => {
@@ -27,7 +27,7 @@ export const DownloadSection = ({ title, fileList = [] }: DownloadSectionProps) 
         {fileList.map((file) => (
           <FileDownloadLink
             key={file.fileName + file.url}
-            downloadUrl={file.url}
+            downloadUrl={file.url as string}
             filename={file.fileName ? shortifyFileName(file.fileName) : title}
           />
         ))}

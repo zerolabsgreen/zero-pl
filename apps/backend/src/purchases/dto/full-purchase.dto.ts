@@ -62,8 +62,8 @@ export class FullPurchaseDto {
   @ApiProperty({ type: FilecoinNodeDto })
   filecoinNode: FilecoinNodeDto;
 
-  @ApiProperty({ type: [File] })
-  files: File[];
+  @ApiProperty({ type: [FileMetadataDto] })
+  files: FileMetadataDto[];
 
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
   contractId: string;
@@ -79,7 +79,7 @@ export class FullPurchaseDto {
       seller: new SellerDto(purchase.seller),
       certificate: CertificateDto.toDto(purchase.certificate),
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${purchase.id}`,
-      files: purchase.files.map(f => ({ ...f.file, url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
+      files: purchase.files.map(f => ({ ...FileMetadataDto.toDto(f.file), url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
       filecoinNode: purchase.filecoinNode,
       contractId: purchase.contractId,
     };
