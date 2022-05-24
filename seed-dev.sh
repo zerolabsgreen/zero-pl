@@ -103,7 +103,7 @@ echo "created batch $BATCH_ID"
 
 echo
 echo "storing the redemption statement file"
-FILE_ID=$(curl -w "\n" -s -X 'POST' "http://localhost:3333/api/files" -H "X-API-KEY: somethingsecret" -F 'file=@examples/redemption-statement.pdf;type=application/pdf' | jq -r '.id')
+FILE_ID=$(curl -w "\n" -s -X 'POST' "http://localhost:3333/api/files" -H "X-API-KEY: $X_API_KEY" -F 'file=@examples/redemption-statement.pdf;type=application/pdf' | jq -r '.id')
 echo "created file $FILE_ID"
 
 echo
@@ -169,5 +169,6 @@ curl -w "\n" -s -X 'POST' \
   "filecoinNodeId": "f00001",
   "contractId": "00000000-0000-0000-0000-000000666666",
   "reportingStart": "2020-01-01T00:00:00.000Z",
-  "reportingEnd": "2020-12-31T23:59:59.999Z"
+  "reportingEnd": "2020-12-31T23:59:59.999Z",
+  "redemptionDate": "2020-01-01T00:00:00.000Z"
 }]'

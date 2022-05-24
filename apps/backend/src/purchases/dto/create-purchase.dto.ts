@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Purchase } from '@prisma/client';
 import {
   IsInt,
   IsISO8601,
@@ -72,5 +71,11 @@ export class CreatePurchaseDto {
   @ApiPropertyOptional({ type: String })
   @IsOptional()
   @IsUUID()
-  contractId: string;
+  contractId?: string;
+
+  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  @IsDatetimePrismaCompatible()
+  redemptionDate?: Date;
 }

@@ -18,7 +18,7 @@ export class FilesService {
         content: buffer,
         fileName: filename,
         mimeType: mimeType,
-        purchases: {
+        purchases: purchaseIds?.length > 0 ? {
           create: purchaseIds.map((id) => ({
             purchase: {
               connect: {
@@ -27,7 +27,7 @@ export class FilesService {
             },
             fileType
           }))
-        }
+        } : undefined
       },
       include: {
         purchases: true
