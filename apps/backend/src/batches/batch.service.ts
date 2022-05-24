@@ -113,12 +113,12 @@ export class BatchService {
 
     const redemptionStatement = await this.filesService.findOne(redemptionStatementFileId);
 
+    const txHash = await this.setRedemptionStatementOnChain(batch.id, redemptionStatement.id);
+
     await this.prisma.batch.update({
       data: { redemptionStatementId: redemptionStatement.id },
       where: { id: BigInt(batch.id) }
     });
-
-    const txHash = await this.setRedemptionStatementOnChain(batch.id, redemptionStatement.id);
 
     return txHash;
   }
