@@ -170,5 +170,6 @@ curl -w "\n" -s -X 'POST' \
   "filecoinNodeId": "f00001",
   "contractId": "00000000-0000-0000-0000-000000666666",
   "reportingStart": "2020-01-01T00:00:00.000Z",
-  "reportingEnd": "2020-12-31T23:59:59.999Z"
+  "reportingEnd": "2020-12-31T23:59:59.999Z",
+  "recsSoldWh": "2000000"
 }]'

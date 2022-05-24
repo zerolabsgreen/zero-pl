@@ -1,5 +1,4 @@
-import { CACHE_MANAGER, Inject, BadRequestException, Injectable, Logger, NotFoundException, ConflictException, PreconditionFailedException } from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import { BadRequestException, Injectable, Logger, NotFoundException, ConflictException, PreconditionFailedException } from '@nestjs/common';
 import { FileType } from '@prisma/client';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
@@ -32,7 +31,6 @@ export class PurchasesService {
     private issuerService: IssuerService,
     private sellersService: SellersService,
     private buyersService: BuyersService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private pdfService: PDFService,
     private filesService: FilesService
   ) {
@@ -46,14 +44,13 @@ export class PurchasesService {
 
     await this.prisma.$transaction(async (prisma) => {
       for (const createPurchaseDto of createPurchaseDtos) {
-
         const { filecoinNodeId, ...purchase } = createPurchaseDto;
 
         if (!filecoinNodeId) {
           throw new BadRequestException(`filecoinNodeId need to be set`)
         }
 
-        const existingFilecoinNode = await this.prisma.filecoinNode.findFirst({ where: { id: filecoinNodeId } });
+        const existingFilecoinNode = await prisma.filecoinNode.findFirst({ where: { id: filecoinNodeId } });
 
         if (!existingFilecoinNode) {
           this.logger.error(`purchase submitted for non-existing filecoin node: ${filecoinNodeId}`);
@@ -62,6 +59,22 @@ export class PurchasesService {
 
         const certData = await this.certificatesService.findOne(purchase.certificateId);
 
+        const purchasesForCertificate = await prisma.purchase.findMany({
+          where: {
+            certificateId: purchase.certificateId
+          }
+        });
+
+        const availableCertificateVolume = BigNumber.from(
+          certData.energyWh
+        ).sub(purchasesForCertificate.reduce(
+          (partialSum, purchase) => BigInt(partialSum) + BigInt(purchase.recsSoldWh), BigInt(0)
+        ).toString());
+
+        if (availableCertificateVolume.lte(0) || BigNumber.from(purchase.recsSoldWh).gte(availableCertificateVolume)) {
+          throw new BadRequestException(`Not enough available certificate volume for cert ${certData.id}. Available: ${availableCertificateVolume.toString()}`);
+        }
+        
         if (certData.initialSellerId !== createPurchaseDto.sellerId) {
           throw new BadRequestException(`certificate has to be owned by transaction seller`);
         }
@@ -82,7 +95,7 @@ export class PurchasesService {
           throw new Error(`buyer ${purchase.buyerId} has no blockchain address assigned`);
         }
 
-        const filecoinNodesOwned = (await this.prisma.filecoinNode.findMany({
+        const filecoinNodesOwned = (await prisma.filecoinNode.findMany({
           where: {
             id: filecoinNodeId,
             buyerId: purchase.buyerId
@@ -99,6 +112,7 @@ export class PurchasesService {
         const newPurchase = await prisma.purchase.create({
           data: {
             ...purchase,
+            recsSoldWh: BigInt(purchase.recsSoldWh),
             filecoinNodeId: filecoinNodeId
           }
         }).catch(err => {
@@ -110,13 +124,13 @@ export class PurchasesService {
           id: Number(certData.onchainId),
           from: sellerData.blockchainAddress,
           to: buyerData.blockchainAddress,
-          amount: certData.energyWh,
+          amount: purchase.recsSoldWh,
         });
 
         const txHash = await this.issuerService.claimCertificate({
           id: Number(certData.onchainId),
           from: buyerData.blockchainAddress,
-          amount: certData.energyWh,
+          amount: purchase.recsSoldWh,
           claimData: {
             beneficiary: newPurchase.beneficiary ?? buyerData.name,
             region: existingFilecoinNode.region,
@@ -236,7 +250,10 @@ export class PurchasesService {
     return await this.prisma.$transaction(async (prisma) => {
       await this.prisma.purchase.update({
         where: { id },
-        data: updatePurchaseDto
+        data: {
+          ...updatePurchaseDto,
+          recsSoldWh: BigInt(updatePurchaseDto.recsSoldWh) ?? undefined
+        }
       });
 
       const data = await prisma.purchase.findUnique({

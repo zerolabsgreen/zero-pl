@@ -8,6 +8,9 @@ export class PurchaseDto {
   @ApiProperty({ example: '0x8a65e2f074e08dbf23de0e757a63b5aab53fe38109084d1be7e15943263a90d0' })
   txHash: string;
 
+  @ApiProperty({ example: '1000000'})
+  recsSoldWh: string;
+
   @ApiProperty({ type: String, example: '68926364-a0ba-4160-b3ea-1ee70c2690dd' })
   sellerId: string;
 
@@ -55,6 +58,7 @@ export class PurchaseDto {
     return {
       id: p.id,
       txHash: p.txHash,
+      recsSoldWh: p.recsSoldWh.toString(),
       sellerId: p.sellerId,
       buyerId: p.buyerId,
       certificateId: p.certificateId,

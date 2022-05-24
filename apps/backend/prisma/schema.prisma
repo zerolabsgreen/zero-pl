@@ -126,6 +126,7 @@ model Purchase {
   txHash                       String?
   certificate                  Certificate                @relation(fields: [certificateId], references: [id])
   certificateId                String                     @unique
+  recsSoldWh                   BigInt
   buyer                        Buyer?                     @relation(fields: [buyerId], references: [id])
   buyerId                      String?
   seller                       Seller?                    @relation(fields: [sellerId], references: [id])
@@ -135,7 +136,7 @@ model Purchase {
   reportingStartTimezoneOffset Int?
   reportingEnd                 DateTime?
   reportingEndTimezoneOffset   Int?
-  filecoinNode                 FilecoinNode?               @relation(fields: [filecoinNodeId], references: [id])
+  filecoinNode                 FilecoinNode?              @relation(fields: [filecoinNodeId], references: [id])
   filecoinNodeId               String?
   Contract                     Contract?                  @relation(fields: [contractId], references: [id])
   contractId                   String?
