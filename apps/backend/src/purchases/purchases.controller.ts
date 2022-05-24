@@ -8,6 +8,7 @@ import {
   ParseArrayPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -16,7 +17,7 @@ import {
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
 import { purchaseEventsSchema } from './purchases.service';
@@ -26,6 +27,7 @@ import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { GenerateAttestationsDto } from './dto/generate-attestations.dto';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('/partners/filecoin/purchases')
 @ApiTags('Filecoin purchases')
@@ -49,9 +51,14 @@ export class PurchasesController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [ShortPurchaseDto] })
-  findAll(): Promise<ShortPurchaseDto[]> {
-    return this.purchasesService.findAll();
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<ShortPurchaseDto>> {
+    return this.purchasesService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

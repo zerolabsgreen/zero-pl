@@ -5,13 +5,14 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
 import { BatchService } from './batch.service';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { BatchDto } from "./dto/batch.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
@@ -19,6 +20,7 @@ import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
 import { SetRedemptionStatementDto } from './dto/set-redemption-statement.dto';
 import { MintDto } from './dto/mint.dto';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('/partners/filecoin/batch')
 @ApiTags('Filecoin Batches')
@@ -41,9 +43,14 @@ export class BatchController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [BatchDto] })
-  findAll() {
-    return this.batchService.findAll();
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<BatchDto>> {
+    return this.batchService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

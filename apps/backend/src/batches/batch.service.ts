@@ -11,6 +11,7 @@ import { MintDTO } from '../issuer/issuer.service';
 import { dateTimeToUnix } from '../utils/unix';
 import { ConfigService } from '@nestjs/config';
 import { toDateTimeWithOffset } from '../utils/date';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Injectable()
 export class BatchService {
@@ -53,12 +54,28 @@ export class BatchService {
     return BatchDto.toDto(dbRecord);
   }
 
-  async findAll(): Promise<BatchDto[]> {
-    return (await this.prisma.batch.findMany({
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<BatchDto>> {
+    const total = await this.prisma.batch.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
+    const batches = (await this.prisma.batch.findMany({
+      skip,
+      take,
       include: {
         certificates: true
       }
     })).map((dbRecord) => BatchDto.toDto(dbRecord));
+
+    return {
+      data: batches,
+      total,
+      count: batches.length
+    };
   }
 
   async findOne(id: string): Promise<BatchDto | null> {

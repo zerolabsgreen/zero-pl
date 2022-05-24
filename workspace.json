@@ -253,7 +253,7 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
+              "optimization": false,
               "extractLicenses": true,
               "inspect": false,
               "fileReplacements": [
@@ -273,7 +273,7 @@
               "cp yarn.lock ./dist/apps/tokenization/",
               "cp ./apps/tokenization/Dockerfile ./dist/apps/tokenization/",
               "mkdir -p ./dist/apps/tokenization/typeorm",
-              "cp -R ./apps/tokenization/migrations ./dist/apps/tokenization/typeorm",
+              "cp -R ./apps/tokenization/migrations ./dist/apps/tokenization/",
               "cp ./apps/tokenization/ormconfig.ts ./dist/apps/tokenization/typeorm/ormconfig.ts",
               "cp ./apps/tokenization/ormOptions.ts ./dist/apps/tokenization/typeorm/ormOptions.ts",
               "docker build --build-arg NPM_TOKEN=$(grep NPM_TOKEN .env | cut -d \"=\" -f2 | tr -d '\"') ./dist/apps/tokenization/ --pull -t zero-pl-tokenization",

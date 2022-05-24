@@ -20,6 +20,10 @@ import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 
 const OriginAppTypeOrmModule = () => {
+  if (!process.env.TOKENIZATION_DATABASE_URL) {
+    throw new Error('TOKENIZATION_DATABASE_URL undefined');
+  } 
+
   const entities = [
     Account,
     BlockchainProperties,
@@ -32,7 +36,7 @@ const OriginAppTypeOrmModule = () => {
 
   return TypeOrmModule.forRoot({
     type: 'postgres',
-    url: process.env.DATABASE_URL,
+    url: process.env.TOKENIZATION_DATABASE_URL,
     entities,
     logging: ['info'],
     ssl: process.env.DB_SSL_OFF

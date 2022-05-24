@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -16,13 +17,14 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { OrderDto } from "./dto/order.dto";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { ConfirmOrderDto } from './dto/confirm-order.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('orders')
 @ApiTags('Orders')
@@ -53,9 +55,14 @@ export class OrdersController {
 
   @Get()
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
-  @ApiOkResponse({ type: [OrderDto] })
-  findAll(): Promise<OrderDto[]> {
-    return this.ordersService.findAll();
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<OrderDto>> {
+    return this.ordersService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

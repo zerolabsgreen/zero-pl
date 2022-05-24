@@ -3,6 +3,7 @@ import { FileType } from '@prisma/client';
 // This is a hack to make Multer available in the Express namespace
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PrismaService } from "../prisma/prisma.service";
+import { PaginatedDto } from '../utils/paginated.dto';
 import { FileMetadataDto } from "./dto/file-metadata.dto";
 
 @Injectable()
@@ -38,8 +39,18 @@ export class FilesService {
     return FileMetadataDto.toDto(newRecord);
   }
 
-  async findAll(): Promise<FileMetadataDto[]> {
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<FileMetadataDto>> {
+    const total = await this.prisma.file.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
     const rows = await this.prisma.file.findMany({
+      skip,
+      take,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
@@ -51,7 +62,11 @@ export class FilesService {
       }
     });
 
-    return (rows).map(r => FileMetadataDto.toDto(r));
+    return {
+      data: (rows).map(r => FileMetadataDto.toDto(r)),
+      total,
+      count: rows.length
+    };
   }
 
   async findOne(id: string): Promise<FileMetadataDto> {

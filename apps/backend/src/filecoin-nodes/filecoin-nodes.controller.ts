@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -15,13 +16,14 @@ import {
 import { FilecoinNodesService, transactionsSchema } from './filecoin-nodes.service';
 import { CreateFilecoinNodeDto } from './dto/create-filecoin-node.dto';
 import { UpdateFilecoinNodeDto } from './dto/update-filecoin-node.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { FilecoinNodeDto } from "./dto/filecoin-node.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Controller('/partners/filecoin/nodes')
 @ApiTags('Filecoin nodes')
@@ -40,9 +42,14 @@ export class FilecoinNodesController {
   }
 
   @Get()
-  @ApiOkResponse({ type: [FilecoinNodeDto] })
-  findAll(): Promise<FilecoinNodeDto[]> {
-    return this.filecoinNodesService.findAll();
+  @ApiOkResponse({ type: [PaginatedDto] })
+  @ApiQuery({ name: 'skip', type: String, required: false })
+  @ApiQuery({ name: 'take', type: String, required: false })
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string
+  ): Promise<PaginatedDto<FilecoinNodeDto>> {
+    return this.filecoinNodesService.findAll({ skip: Number(skip), take: Number(take) });
   }
 
   @Get(':id')

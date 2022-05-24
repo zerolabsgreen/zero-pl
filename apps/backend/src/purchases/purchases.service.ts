@@ -19,6 +19,7 @@ import { BigNumber } from 'ethers';
 import { SellersService } from '../sellers/sellers.service';
 import { dateTimeToUnix } from '../utils/unix';
 import { toDateTimeWithOffset } from '../utils/date';
+import { PaginatedDto } from '../utils/paginated.dto';
 
 @Injectable()
 export class PurchasesService {
@@ -166,15 +167,33 @@ export class PurchasesService {
     return purchases;
   }
 
-  async findAll(): Promise<ShortPurchaseDto[]> {
+  async findAll(query?: {
+    skip?: number;
+    take?: number;
+  }): Promise<PaginatedDto<ShortPurchaseDto>> {
     const apiBaseUrl = this.configService.get('API_BASE_URL');
     const uiBaseURL = this.configService.get('UI_BASE_URL');
 
-    return (await this.prisma.purchase.findMany({ select: { id: true } })).map((i) => ({
+    const total = await this.prisma.purchase.count();
+
+    const take = query?.take || total;
+    const skip = query?.skip || 0;
+
+    const purchases = (await this.prisma.purchase.findMany({
+      skip,
+      take,
+      select: { id: true }
+    })).map((i) => ({
       ...i,
       pageUrl: `${uiBaseURL}/partners/filecoin/purchases/${i.id}`,
       dataUrl: `${apiBaseUrl}/api/partners/filecoin/purchases/${i.id}`,
     }));
+
+    return {
+      data: purchases,
+      total,
+      count: purchases.length
+    };
   }
 
   async findOne(id: string): Promise<FullPurchaseDto> {
