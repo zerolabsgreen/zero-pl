@@ -45,6 +45,9 @@ export class CertificateDto {
   @ApiProperty({ example: '0x65ca0692df73b3ff23126fd69e15d2f7de7a317def6016ebfdeedde1e24a7a8f' })
   txHash: string;
 
+  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
+  redemptionDate?: Date;
+
   @ApiPropertyOptional({ example: 1e9 })
   nameplateCapacityW?: number;
 

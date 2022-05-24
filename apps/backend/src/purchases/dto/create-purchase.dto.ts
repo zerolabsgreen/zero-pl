@@ -72,10 +72,4 @@ export class CreatePurchaseDto {
   @IsOptional()
   @IsUUID()
   contractId?: string;
-
-  @ApiPropertyOptional({ example: '2021-06-30T23:59:59.999Z' })
-  @IsOptional()
-  @IsISO8601({ strict: true })
-  @IsDatetimePrismaCompatible()
-  redemptionDate?: Date;
 }
