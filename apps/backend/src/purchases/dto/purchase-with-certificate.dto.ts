@@ -13,6 +13,7 @@ export class PurchaseWithCertificateDto extends OmitType(PurchaseDto, ['certific
     return {
       id: p.id,
       txHash: p.txHash,
+      recsSoldWh: p.recsSoldWh.toString(),
       sellerId: p.sellerId,
       buyerId: p.buyerId,
       certificate: CertificateDto.toDto(p.certificate),

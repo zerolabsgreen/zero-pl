@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsInt,
   IsISO8601,
+  IsNumberString,
   IsOptional,
   IsString,
   IsUUID,
@@ -31,6 +32,10 @@ export class CreatePurchaseDto {
   @ApiProperty({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
   @IsUUID()
   certificateId: string;
+
+  @ApiProperty({ example: '1000000'})
+  @IsNumberString()
+  recsSoldWh: string;
 
   @ApiProperty({ example: '29e25d61-103a-4710-b03d-ee12df765066' })
   @IsUUID()
