@@ -95,7 +95,7 @@ export class FilesController {
     @Param('id') id: string,
     @Res() res: Response
   ) {
-    const file = await this.filesService.findOne(id);
+    const file = await this.filesService.findOneRaw(id);
 
     if (!file) {
       throw new NotFoundException();
