@@ -93,7 +93,8 @@ curl -w "\n" -s -X 'POST' \
   "generationStart": "2021-06-02T00:00:00.000Z",
   "generationEnd": "2021-06-30T23:59:59.999Z",
   "energyWh": "7000000",
-  "nameplateCapacityW": 400000000
+  "nameplateCapacityW": 400000000,
+  "redemptionDate": "2020-01-01T00:00:00.000Z"
 }]'
 
 echo
@@ -169,6 +170,5 @@ curl -w "\n" -s -X 'POST' \
   "filecoinNodeId": "f00001",
   "contractId": "00000000-0000-0000-0000-000000666666",
   "reportingStart": "2020-01-01T00:00:00.000Z",
-  "reportingEnd": "2020-12-31T23:59:59.999Z",
-  "redemptionDate": "2020-01-01T00:00:00.000Z"
+  "reportingEnd": "2020-12-31T23:59:59.999Z"
 }]'
