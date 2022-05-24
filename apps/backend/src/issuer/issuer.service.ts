@@ -130,6 +130,8 @@ export class IssuerService {
   ): Promise<TxHash> {
     let txHash: string;
 
+    this.logger.debug(`[Batch ${batchId}] Setting redemption statement to: ${JSON.stringify(dto)}`);
+
     try {
       const responseData = (
         await this.axiosInstance.post(
