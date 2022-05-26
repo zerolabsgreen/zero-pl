@@ -132,7 +132,7 @@ export class BatchService {
     const hex = hashSum.digest('hex');
     
     return await this.issuerService.setRedemptionStatement(Number(onChainBatchId), {
-      value: hex,
+      value: `0x${hex}`,
       storagePointer: `/api/files/${redemptionStatementId}`,
     });
   }
@@ -221,7 +221,8 @@ export class BatchService {
       for (let i = 0; i < certificateIds.length; i++) {
         await prisma.certificate.update({
           data: {
-            onchainId: BigInt(onchainCertificateIds[i])
+            onchainId: BigInt(onchainCertificateIds[i]),
+            batchId: BigInt(batch.id),
           },
           where: {
             id: certificateIds[i]

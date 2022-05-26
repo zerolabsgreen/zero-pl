@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  redis: 
+    image: redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    networks:
+      - dev
+
   db:
     image: postgres:13-alpine
     restart: unless-stopped
