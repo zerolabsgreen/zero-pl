@@ -29,7 +29,7 @@ export const useProductPageEffects = () => {
     proofId: <EthereumAddress shortify clipboard address={data?.certificate?.id ?? ''} />,
     product: data?.certificate?.productType ?? '',
     beneficiary: data?.filecoinNode?.id ?? '',
-    amount: data?.certificate?.energyWh ? formatPower(data.certificate.energyWh, { unit: Unit.MWh, includeUnit: true }) : '',
+    amount: data?.recsSoldWh ? formatPower(data.recsSoldWh, { unit: Unit.MWh, includeUnit: true }) : '',
     period: (
     <>{dayjs(data?.certificate?.generationStart).isValid()
       ? dayjs(data?.certificate?.generationStart).utc().format('YYYY-MM-DD')
@@ -40,7 +40,7 @@ export const useProductPageEffects = () => {
     </>),
     generatorId: data?.certificate?.generatorId ?? '',
     energySource: <FuelType fuelType={data?.certificate?.energySource as FuelTypeEnum} />,
-    region: `${data?.certificate?.country}, ${data?.certificate?.region}`,
+    region: `${data?.certificate?.country}${data?.certificate?.region ? ", " + data?.certificate?.region : ''}`,
     redemptionDate: dayjs(data?.certificate?.redemptionDate).isValid()
       ? dayjs(data?.certificate?.redemptionDate).utc().format('YYYY-MM-DD')
       : '-',
@@ -50,5 +50,13 @@ export const useProductPageEffects = () => {
   const attestationFile = data?.files?.find(file => file.fileType === 'ATTESTATION')
   const redemptionFile = data?.files?.find(file => file.fileType === 'REDEMPTION_STATEMENT')
 
-  return { certificateInfoTableData, data, redemptionFile, attestationFile, isLoading, isFetched, purchaseId };
+  return {
+    certificateInfoTableData,
+    data,
+    redemptionFile,
+    attestationFile,
+    isLoading,
+    isFetched,
+    purchaseId
+  };
 }

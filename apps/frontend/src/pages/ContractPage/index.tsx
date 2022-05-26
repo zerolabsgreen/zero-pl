@@ -19,7 +19,7 @@ export const ContractPage = () => {
     <Container maxWidth={'xl'}>
       <Grid container>
         <Box sx={{ width: '100%' }}>
-          <Grid item xs={12}>
+          <Grid item xs={12} mb="30px">
             <Breadcrumbs
               breadcrumbList={[
                 'Contract',
