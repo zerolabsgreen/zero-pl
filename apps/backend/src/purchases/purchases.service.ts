@@ -73,7 +73,7 @@ export class PurchasesService {
           (partialSum, purchase) => BigInt(partialSum) + BigInt(purchase.recsSoldWh), BigInt(0)
         ).toString());
 
-        if (availableCertificateVolume.lte(0) || BigNumber.from(purchase.recsSoldWh).gte(availableCertificateVolume)) {
+        if (availableCertificateVolume.lte(0) || BigNumber.from(purchase.recsSoldWh).gt(availableCertificateVolume)) {
           throw new BadRequestException(`Not enough available certificate volume for cert ${certData.id}. Available: ${availableCertificateVolume.toString()}`);
         }
         
