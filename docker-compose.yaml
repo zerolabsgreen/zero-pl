@@ -46,6 +46,8 @@ services:
       DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
+      REDIS_TLS_OFF: "true"
+      WEB3: "http://ganache:8545"
     networks:
       zero-pl:
 

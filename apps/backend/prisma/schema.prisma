@@ -125,7 +125,7 @@ model Purchase {
   id                           String                     @id @default(uuid())
   txHash                       String?
   certificate                  Certificate                @relation(fields: [certificateId], references: [id])
-  certificateId                String                     @unique
+  certificateId                String
   recsSoldWh                   BigInt
   buyer                        Buyer?                     @relation(fields: [buyerId], references: [id])
   buyerId                      String?

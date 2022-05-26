@@ -20,6 +20,8 @@ import { dateTimeToUnix } from '../utils/unix';
 import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 @Injectable()
 export class PurchasesService {
   private readonly logger = new Logger(CertificatesService.name, { timestamp: true });
@@ -71,7 +73,7 @@ export class PurchasesService {
           (partialSum, purchase) => BigInt(partialSum) + BigInt(purchase.recsSoldWh), BigInt(0)
         ).toString());
 
-        if (availableCertificateVolume.lte(0) || BigNumber.from(purchase.recsSoldWh).gte(availableCertificateVolume)) {
+        if (availableCertificateVolume.lte(0) || BigNumber.from(purchase.recsSoldWh).gt(availableCertificateVolume)) {
           throw new BadRequestException(`Not enough available certificate volume for cert ${certData.id}. Available: ${availableCertificateVolume.toString()}`);
         }
         
@@ -120,12 +122,17 @@ export class PurchasesService {
           throw err;
         });
 
-        await this.issuerService.transferCertificate({
+        const transferTxHash = await this.issuerService.transferCertificate({
           id: Number(certData.onchainId),
           from: sellerData.blockchainAddress,
           to: buyerData.blockchainAddress,
           amount: purchase.recsSoldWh,
         });
+
+        const waitTimeSec = Number(process.env.TX_WAIT_TIME_SEC || 15);
+
+        this.logger.debug(`[${transferTxHash}] Transaction has been mined. Waiting for ${waitTimeSec} seconds for the tokenization API to detect the tx...`);
+        await sleep(waitTimeSec * 1e3); // Give time to the Tokenization API to detect the transaction and make changes
 
         const txHash = await this.issuerService.claimCertificate({
           id: Number(certData.onchainId),
@@ -133,8 +140,8 @@ export class PurchasesService {
           amount: purchase.recsSoldWh,
           claimData: {
             beneficiary: newPurchase.beneficiary ?? buyerData.name,
-            region: existingFilecoinNode.region,
-            countryCode: existingFilecoinNode.country,
+            region: existingFilecoinNode.region ?? '',
+            countryCode: existingFilecoinNode.country ?? '',
             periodStartDate: dateTimeToUnix(
               toDateTimeWithOffset(
                 createPurchaseDto.reportingStart,
@@ -154,7 +161,6 @@ export class PurchasesService {
         });
 
         await this.issuerService.waitForTxMined(txHash);
-        await this.createAttestationForPurchases([newPurchase.id]);
 
         purchases.push(await this.findOne(newPurchase.id));
       }
@@ -162,6 +168,13 @@ export class PurchasesService {
       this.logger.error('rolling back transaction');
       throw err;
     });
+
+    try {
+      await this.createAttestationForPurchases(purchases.map(p => p.id));
+    } catch (e) {
+      this.logger.error(`Unable to generate an attestation for purchases ${purchases.map(p => p.id)}`);
+      this.logger.error(e);
+    }
 
     return purchases;
   }
