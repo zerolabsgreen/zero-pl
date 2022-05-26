@@ -15,7 +15,7 @@ import { SellersModule } from '../sellers/sellers.module';
     PDFModule.register({
       view: {
           root: `${__dirname}/templates`,
-          engine: 'htmling',
+          engine: 'pug',
       },
     }),
     FilesModule,

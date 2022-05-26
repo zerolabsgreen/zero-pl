@@ -10,7 +10,6 @@ type UnixTimestamp = number;
 const TIMEOUT = 90; // Seconds
 const RETRY_EVERY = 2; // Seconds
 const RETRY_INTERVALS = Array.from({ length: TIMEOUT / RETRY_EVERY }, (v, i) => i * RETRY_EVERY + 1).map(seconds => seconds * 1e3); // Returns [1, 3, 5...]
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 interface ISetRedemptionStatementDTO {
   value: string;
@@ -308,11 +307,6 @@ export class IssuerService {
           `/blockchain/${txHash}`
         );
       });
-
-      const waitTimeSec = 2;
-
-      this.logger.debug(`[${txHash}] Transaction has been mined. Waiting for ${waitTimeSec} seconds for the tokenization API to detect the tx...`);
-      await sleep(waitTimeSec * 1e3); // Give time to the Tokenization API to detect the transaction and make changes
 
       return (await this.axiosInstance.get(`/blockchain/${txHash}`)).data;
   }
