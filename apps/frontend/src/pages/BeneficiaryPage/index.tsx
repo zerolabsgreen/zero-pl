@@ -39,16 +39,16 @@ const BeneficiaryPage: FC = () => {
   const [certificateType, setCertificateType] = useState(CertificateBlocksEnum.Redeemed)
 
   const filecoinNodeId = minerId as string;
-  const handleCertificateTypeChange = useCallback((event: SelectChangeEvent) => {
+  const handleCertificateTypeChange = (event: SelectChangeEvent) => {
     setCertificateType(event.target.value as CertificateBlocksEnum)
-  }, []);
+  }
 
-  const handleRedeemedSelect = useCallback(() => {
+  const handleRedeemedSelect = () => {
     setCertificateType(CertificateBlocksEnum.Redeemed)
-  }, [])
-  const handleContractsSelect = useCallback(() => {
+  }
+  const handleContractsSelect = () => {
     setCertificateType(CertificateBlocksEnum.Contracts)
-  }, [])
+  }
 
   const {
     data: filecoinNode,
@@ -65,7 +65,10 @@ const BeneficiaryPage: FC = () => {
   });
 
   const [transactionsData, setTransactionsData] = useState<FullPurchaseDto[]>([]);
-  const { data: filecoinNodeTransactions, isLoading: areTransactionsLoading } = useFilecoinNodesControllerGetTransactions(filecoinNodeId);
+  const {
+    data: filecoinNodeTransactions,
+    isLoading: areTransactionsLoading
+  } = useFilecoinNodesControllerGetTransactions(filecoinNodeId);
   const transactions = filecoinNodeTransactions?.transactions;
 
   const fetchAllTransactionsData = useCallback(async (transactions: FilecoinNodesControllerGetTransactions200TransactionsItem[]) => {

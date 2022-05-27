@@ -13,7 +13,7 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { shortifyEthAddr } from '../../components/EthereumAddress';
 import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
 import { formatPower, Unit } from '../../utils';
-import { SankeyProof } from '../../components/ProofPage';
+// import { SankeyProof } from '../../components/ProofPage';
 
 export const ProofPage = () => {
   const {
@@ -43,7 +43,7 @@ export const ProofPage = () => {
               sectionHelpText={
                 <div>
                   This page is a summary of the proof that the buyer <b>{shortifyEthAddr(data.buyer.blockchainAddress ?? '')}</b> has
-                  bought <b>{formatPower(data.certificate.energyWh, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
+                  bought <b>{formatPower(data.recsSoldWh, { unit: Unit.MWh, includeUnit: true })}</b>  worth of <UnderlinedText>Renewable Energy Certificates</UnderlinedText>,
                   and that they have been <UnderlinedText>redeemed</UnderlinedText> in their name
                 </div>
               }
@@ -93,7 +93,7 @@ export const ProofPage = () => {
         </Box>
         <Box width={'100%'}>
           {/* <TableListProofs purchaseId={purchaseId} /> */}
-          <SankeyProof proof={data} redemptionStatementId={redemptionFile?.id} />
+          {/* <SankeyProof proof={data} redemptionStatementId={redemptionFile?.id} /> */}
         </Box>
       </Grid>
     </Container>

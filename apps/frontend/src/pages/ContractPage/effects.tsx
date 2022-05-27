@@ -62,7 +62,7 @@ export const useProductPageEffects = () => {
     ),
     region: data?.countryRegionMap.map(item => (
       <div key={item.country+item.region}>
-        {item.country}, {item.region}
+        {item.country}{item.region ? ', '+item.region : ''}
       </div>
     )),
     contractDate: dayjs(data?.contractDate).isValid()
