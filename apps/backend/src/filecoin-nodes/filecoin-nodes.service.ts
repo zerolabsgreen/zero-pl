@@ -126,6 +126,7 @@ export class FilecoinNodesService {
     const allRedemptionStatements = allFiles.filter(f => f.fileType === FileType.REDEMPTION_STATEMENT) ?? []
 
     // should be typed
+    // ^^^^ ASAP
     return {
       minerId: data.id,
       buyerId: data.buyerId,
@@ -157,10 +158,13 @@ export class FilecoinNodesService {
             'createdAt',
             'updatedAt'
           ]),
+          recsSoldWh: p.recsSoldWh.toString(),
           reportingStartLocal: toDateStringWithOffset(p.reportingStart, p.reportingStartTimezoneOffset),
           reportingEndLocal: toDateStringWithOffset(p.reportingEnd, p.reportingEndTimezoneOffset),
           generation: {
             ...p.certificate,
+            onchainId: p.certificate.onchainId.toString(),
+            batchId: p.certificate.batchId.toString(),
             energyWh: BigNumber.from(p.certificate.energyWh).toNumber(),
             generationStartLocal: toDateStringWithOffset(p.certificate.generationStart, p.certificate.generationStartTimezoneOffset),
             generationEndLocal: toDateStringWithOffset(p.certificate.generationEnd, p.certificate.generationEndTimezoneOffset)
@@ -196,6 +200,7 @@ export const transactionsSchema = {
           sellerId: { type: "string", example: "68926364-a0ba-4160-b3ea-1ee70c2690dd" },
           txHash: { type: "string", example: "5e7ed59f-18e8-4e3d-b0b6-7e962af095e9" },
           buyerId: { type: "string", example: "b7cda676-b005-44dd-b51b-b8c8d4ebd3dd" },
+          recsSoldWh: { type: "string", example: "1000000" },
           contractId: { type: "string", example: "6383554e-0ae6-4400-946a-384ffcb36442" },
           createdAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
           updatedAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
@@ -235,10 +240,12 @@ export const transactionsSchema = {
               beneficiary: { type: "string", example: "5e7ed59f-18e8-4e3d-b0b6-7e962af095e9" },
               redemptionDate: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
               commissioningDate: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
-              capacity: { type: "number", example: 12000 },
+              nameplateCapacityW: { type: "number", example: 12000 },
               label: { type: "string" },
               createdAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
               updatedAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
+              batchId: { type: "string", example: "5"},
+              onchainId: { type: "string", example: "23"}
             }
           }
         }
