@@ -10,7 +10,6 @@ import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts
 import { FilesService } from '../files/files.service';
 import { toDateStringWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
-import { paperClasses } from '@mui/material';
 
 @Injectable()
 export class FilecoinNodesService {
