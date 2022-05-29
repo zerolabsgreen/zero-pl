@@ -47,14 +47,11 @@ export const useProductPageEffects = () => {
     seller: <EthereumAddress shortify clipboard address={data?.certificate?.initialSellerId ?? ''} />
   }]
 
-  const attestationFile = data?.files?.find(file => file.fileType === 'ATTESTATION')
-  const redemptionFile = data?.files?.find(file => file.fileType === 'REDEMPTION_STATEMENT')
-
   return {
     certificateInfoTableData,
     data,
-    redemptionFile,
-    attestationFile,
+    redemptionFile: data?.files?.redemptionStatement,
+    attestationFile: data?.files?.attestation,
     isLoading,
     isFetched,
     purchaseId

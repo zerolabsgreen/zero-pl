@@ -160,7 +160,7 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
     {query:{enabled: Boolean(redemptionStatementId)}}
   )
 
-  const purchaseIds = redemptionStatement?.purchases ?? []
+  const purchaseIds = proofContract?.purchases?.map((p) => p.id) ?? []
   const { purchases } = usePurchasesByIds(purchaseIds)
 
   const contractsIds = purchases.map(p => p.contractId ?? '')

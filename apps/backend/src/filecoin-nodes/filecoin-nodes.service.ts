@@ -3,13 +3,12 @@ import { CreateFilecoinNodeDto } from './dto/create-filecoin-node.dto';
 import { UpdateFilecoinNodeDto } from './dto/update-filecoin-node.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilecoinNodeDto } from './dto/filecoin-node.dto';
-import { FileType } from '@prisma/client';
 import { pick } from 'lodash';
 import { BigNumber } from 'ethers';
 import { FilecoinNodeWithContractsDto } from './dto/filecoin-node-with-contracts.dto';
-import { FilesService } from '../files/files.service';
 import { toDateStringWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { BatchService } from '../batches/batch.service';
 
 @Injectable()
 export class FilecoinNodesService {
@@ -17,7 +16,7 @@ export class FilecoinNodesService {
 
   constructor(
     private prisma: PrismaService,
-    private filesService: FilesService
+    private batchService: BatchService
   ) {}
 
   async create(createFilecoinNodeDto: CreateFilecoinNodeDto): Promise<FilecoinNodeDto> {
@@ -122,9 +121,6 @@ export class FilecoinNodesService {
       return null;
     }
 
-    const { data: allFiles } = await this.filesService.findAll();
-    const allRedemptionStatements = allFiles.filter(f => f.fileType === FileType.REDEMPTION_STATEMENT) ?? []
-
     // should be typed
     // ^^^^ ASAP
     return {
@@ -138,13 +134,13 @@ export class FilecoinNodesService {
             BigNumber.from(purchase.certificate.energyWh).mul(1000000)
           ), BigNumber.from(0)
         ).toNumber() / 1e6,
-      transactions: data.purchases.map((p) => {
-        const redemptionStatement = allRedemptionStatements.find(rs => rs.purchases.includes(p.id))
+      transactions: data.purchases.map(async (p) => {
+        const batch = await this.batchService.findOne(p.certificate.batchId.toString());
         return {
           id: p.id,
           pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${p.id}`,
           dataUrl: `${process.env.API_BASE_URL}/api/partners/filecoin/purchases/${p.id}`,
-          downloadUrl: redemptionStatement?.id ? `${process.env.API_BASE_URL}/api/files/${redemptionStatement.id}` : null,
+          downloadUrl: `${process.env.API_BASE_URL}/api/files/${batch.redemptionStatementId}`,
           ...pick(p, [
             'sellerId',
             'annually',

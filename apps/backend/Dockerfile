@@ -3,7 +3,7 @@ ENV NODE_ENV=production
 ENV FILES_STORAGE=/uploaded-files
 VOLUME ["/tmp"]
 WORKDIR /app
-RUN yarn global add prisma@3.6.0
+RUN yarn global add prisma@3.6.0 htmling@0.0.8
 COPY ["./package.json", "./yarn.lock", "./"]
 RUN yarn install
 COPY . .

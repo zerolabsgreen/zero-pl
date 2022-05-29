@@ -32,7 +32,6 @@ model File {
   fileName  String
   mimeType  String
   content   Bytes
-  purchases FilesOnPurchases[] // TODO: Double-check if we really need this binding
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -131,7 +130,7 @@ model Purchase {
   buyerId                      String?
   seller                       Seller?                    @relation(fields: [sellerId], references: [id])
   sellerId                     String?
-  files                        FilesOnPurchases[]
+  attestationId                String?                    @unique()
   reportingStart               DateTime?
   reportingStartTimezoneOffset Int?
   reportingEnd                 DateTime?
@@ -147,20 +146,6 @@ model Purchase {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([id, buyerId])
-}
-
-model FilesOnPurchases {
-  file       File     @relation(fields: [fileId], references: [id])
-  fileId     String
-  purchase   Purchase @relation(fields: [purchaseId], references: [id])
-  purchaseId String // relation scalar field (used in the `@relation` attribute above)
-  fileType  FileType
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  @@id([fileId, purchaseId, fileType])
-  @@unique([purchaseId, fileType])
 }
 
 model Order {
@@ -282,11 +267,6 @@ enum LabelEnumType {
   ENERGIA_VERDE_100
   BRA_MILJOVAL
   GRUENER_STROM
-}
-
-enum FileType {
-  ATTESTATION
-  REDEMPTION_STATEMENT
 }
 
 // Taken from https://gist.github.com/ssskip/5a94bfcd2835bf1dea52

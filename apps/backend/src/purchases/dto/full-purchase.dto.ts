@@ -1,17 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { FileMetadataDto } from '../../files/dto/file-metadata.dto';
 import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { CertificateDto } from '../../certificates/dto/certificate.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
 import { Buyer, Certificate, FilecoinNode, Purchase, Seller } from '@prisma/client';
+import { PurchaseFilesDto } from './purchase-files.dto';
 
 export type FullPurchaseEntity = Purchase & {
   seller: Seller,
   buyer: Buyer,
   filecoinNode: FilecoinNode,
   certificate: Certificate,
-  files: any
+  files: PurchaseFilesDto
 };
 
 export class FullPurchaseDto {
@@ -57,8 +57,8 @@ export class FullPurchaseDto {
   @ApiProperty({ type: FilecoinNodeDto })
   filecoinNode: FilecoinNodeDto;
 
-  @ApiProperty({ type: [FileMetadataDto] })
-  files: FileMetadataDto[];
+  @ApiProperty({ type: PurchaseFilesDto })
+  files: PurchaseFilesDto;
 
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
   contractId: string;
@@ -75,7 +75,6 @@ export class FullPurchaseDto {
       seller: new SellerDto(purchase.seller),
       certificate: CertificateDto.toDto(purchase.certificate),
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${purchase.id}`,
-      files: purchase.files.map(f => ({ ...FileMetadataDto.toDto(f.file), url: `${process.env.FILES_BASE_URL}/${f.file.id}` })),
       filecoinNode: purchase.filecoinNode,
       contractId: purchase.contractId,
     };
