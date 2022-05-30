@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "nx": "nx",
-    "clean": "rm -rf node_modules dist tmp",
+    "clean": "rm -rf dist tmp",
     "start": "concurrently --names 'FRONTEND,BACKEND,TOKENIZATION' -c 'yellow,cyan,green'  'yarn serve:frontend' 'yarn serve:backend' 'yarn serve:tokenization'",
     "build:next-ui": "yarn swagger:schema:generate && yarn build:api-client && yarn nx run frontend-next:build",
     "start-with-next-ui": "concurrently --names 'FRONTEND-NEXT,BACKEND,TOKENIZATION' -c 'yellow,cyan'  'yarn serve:frontend-next' 'yarn serve:backend' 'yarn serve:tokenization'",

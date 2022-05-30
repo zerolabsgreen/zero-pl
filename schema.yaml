@@ -411,7 +411,7 @@ components:
         data:
           type: "string"
           description: "Minting data"
-          example: "0x76c4bb6fd3691e546145e50559e998129b5cb5f2f01cd1de81bd83e4c020b484"
+          example: "0x4180833af7628289fbab51d41b0b6a3f7dbf84b4f50a1757596f07f8bde6eda1"
       required:
         - "to"
         - "amount"
@@ -440,8 +440,13 @@ components:
           $ref: "#/components/schemas/GeneratorDTO"
         owners:
           type: "object"
+          example:
+            0xD173313A51f8fc37BcF67569b463abd89d81844f: 1000000
+            0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8: 2000000
         claimed:
           type: "object"
+          example:
+            0xD173313A51f8fc37BcF67569b463abd89d81844f: 1000000
       required:
         - "id"
         - "generationStartTime"

@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  redis: 
-    image: redis
+  redis:
+    image: redis:6-alpine
     restart: unless-stopped
     ports:
-      - '6379:6379'
-    networks:
-      - dev
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - dev-redis-data:/data
 
   db:
     image: postgres:13-alpine
@@ -20,8 +20,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: zero-protocol-labs
-    networks:
-      - dev
 
   db-tokenization:
     image: postgres:13-alpine
@@ -34,8 +32,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tokenization
-    networks:
-      - dev
 
   ganache-cli:
     image: trufflesuite/ganache-cli
@@ -49,8 +45,6 @@ services:
         -h 0.0.0.0
     volumes:
       - dev-ganache-data:/data
-    networks:
-      - dev
     ports:
       - '127.0.0.1:8545:8545'
 
@@ -60,13 +54,9 @@ services:
     ports:
       - '127.0.0.1:1025:1025'
       - '127.0.0.1:8025:8025'
-    networks:
-      - dev
 
 volumes:
   dev-pg-data-main:
   dev-pg-data-tokenization:
   dev-ganache-data:
-
-networks:
-  dev:
+  dev-redis-data:

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import htmling from 'htmling'; // DO NOT REMOVE - needed for the docker build to include the dependency
+
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';

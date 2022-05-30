@@ -233,7 +233,9 @@ export class PurchasesService {
         redemptionStatement: await this.getRedemptionStatement(
           purchase.certificate.batchId.toString()
         ),
-        attestation: purchase.attestationId ? await this.filesService.findOneRaw(purchase.attestationId) : undefined
+        attestation: purchase.attestationId
+          ? await this.filesService.findOne(purchase.attestationId)
+          : undefined
       }
     });
   }
@@ -332,9 +334,9 @@ export class PurchasesService {
     return fileDtos;
   }
 
-  private async getRedemptionStatement(batchId: string): Promise<File> {
+  private async getRedemptionStatement(batchId: string): Promise<FileMetadataDto> {
     const batch = await this.batchService.findOne(batchId.toString());
-    return await this.filesService.findOneRaw(batch.redemptionStatementId);
+    return await this.filesService.findOne(batch.redemptionStatementId);
   }
 
   // async getChainEvents(id: string) {

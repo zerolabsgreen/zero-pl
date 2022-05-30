@@ -47,12 +47,10 @@
               "optimization": false,
               "extractLicenses": true,
               "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/backend/src/environments/environment.ts",
-                  "with": "apps/backend/src/environments/environment.prod.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "apps/backend/src/environments/environment.ts",
+                "with": "apps/backend/src/environments/environment.prod.ts"
+              }]
             }
           }
         },
@@ -116,12 +114,10 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/frontend/src/environments/environment.ts",
-                  "with": "apps/frontend/src/environments/environment.prod.ts"
-                }
-              ],
+              "fileReplacements": [{
+                "replace": "apps/frontend/src/environments/environment.ts",
+                "with": "apps/frontend/src/environments/environment.prod.ts"
+              }],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -129,13 +125,11 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "1mb",
-                  "maximumError": "4mb"
-                }
-              ]
+              "budgets": [{
+                "type": "initial",
+                "maximumWarning": "1mb",
+                "maximumError": "4mb"
+              }]
             }
           }
         },
@@ -256,12 +250,10 @@
               "optimization": false,
               "extractLicenses": true,
               "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/tokenization/src/environments/environment.ts",
-                  "with": "apps/tokenization/src/environments/environment.prod.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "apps/tokenization/src/environments/environment.ts",
+                "with": "apps/tokenization/src/environments/environment.prod.ts"
+              }]
             }
           }
         },
@@ -321,13 +313,11 @@
             "external": ["react/jsx-runtime", "@emotion/styled/base"],
             "rollupConfig": "rollup.config.js",
             "compiler": "babel",
-            "assets": [
-              {
-                "glob": "libs/ui/components/README.md",
-                "input": ".",
-                "output": "."
-              }
-            ]
+            "assets": [{
+              "glob": "libs/ui/components/README.md",
+              "input": ".",
+              "output": "."
+            }]
           }
         },
         "lint": {
@@ -362,13 +352,11 @@
             "entryFile": "libs/ui/theme/src/index.ts",
             "external": ["react/jsx-runtime", "@emotion/styled/base"],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-            "assets": [
-              {
-                "glob": "libs/ui/theme/README.md",
-                "input": ".",
-                "output": "."
-              }
-            ]
+            "assets": [{
+              "glob": "libs/ui/theme/README.md",
+              "input": ".",
+              "output": "."
+            }]
           }
         },
         "lint": {
