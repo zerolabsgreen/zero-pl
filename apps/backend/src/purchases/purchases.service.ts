@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, ConflictException, PreconditionFailedException } from '@nestjs/common';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
-import { File } from '@prisma/client';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -227,14 +226,21 @@ export class PurchasesService {
       return null;
     }
 
+    const redemptionStatement = await this.getRedemptionStatement(purchase.certificate.batchId.toString());
+    const attestation = purchase.attestationId ? await this.filesService.findOne(purchase.attestationId) : undefined;
+
     return FullPurchaseDto.toDto({
       ...purchase,
       files: {
-        redemptionStatement: await this.getRedemptionStatement(
-          purchase.certificate.batchId.toString()
-        ),
+        redemptionStatement: {
+          ...redemptionStatement,
+          url: `${process.env.FILES_BASE_URL}/${redemptionStatement.id}`
+        },
         attestation: purchase.attestationId
-          ? await this.filesService.findOne(purchase.attestationId)
+          ? {
+            ...attestation,
+            url: `${process.env.FILES_BASE_URL}/${attestation.id}`
+          }
           : undefined
       }
     });

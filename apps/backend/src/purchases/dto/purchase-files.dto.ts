@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FileMetadataDto } from "../../files/dto/file-metadata.dto";
+import { FileMetadataWithUrlDto } from "../../files/dto/file-metadata-with-url.dto";
 
 export class PurchaseFilesDto {
-    @ApiProperty({ type: FileMetadataDto })
-    redemptionStatement: FileMetadataDto;
+    @ApiProperty({ type: FileMetadataWithUrlDto })
+    redemptionStatement: FileMetadataWithUrlDto;
 
-    @ApiProperty({ type: FileMetadataDto })
-    attestation: FileMetadataDto;
+    @ApiProperty({ type: FileMetadataWithUrlDto })
+    attestation: FileMetadataWithUrlDto;
 }
