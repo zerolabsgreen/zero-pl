@@ -69,6 +69,7 @@ model Seller {
 model Batch {
   id                        BigInt @id 
   redemptionStatementId     String? @unique()
+  totalVolume               BigInt?
   certificates              Certificate[]
 }
 
