@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { FilesOnPurchases, FileType, File } from '@prisma/client';
+import { File } from '@prisma/client';
 // This is a hack to make Multer available in the Express namespace
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PrismaService } from "../prisma/prisma.service";
@@ -12,25 +12,12 @@ export class FilesService {
   
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(filename: string, buffer: Buffer, purchaseIds: string[], fileType: FileType, mimeType = 'application/pdf'): Promise<FileMetadataDto> {
+  async create(filename: string, buffer: Buffer, mimeType = 'application/pdf'): Promise<FileMetadataDto> {
     const newRecord = await this.prisma.file.create({
       data: {
         content: buffer,
         fileName: filename,
         mimeType: mimeType,
-        purchases: purchaseIds?.length > 0 ? {
-          create: purchaseIds.map((id) => ({
-            purchase: {
-              connect: {
-                id,
-              },
-            },
-            fileType
-          }))
-        } : undefined
-      },
-      include: {
-        purchases: true
       }
     });
 
@@ -58,7 +45,6 @@ export class FilesService {
         mimeType: true,
         createdAt: true,
         updatedAt: true,
-        purchases: true,
       }
     });
 
@@ -71,17 +57,15 @@ export class FilesService {
 
   async findOne(id: string): Promise<FileMetadataDto> {
     const file = await this.prisma.file.findUnique({
-      where: { id },
-      include: { purchases: true }
+      where: { id }
     });
 
     return FileMetadataDto.toDto(file);
   }
 
-  async findOneRaw(id: string): Promise<File & { purchases: FilesOnPurchases[]; }> {
+  async findOneRaw(id: string): Promise<File> {
     return await this.prisma.file.findUnique({
-      where: { id },
-      include: { purchases: true }
+      where: { id }
     });
   }
 

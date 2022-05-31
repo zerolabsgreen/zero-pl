@@ -9,13 +9,14 @@ import * as process from 'process';
 import { PDFModule } from '@t00nday/nestjs-pdf';
 import { FilesModule } from '../files/files.module';
 import { SellersModule } from '../sellers/sellers.module';
+import { BatchModule } from '../batches/batch.module';
 
 @Module({
   imports: [
     PDFModule.register({
       view: {
           root: `${__dirname}/templates`,
-          engine: 'pug',
+          engine: 'htmling'
       },
     }),
     FilesModule,
@@ -34,6 +35,7 @@ import { SellersModule } from '../sellers/sellers.module';
     }),
     CertificatesModule,
     IssuerModule,
+    BatchModule
   ],
   controllers: [PurchasesController],
   providers: [PurchasesService]

@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   ClassSerializerInterceptor,
   Controller,
   Delete,
@@ -25,7 +24,7 @@ import { Express, Response } from 'express';
 import * as multer from 'multer';
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
-import { ApiKeyPermissions, FileType } from '@prisma/client';
+import { ApiKeyPermissions } from '@prisma/client';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { PaginatedDto } from '../utils/paginated.dto';
 
@@ -47,8 +46,6 @@ export class FilesController {
     schema: {
       type: 'object',
       properties: {
-        purchaseIds: { type: 'array', items: { type: 'string' } },
-        fileType: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',
@@ -64,14 +61,13 @@ export class FilesController {
     }
   }))
   create(
-    @Body() dto: { fileType: string, purchaseIds: string },
     @UploadedFile() file: Express.Multer.File
   ): Promise<FileMetadataDto> {
     this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
     if (!file) {
       throw new BadRequestException(`Please provide a file`);
     }
-    return this.filesService.create(file.originalname, file.buffer, dto.purchaseIds?.split(',') ?? [], dto.fileType as FileType, file.mimetype);
+    return this.filesService.create(file.originalname, file.buffer, file.mimetype);
   }
 
   @Get()

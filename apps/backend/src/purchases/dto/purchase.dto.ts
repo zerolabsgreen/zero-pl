@@ -29,6 +29,9 @@ export class PurchaseDto {
   @ApiProperty({ example: '2020-12-31T23:59:59.999Z' })
   reportingEnd: Date;
 
+  @ApiProperty({ example: '863d48bb-15da-4eaf-8040-b6cb66e22023' })
+  attestationId: string;
+
   @ApiPropertyOptional({ example: 180 })
   reportingEndTimezoneOffset?: number;
 
@@ -68,6 +71,7 @@ export class PurchaseDto {
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
       contractId: p.contractId,
       filecoinNodeId: p.filecoinNodeId,
+      attestationId: p.attestationId,
       beneficiary: p.beneficiary,
       purpose: p.purpose,
       createdAt: p.createdAt,

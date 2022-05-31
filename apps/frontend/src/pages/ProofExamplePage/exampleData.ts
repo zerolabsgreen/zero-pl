@@ -77,21 +77,21 @@ export const exampleData = {
         "commissioningDate": "2014-09-01T00:00:00.000Z",
         "label": null
     },
-    "files": [
-        {
-            "id": "d52cf9e9-8a50-48e9-83e3-6753c14178d5",
-            "fileName": "ZeroLabs_EAC-Attestation_f0763337.pdf",
-            "fileType": "ATTESTATION",
-            "mimeType": "application/pdf",
-            "url": "https://proofs-api.zerolabs.green/api/files/d52cf9e9-8a50-48e9-83e3-6753c14178d5"
-        },
-        {
+    "files": {
+        redemptionStatement: {
             "id": "b2c523d7-f352-4ce2-827a-819197bbf04c",
             "fileName": "Green-e_Attestation.pdf",
             "fileType": "REDEMPTION_STATEMENT",
             "mimeType": "application/pdf",
             "url": "https://proofs-api.zerolabs.green/api/files/b2c523d7-f352-4ce2-827a-819197bbf04c"
+        },
+        attestation: {
+            "id": "d52cf9e9-8a50-48e9-83e3-6753c14178d5",
+            "fileName": "ZeroLabs_EAC-Attestation_f0763337.pdf",
+            "fileType": "ATTESTATION",
+            "mimeType": "application/pdf",
+            "url": "https://proofs-api.zerolabs.green/api/files/d52cf9e9-8a50-48e9-83e3-6753c14178d5"
         }
-    ],
+    },
     "pageUrl": "https://proofs.zerolabs.green/partners/filecoin/purchases/5253751e-9072-4c05-a3ae-e42428baa429"
 } as any as FullPurchaseDto;

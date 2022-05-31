@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import htmling from 'htmling'; // DO NOT REMOVE - needed for the docker build to include the dependency
+
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
@@ -55,7 +58,7 @@ import { BatchModule } from '../batches/batch.module';
     PDFModule.register({
       view: {
           root: `${__dirname}/templates`,
-          engine: 'pug',
+          engine: 'htmling'
       },
     }),
     PrismaModule,

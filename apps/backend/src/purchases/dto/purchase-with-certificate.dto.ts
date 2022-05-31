@@ -23,6 +23,7 @@ export class PurchaseWithCertificateDto extends OmitType(PurchaseDto, ['certific
       reportingEndTimezoneOffset: p.reportingEndTimezoneOffset,
       contractId: p.contractId,
       filecoinNodeId: p.filecoinNodeId,
+      attestationId: p.attestationId,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt
     };
