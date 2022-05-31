@@ -301,7 +301,7 @@ export class PurchasesService {
         const pdfGenerationData = {
           locals: {
             minerId: savedPurchase.filecoinNodeId,
-            orderQuantity: BigNumber.from(savedPurchase.certificate.energyWh).div(1e6).toString(),
+            orderQuantity: BigNumber.from(savedPurchase.recsSoldWh).div(1e6).toString(),
             country: savedPurchase.certificate.country.toString(),
             state: savedPurchase.certificate.region,
             generationPeriod: `${savedPurchase.certificate.generationStart.toDateString()} - ${savedPurchase.certificate.generationEnd.toDateString()}`,
