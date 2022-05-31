@@ -24,6 +24,7 @@ import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { CertificateWithPurchasesDto } from './dto/certificate-with-purchases.dto';
 
 @Controller('/partners/filecoin/certificates')
 @ApiTags('Filecoin certificates')
@@ -62,6 +63,13 @@ export class CertificatesController {
   @ApiOkResponse({ type: CertificateDto })
   findOne(@Param('id') id: string) {
     return this.certificatesService.findOne(id);
+  }
+
+  @Get(':id/purchases')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @ApiOkResponse({ type: CertificateWithPurchasesDto })
+  findOneWithPurchases(@Param('id') id: string) {
+    return this.certificatesService.findOneWithPurchases(id);
   }
 
   @Patch(':id')
