@@ -1,9 +1,9 @@
 import {
-  FileMetadataDto,
+  BatchDto,
   FindContractDto,
   FullPurchaseDto,
+  useBatchControllerFindOne,
   useContractsControllerFindOne,
-  useFilesControllerGetFileMetadata
 } from "@energyweb/zero-protocol-labs-api-client"
 import { BigNumber } from "@ethersproject/bignumber"
 import CircularProgress from "@mui/material/CircularProgress"
@@ -31,13 +31,13 @@ type SankeyData = {
 
 export const createSankeyData = (
   contracts: FindContractDto[],
-  redemptionStatement: FileMetadataDto,
+  batch: BatchDto,
   purchases: FullPurchaseDto[]
 ): { sankeyData: SankeyData }  => {
 
   const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
     id: contract.id,
-    targetIds: [redemptionStatement.id],
+    targetIds: [batch.redemptionStatementId],
     type: SankeyItemType.Contract,
     volume: formatPower(
       BigNumber.from(contract.openVolume ?? 0)
@@ -51,14 +51,10 @@ export const createSankeyData = (
   }))
 
   const redemptionNode: ExtendedNodeProperties[] = [{
-    id: redemptionStatement.id,
+    id: batch.redemptionStatementId,
     targetIds: purchases.map(p => p.certificate.id),
     type: SankeyItemType.Redemption,
-    volume: contracts.length > 1 ? formatPower(purchases.reduce(
-      (prev, current) => prev.add(BigNumber.from(current.certificate.energyWh)),
-      BigNumber.from(0)).toString(),
-      { includeUnit: true, unit: Unit.MWh }
-    ) : '',
+    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh }),
   }]
 
   const certificatesNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({
@@ -68,14 +64,14 @@ export const createSankeyData = (
     volume: formatPower(purchase.certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
     period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [purchase.certificate.energySource],
-    location: `${purchase.certificate.country}, ${purchase.certificate.region}`,
+    location: `${purchase.certificate.country}${purchase.certificate.region ? ', '+purchase.certificate.region : ''}`,
     generator: purchase.certificate.generatorName
   }))
 
   const proofsNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({
     id: purchase.id,
     type: SankeyItemType.Proof,
-    volume: formatPower(purchase.certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
+    volume: formatPower(purchase.recsSoldWh, { includeUnit: true, unit: Unit.MWh }),
     targetIds: [],
     period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [purchase.certificate.energySource],
@@ -99,7 +95,7 @@ export const createSankeyData = (
   const links = clonedLinks.map(link => ({
     source: nodes.findIndex(node => node.id === link.id),
     target: nodes.findIndex(node => node.id === link.targetIds),
-    value: link.type === SankeyItemType.Redemption
+    value: link.type === SankeyItemType.Certificate
       ? parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
       : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0')
   })).filter(item => !!item);
@@ -138,8 +134,7 @@ interface Props {
   redemptionStatementId?: string
 }
 
-export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
-
+export const SankeyProof = ({ proof }: Props) => {
   const [isExtendedSankey, setIsExtendedSankey] = useState(false)
   const btnText = isExtendedSankey ? 'See less' : 'See more'
   const handleBtnClick = () => setIsExtendedSankey(!isExtendedSankey)
@@ -152,12 +147,9 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
     {query:{enabled: Boolean(proof.contractId)}}
   )
 
-  const {
-    data: redemptionStatement,
-    isLoading: isFileLoading
-  } = useFilesControllerGetFileMetadata(
-    redemptionStatementId,
-    {query:{enabled: Boolean(redemptionStatementId)}}
+  const { data: batch, isLoading: isBatchLoading } = useBatchControllerFindOne(
+    proof.certificate.batchId || '',
+    { query: { enabled: !!proof.certificate.batchId } }
   )
 
   const purchaseIds = proofContract?.purchases?.map((p) => p.id) ?? []
@@ -168,13 +160,13 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
   const { contracts } = useContractsByIds(validContractIds)
 
   const beneficiary = proof.filecoinNode?.id
-  const isLoading = isContractLoading || isFileLoading
+  const isLoading = isContractLoading || isBatchLoading
 
-  if (proofContract && redemptionStatement && !isLoading) {
+  if (proofContract && batch && !isLoading) {
     const { sankeyData } = !isExtendedSankey
-      ? createSankeyData([proofContract], redemptionStatement, proofContract.purchases as any as FullPurchaseDto[])
-      : createSankeyData(contracts, redemptionStatement, purchases)
-    const sankeyHeight = isExtendedSankey ? purchases.length*80 : proofContract.purchases.length*150
+      ? createSankeyData([proofContract], batch, proofContract.purchases as any as FullPurchaseDto[])
+      : createSankeyData(contracts, batch, purchases)
+    // const sankeyHeight = isExtendedSankey ? purchases.length*80 : proofContract.purchases.length*150
 
     if (isExtendedSankey && contracts.length < 1) return (<Loader />)
 
@@ -194,7 +186,7 @@ export const SankeyProof = ({ proof, redemptionStatementId = '' }: Props) => {
               nodeWidth={160}
               nodePadding={30}
               width={sankeyWidth}
-              height={sankeyHeight}
+              // height={sankeyHeight}
             >
               {({ graph }) => {
                 return (

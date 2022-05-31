@@ -13,7 +13,7 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { shortifyEthAddr } from '../../components/EthereumAddress';
 import { useProductPageEffects, certificateInfoTableHeaders } from './effects';
 import { formatPower, Unit } from '../../utils';
-// import { SankeyProof } from '../../components/ProofPage';
+import { SankeyProof } from '../../components/ProofPage';
 
 export const ProofPage = () => {
   const {
@@ -93,7 +93,7 @@ export const ProofPage = () => {
         </Box>
         <Box width={'100%'}>
           {/* <TableListProofs purchaseId={purchaseId} /> */}
-          {/* <SankeyProof proof={data} redemptionStatementId={redemptionFile?.id} /> */}
+          <SankeyProof proof={data} />
         </Box>
       </Grid>
     </Container>
