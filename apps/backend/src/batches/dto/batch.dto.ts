@@ -13,6 +13,9 @@ export class BatchDto {
   @ApiProperty({ example: 100e6.toString() })
   totalVolume: string;
 
+  @ApiProperty({ example: 50e6.toString() })
+  mintedVolume: string;
+
   @ApiProperty({ type: [CertificateDto] })
   certificates: CertificateDto[];
 
@@ -26,7 +29,8 @@ export class BatchDto {
     return {
       ...dbEntity,
       id: dbEntity.id?.toString() ?? undefined,
-      totalVolume: dbEntity.certificates.reduce(
+      totalVolume: dbEntity.totalVolume?.toString(),
+      mintedVolume: dbEntity.certificates.reduce(
         (total, certificate) => 
           total.add(BigNumber.from(certificate.energyWh)), 
           BigNumber.from(0)

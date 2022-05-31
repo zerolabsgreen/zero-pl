@@ -12,6 +12,7 @@ import { dateTimeToUnix } from '../utils/unix';
 import { ConfigService } from '@nestjs/config';
 import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { BigNumber } from 'ethers';
 
 @Injectable()
 export class BatchService {
@@ -90,7 +91,11 @@ export class BatchService {
     return BatchDto.toDto(dbRecord);
   }
 
-  async setRedemptionStatement(batchId: string, redemptionStatementFileId: string): Promise<string> {
+  async setRedemptionStatement(
+    batchId: string,
+    redemptionStatementFileId: string,
+    totalVolume: string
+  ): Promise<string> {
     if (!redemptionStatementFileId) {
       throw new NotFoundException(`Please provide a valid redemption statement ID. Got: ${redemptionStatementFileId}`);
     }
@@ -116,7 +121,10 @@ export class BatchService {
     const txHash = await this.setRedemptionStatementOnChain(batch.id, redemptionStatement.id);
 
     await this.prisma.batch.update({
-      data: { redemptionStatementId: redemptionStatement.id },
+      data: {
+        redemptionStatementId: redemptionStatement.id,
+        totalVolume: BigInt(totalVolume)
+      },
       where: { id: BigInt(batch.id) }
     });
 
@@ -162,6 +170,15 @@ export class BatchService {
     
     if (certificates.length !== certificateIds.length) {
       throw new BadRequestException(`Non-existing Certificate ID in array`);
+    }
+
+    const totalCertificateVolume = certificates.reduce(
+      (partialSum, cert) => partialSum.add(cert.energyWh), BigNumber.from(0)
+    );
+
+    // TODO: Also check if some certificates have already been minted and account for those
+    if (totalCertificateVolume.gt(batch.totalVolume)) {
+      throw new BadRequestException(`Batch totalVolume=${batch.totalVolume} but trying to mint ${totalCertificateVolume.toString()} Wh`);
     }
 
     const mintingData = await Promise.all(certificates.map(async (c): Promise<MintDTO> => {

@@ -131,10 +131,10 @@ export class FilecoinNodesService {
       recsTotal: data.purchases.reduce(
         (total, purchase) =>
           total.add(
-            BigNumber.from(purchase.certificate.energyWh).mul(1000000)
+            BigNumber.from(purchase.recsSoldWh)
           ), BigNumber.from(0)
-        ).toNumber() / 1e6,
-      transactions: data.purchases.map(async (p) => {
+        ).toString(),
+      transactions: await Promise.all(data.purchases.map(async (p) => {
         const batch = await this.batchService.findOne(p.certificate.batchId.toString());
         return {
           id: p.id,
@@ -143,7 +143,6 @@ export class FilecoinNodesService {
           downloadUrl: `${process.env.API_BASE_URL}/api/files/${batch.redemptionStatementId}`,
           ...pick(p, [
             'sellerId',
-            'annually',
             'reportingStart',
             'reportingStartTimezoneOffset',
             'reportingEnd',
@@ -166,7 +165,7 @@ export class FilecoinNodesService {
             generationEndLocal: toDateStringWithOffset(p.certificate.generationEnd, p.certificate.generationEndTimezoneOffset)
           }
         };
-      })
+      }))
     };
   }
 }
@@ -200,16 +199,6 @@ export const transactionsSchema = {
           contractId: { type: "string", example: "6383554e-0ae6-4400-946a-384ffcb36442" },
           createdAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
           updatedAt: { type: "string", format: "date-time", example: "2021-08-26T18:20:30.633Z" },
-          annually: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                year: { type: "number", example: 2020 },
-                amount: { type: "number", example: 3 }
-              }
-            }
-          },
           reportingStart : {type: "string", example: "2019-12-31T21:00:00.000Z"},
           reportingStartTimezoneOffset : {type: "number", example: 180},
           reportingEnd : {type: "string", example: "2020-12-31T20:59:59.999Z"},

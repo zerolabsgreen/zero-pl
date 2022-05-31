@@ -6,6 +6,7 @@ import { CertificateDto } from './dto/certificate.dto';
 import { Certificate } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { CertificateWithPurchasesDto } from './dto/certificate-with-purchases.dto';
 
 @Injectable()
 export class CertificatesService {
@@ -95,6 +96,18 @@ export class CertificatesService {
     });
 
     return CertificateDto.toDto(dbRecord);
+  }
+
+  async findOneWithPurchases(id: string): Promise<CertificateWithPurchasesDto> {
+    const dbRecord = await this.prisma.certificate.findUnique({
+      where: { id },
+      include: {
+        purchase: true
+      },
+      rejectOnNotFound: () => new NotFoundException(`certificateId=${id} not found`)
+    });
+
+    return CertificateWithPurchasesDto.toDto(dbRecord);
   }
 
   async update(id: string, updateCertificateDto: UpdateCertificateDto): Promise<CertificateDto> {

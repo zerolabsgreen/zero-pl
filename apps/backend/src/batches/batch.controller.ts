@@ -69,9 +69,9 @@ export class BatchController {
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   setRedemptionStatement(
     @Param('id') id: string,
-    @Body() { redemptionStatementId }: SetRedemptionStatementDto
+    @Body() { redemptionStatementId, totalVolume }: SetRedemptionStatementDto
   ): Promise<string> {
-    return this.batchService.setRedemptionStatement(id, redemptionStatementId);
+    return this.batchService.setRedemptionStatement(id, redemptionStatementId, totalVolume);
   }
 
   @Post(':id/mint')
