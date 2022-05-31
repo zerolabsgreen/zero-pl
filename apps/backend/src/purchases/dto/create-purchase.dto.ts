@@ -11,18 +11,6 @@ import {
 } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 
-class RecsAnnuallyDTO {
-  @ApiProperty({ example: 2021 })
-  @IsInt()
-  @Min(2020)
-  year: number;
-
-  @ApiProperty({ example: 10 })
-  @IsInt()
-  @Min(0)
-  amount: number;
-}
-
 export class CreatePurchaseDto {
   @ApiProperty({ example: '04a7155d-ced1-4981-8660-48670a0735dd' })
   @IsUUID()
