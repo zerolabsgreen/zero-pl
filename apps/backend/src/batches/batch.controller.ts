@@ -54,7 +54,7 @@ export class BatchController {
   }
 
   @Get(':id')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: BatchDto })
   findOne(@Param('id') id: string) {
     return this.batchService.findOne(id);
@@ -73,6 +73,8 @@ export class BatchController {
   ): Promise<string> {
     return this.batchService.setRedemptionStatement(id, redemptionStatementId, totalVolume);
   }
+
+
 
   @Post(':id/mint')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
