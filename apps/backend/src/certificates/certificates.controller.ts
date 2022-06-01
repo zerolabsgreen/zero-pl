@@ -66,7 +66,7 @@ export class CertificatesController {
   }
 
   @Get(':id/purchases')
-  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
   @ApiOkResponse({ type: CertificateWithPurchasesDto })
   findOneWithPurchases(@Param('id') id: string) {
     return this.certificatesService.findOneWithPurchases(id);
