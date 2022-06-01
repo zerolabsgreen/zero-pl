@@ -174,7 +174,10 @@ export class IssuerService {
   async mint(
     batchId: number,
     dto: MintDTO[]
-  ): Promise<number[]> {
+  ): Promise<{
+    txHash: string,
+    certificateIds: number[]
+  }> {
     let txHash: string;
 
     try {
@@ -210,7 +213,10 @@ export class IssuerService {
         return response.data.map(id => Number(id));
       });
 
-    return ids;
+    return {
+      txHash,
+      certificateIds: ids
+    };
   }
 
   async getBatchByTransactionHash(txHash: string): Promise<number> {

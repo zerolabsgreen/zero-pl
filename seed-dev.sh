@@ -115,7 +115,8 @@ curl -w "\n" -s -X 'POST' \
   -H 'Content-Type: application/json' \
   -d @- <<END;
 {
-    "redemptionStatementId": "$FILE_ID"
+    "redemptionStatementId": "$FILE_ID",
+    "totalVolume": "3000000"
 }
 END
 

@@ -220,8 +220,11 @@ export class BatchService {
       };
     }));
 
-    const onchainCertificateIds = await this.issuerService.mint(
-      Number(batch.id), 
+    const {
+      certificateIds: onchainCertificateIds, 
+      txHash
+    } = await this.issuerService.mint(
+      Number(batch.id),  
       mintingData
     );
 
@@ -240,6 +243,7 @@ export class BatchService {
           data: {
             onchainId: BigInt(onchainCertificateIds[i]),
             batchId: BigInt(batch.id),
+            txHash
           },
           where: {
             id: certificateIds[i]
