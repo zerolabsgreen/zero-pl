@@ -163,6 +163,16 @@ export class PurchasesService {
 
         await this.issuerService.waitForTxMined(txHash);
 
+        await prisma.purchase.update({
+          where: {
+            id: newPurchase.id
+          }, 
+          data: { txHash }
+        }).catch(err => {
+          this.logger.error(`error updating the purchase with txHash: ${err}`);
+          throw err;
+        });
+
         purchases.push(await this.findOne(newPurchase.id));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
