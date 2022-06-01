@@ -10,7 +10,7 @@ import { maxBy } from 'lodash'
 import { BatchDto, CertificateWithPurchasesDto, FindContractDto, PurchaseDto, PurchaseWithCertificateDto } from "@energyweb/zero-protocol-labs-api-client";
 import Sankey from "../Sankey";
 import Link from "../Sankey/Link";
-import Node, { ExtendedNodeProperties, /* isContractNode, isEmptyContractNode, */ SankeyItemType } from "../Sankey/Node";
+import Node, { ExtendedNodeProperties, isEmptyContractNode, /* isContractNode, isEmptyContractNode, */ SankeyItemType } from "../Sankey/Node";
 import { formatPower, getRegionString, Unit } from "../../utils";
 import { useBatchesByIds } from "../../hooks/fetch/useBatchesByIds";
 import { useCertificatesByIds } from "../../hooks/fetch/useCertificatesByIds";
@@ -240,8 +240,6 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
                           beneficiary={beneficiary}
                           link={link}
                           color={linkColor}
-                          // minWidth={30}
-                          // width={linkWidth}
                         />
                       )
                     })
@@ -268,11 +266,10 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
                           key={`sankey-node-${node.id}`}
                           link={node}
                           color={sankeyColors[node.type]}
-                          // height={nodeHeight}
                           name={node.type}
                           graph={graph}
                           volume={node.volume}
-                          minHeight={30}
+                          minHeight={isEmptyContractNode(node) ? 30 : undefined}
                         />
                       )
                     })

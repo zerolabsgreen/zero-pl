@@ -215,6 +215,7 @@ export const SankeyProof = ({ proof }: Props) => {
                             link={link}
                             color={linkColor}
                             beneficiary={beneficiary}
+                            centered={!isExtendedSankey}
                             hidePopoverBtn={linkSource.type === SankeyItemType.Redemption}
                           />
                         )
