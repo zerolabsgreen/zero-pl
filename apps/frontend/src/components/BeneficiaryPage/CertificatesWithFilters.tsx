@@ -10,14 +10,14 @@ import dayjs from "dayjs";
 import { FC, useCallback, useMemo, useState } from "react";
 import { FindContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../PageSection"
-// import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
-// import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
+import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
+import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 import EthereumAddress from "../EthereumAddress";
-import { Unit, formatPower, ProductEnumType, getContractTotalVolume } from "../../utils";
+import { Unit, formatPower, ProductEnumType, getContractTotalVolume, getRegionString } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../FuelType";
 import ButtonRight from "./ButtonRight";
-// import SecondaryButton from "../SecondaryButton";
-// import SankeyView from "./SankeyView";
+import SecondaryButton from "../SecondaryButton";
+import SankeyView from "./SankeyView";
 
 interface CertificatesWithFiltersProps {
   userId: string;
@@ -40,9 +40,9 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
   transactionsData = []
 }) => {
   const navigate = useNavigate()
-  // const [viewMode, setViewMode] = useState(ViewModeEnum.List);
-  // const handleListView = () => setViewMode(ViewModeEnum.List)
-  // const handleSankeyView = () => setViewMode(ViewModeEnum.Sankey)
+  const [viewMode, setViewMode] = useState(ViewModeEnum.List);
+  const handleListView = () => setViewMode(ViewModeEnum.List)
+  const handleSankeyView = () => setViewMode(ViewModeEnum.Sankey)
   const [productType, setProductType] = useState<ProductEnumType | 'Any'>('Any')
 
   const handleProductTypeChange = useCallback((event: SelectChangeEvent) => {
@@ -72,10 +72,10 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
       : '-'}`,
     generatorId: tx.certificate.generatorId,
     energySource: <FuelType fuelType={tx.certificate.energySource as FuelTypeEnum} />,
-    region: `${tx.certificate.country}${tx.certificate.region ? ', ' + tx.certificate.region : ''}`,
+    region: `${tx.certificate.country}${getRegionString(tx.certificate.region)}`,
     seller: tx.seller.name ?? '',
     action: <ButtonRight onClick={() => navigate(`/partners/filecoin/purchases/${tx.id}`)} />
-    })), [transactionsData]);
+  })), [transactionsData]);
 
 
   const contractTableData: TableRowData<FindContractDto['id']>[] = useMemo(() => contracts.map((contract) => {
@@ -175,8 +175,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
         >
           {title}
         </Typography>
-        {/* Hidden until Redemption Statement added to Sankey */}
-        {/* <Box display={'flex'}>
+        <Box display={'flex'}>
           <SecondaryButton
             active={viewMode === ViewModeEnum.List}
             onClick={handleListView}
@@ -192,14 +191,13 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
           >
             Sankey view
           </SecondaryButton>
-        </Box> */}
+        </Box>
       </Box>
       <Box mt="20px">
-        {/* {viewMode === ViewModeEnum.List
+        {viewMode === ViewModeEnum.List
           ? <GenericTable headers={headers} data={filteredTableData} />
           : <SankeyView contracts={contracts} beneficiary={userId} />
-        } */}
-        <GenericTable headers={headers} data={filteredTableData} />
+        }
       </Box>
     </PageSection>
   )

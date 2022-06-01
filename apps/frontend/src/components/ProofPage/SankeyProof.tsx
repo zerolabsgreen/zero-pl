@@ -16,7 +16,7 @@ import dayjs from "dayjs"
 import { useState } from "react"
 import { useContractsByIds } from "../../hooks/fetch/useContractsByIds"
 import { Unit } from "../../utils/enums"
-import { formatPower } from "../../utils/formatters"
+import { formatPower, getRegionString } from "../../utils/formatters"
 import PageSection from "../PageSection"
 import Sankey from "../Sankey"
 import Link from "../Sankey/Link"
@@ -65,7 +65,7 @@ export const createSankeyData = (
     volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
     period: `${dayjs(certificate.generationStart).utc().format('YYYY.MM.DD')} - ${dayjs(certificate.generationEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [certificate.energySource],
-    location: `${certificate.country}${certificate.region ? ', '+certificate.region : ''}`,
+    location: `${certificate.country}${getRegionString(certificate.region)}`,
     generator: certificate.generatorName
   }))
 
