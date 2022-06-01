@@ -56,7 +56,7 @@ const SankeyLinkPopover: FC<SankeyLinkPopoverProps> = ({
   const theme = useTheme()
   const navigate = useNavigate()
   const viewItem = () => {
-    const urlType = type === SankeyItemType.Certificate ? 'purchases' : 'contracts'
+    const urlType = type === SankeyItemType.Proof ? 'purchases' : 'contracts'
     return navigate(`/partners/filecoin/${urlType}/${targetId}`)
   }
   const labelWidth = amountTitle === defaultAmountTitle ? '40%' : '60%'

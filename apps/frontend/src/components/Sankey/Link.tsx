@@ -13,6 +13,7 @@ type LinkProps = {
   beneficiary?: string;
   hidePopover?: boolean;
   hidePopoverBtn?: boolean;
+  centered?: boolean;
 };
 
 function horizontalSourceO(d: any): [number, number] {
@@ -33,6 +34,16 @@ function horizontalTarget(d: any): [number, number] {
   return [d.target.x0, d.y1];
 }
 
+function horizontalSourceCentered(d: any): [number, number] {
+  const y = (d.source.y1 - d.source.y0) / 2 + d.source.y0;
+  return [d.source.x0, y]
+}
+
+function horizontalTargetCentered(d: any): [number, number] {
+  const y = (d.target.y1 - d.target.y0) / 2 + d.target.y0;
+  return [d.target.x0, y];
+}
+
 function sankeyLinkHorizontal() {
   return linkHorizontal().source(horizontalSource).target(horizontalTarget);
 }
@@ -41,7 +52,21 @@ function sankeyLinkHorizontalO() {
   return linkHorizontal().source(horizontalSourceO).target(horizontalTargetO);
 }
 
-export default function Link({ link, color, maxWidth, minWidth, width, beneficiary, hidePopover = false, hidePopoverBtn = false }: LinkProps) {
+function sankeyLinkCenteredHorizontal() {
+  return linkHorizontal().source(horizontalSourceCentered).target(horizontalTargetCentered)
+}
+
+export default function Link({
+  link,
+  color,
+  maxWidth,
+  minWidth,
+  width,
+  beneficiary,
+  hidePopover = false,
+  hidePopoverBtn = false,
+  centered = false
+}: LinkProps) {
   const linkWidth = width
     ? width
     : minWidth && (link.width ?? 0) < minWidth
@@ -52,7 +77,9 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
 
   const path: any = maxWidth
     ? sankeyLinkHorizontalO()(link as any)
-    : sankeyLinkHorizontal()(link as any);
+    : centered
+      ? sankeyLinkCenteredHorizontal()(link as any)
+      : sankeyLinkHorizontal()(link as any);
 
   const [opacity, setOpacity] = useState(0.3);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -90,13 +117,10 @@ export default function Link({ link, color, maxWidth, minWidth, width, beneficia
          anchorEl={popoverAnchor.current}
          handleClose={handlePopoverClose}
          handleOpen={handlePopoverOpen}
-         type={source.type}
-         id={source.id}
+         type={source.type === SankeyItemType.Certificate ? SankeyItemType.Proof : source.type}
+         id={source.type === SankeyItemType.Certificate ? target.id : source.id}
          targetId={source.type === SankeyItemType.Certificate ? target.id : source.id}
-         amount={source.type === SankeyItemType.Redemption ? target.volume : source.volume}
-         amountTitle={source.type === SankeyItemType.Redemption ? 'Certificate volume' : undefined}
-         totalAmount={source.type === SankeyItemType.Redemption ? source.volume : undefined}
-         totalAmountTitle={source.type === SankeyItemType.Redemption ? 'Redemption volume' : undefined}
+         amount={source.type === SankeyItemType.Certificate ? target.volume : source.volume}
          beneficiary={beneficiary}
          period={source.period}
          generator={source.generator}

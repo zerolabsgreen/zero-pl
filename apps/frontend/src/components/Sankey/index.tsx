@@ -37,7 +37,7 @@ export default function Sankey<N, L>({
         .nodeWidth(nodeWidth)
         .nodePadding(nodePadding)
         .extent([
-          [0, 0],
+          [0, 30],
           [sankeyWidth, sankeyHeight - 30]
         ])(data)
     );

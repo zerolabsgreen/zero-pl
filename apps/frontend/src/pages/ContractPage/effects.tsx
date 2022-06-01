@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { styled } from "@mui/material/styles";
 import EthereumAddress from "../../components/EthereumAddress";
 import FuelType, { FuelTypeEnum } from "../../components/FuelType";
-import { formatPower, Unit } from "../../utils";
+import { formatPower, getRegionString, Unit } from "../../utils";
 
 export const contractTableHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
@@ -62,7 +62,7 @@ export const useProductPageEffects = () => {
     ),
     region: data?.countryRegionMap.map(item => (
       <div key={item.country+item.region}>
-        {item.country}{item.region ? ', '+item.region : ''}
+        {item.country}{getRegionString(item.region)}
       </div>
     )),
     contractDate: dayjs(data?.contractDate).isValid()

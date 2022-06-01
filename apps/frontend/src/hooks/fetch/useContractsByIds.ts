@@ -19,7 +19,7 @@ export const useContractsByIds = (contractsIds: string[]) => {
   const [contracts, setContracts] = useState<FindContractDto[]>([])
 
   useEffect(() => {
-    if (contractsIds.length > 0 && contracts.length === 0) {
+    if (contractsIds.length > 0 && contracts.length !== contractsIds.length) {
       getAllContracts(contractsIds, setContracts)
     }
   }, [contractsIds])
