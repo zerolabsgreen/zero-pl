@@ -1,6 +1,6 @@
 import { useTheme } from "@mui/material/styles";
 import type { SankeyNode, sankey, SankeyGraph } from "d3-sankey";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type NodeProps<N, L> = {
   link: SankeyNode<ExtendedNodeProperties, Record<string, any>>;
@@ -74,7 +74,7 @@ export default function Node<N, L>({
     : y0 ?? 0;
 
   const textX = (isLinkAnEmptyContractNode ? 0 : x0 ?? 0) + 15;
-  const textY = height ? nodeY + height / 5 + 6 : (y0 ?? 0) + nodeHeight / 2 + 6;
+  const textY = height ? nodeY + height / 5 + 6 : (y0 ?? 0) + nodeHeight / 2;
 
   return (
       <g style={{ pointerEvents: "all" }}>

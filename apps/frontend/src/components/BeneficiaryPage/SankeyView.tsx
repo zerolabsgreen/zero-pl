@@ -7,10 +7,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { BigNumber } from "@ethersproject/bignumber";
 import { maxBy } from 'lodash'
-import { BatchDto, CertificateWithPurchasesDto, FindContractDto, PurchaseDto, PurchaseWithCertificateDto } from "@energyweb/zero-protocol-labs-api-client";
+import { BatchDto, CertificateWithPurchasesDto, FindContractDto, PurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import Sankey from "../Sankey";
 import Link from "../Sankey/Link";
-import Node, { ExtendedNodeProperties, isEmptyContractNode, /* isContractNode, isEmptyContractNode, */ SankeyItemType } from "../Sankey/Node";
+import Node, { ExtendedNodeProperties, isEmptyContractNode, SankeyItemType } from "../Sankey/Node";
 import { formatPower, getRegionString, Unit } from "../../utils";
 import { useBatchesByIds } from "../../hooks/fetch/useBatchesByIds";
 import { useCertificatesByIds } from "../../hooks/fetch/useCertificatesByIds";
@@ -21,6 +21,7 @@ type BeneficiarySankeyColors = {
   Certificate: string;
   Proof: string;
   Redemption: string;
+  NonTargetColor?: string;
 }
 
 const sankeyColors: BeneficiarySankeyColors = {
@@ -31,15 +32,16 @@ const sankeyColors: BeneficiarySankeyColors = {
   Redemption: '#4480DB',
 }
 
-const sankeyWidth = 1000
-// const sankeyHeight = 700
-// const sankeyNodeSpacer = 40
+const sankeyNonTargetColors: BeneficiarySankeyColors = {
+  NotDeliveredContract: '#D0CBF0',
+  NonTargetColor: '#CFCFCF',
+  Contract: '#4e5766',
+  Certificate: '#9fbfa8',
+  Proof: '#9cb8a7',
+  Redemption: '#829cc4',
+}
 
-// const getNodeHeight = (blocksInColumn: number, blockEnergyAmount: number, columnEnergyAmount: number, spacer?: number) => {
-//   const nodeSpacer = spacer ?? sankeyNodeSpacer
-//   const result = (sankeyHeight - (nodeSpacer*blocksInColumn)) * (blockEnergyAmount / columnEnergyAmount)
-//   return result < 40 ? 40 : result
-// }
+const sankeyWidth = 1000
 
 type SankeyData = {
   nodes: SankeyNode<ExtendedNodeProperties, Record<string, any>>[];
@@ -68,7 +70,12 @@ type ColumnData = {
   heightMultiplier: number
 }
 
-const createSankeyData = (contracts: FindContractDto[], batches: BatchDto[], certificates: CertificateWithPurchasesDto[]): { sankeyData: SankeyData; columnData: ColumnData }  => {
+const createSankeyData = (
+  contracts: FindContractDto[],
+  batches: BatchDto[],
+  certificates: CertificateWithPurchasesDto[]
+): { sankeyData: SankeyData; columnData: ColumnData }  => {
+
   const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
     id: contract.id,
     targetIds: contract.purchases.map(p => p.certificate.batchId ?? ''),
@@ -83,7 +90,6 @@ const createSankeyData = (contracts: FindContractDto[], batches: BatchDto[], cer
     energySources: contract.energySources,
     location: contract.countryRegionMap.map(pair => `${pair.country}${getRegionString(pair.region)}`).join('; '),
   }))
-
 
   const redemptionNodes: ExtendedNodeProperties[] = batches.map(batch => ({
     id: batch.id,
@@ -186,7 +192,7 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
   const filteredBatchesIds = batchesIds.filter(id => Boolean(id))
   const { batches } = useBatchesByIds(filteredBatchesIds)
 
-  const userPurchases: PurchaseWithCertificateDto[] = contracts.flatMap(contract => contract.purchases)
+  const userPurchases = contracts.flatMap(contract => contract.purchases)
   const certificatesIds = userPurchases.map(p => p.certificate.id)
   const { certificates } = useCertificatesByIds(certificatesIds)
 
@@ -205,7 +211,7 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
     )
   }
 
-  const multipliedHeight = columnData.heightMultiplier*85
+  const multipliedHeight = columnData.heightMultiplier*80
   const sankeyHeight = multipliedHeight > 750 ? multipliedHeight : 750;
 
   return (
@@ -228,44 +234,38 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
                 <g>
                   {graph &&
                     graph.links.map((link, i) => {
-                      // const linkWidth = getNodeHeight(
-                      //   columnData[(link.target as any).type as SankeyItemType].amountOfBlocksInColumn,
-                      //   (link.target as any).value,
-                      //   columnData[(link.target as any).type as SankeyItemType].columnTotalEnergy
-                      // )
-                      const linkColor = sankeyColors[(link.source as any).type as keyof(BeneficiarySankeyColors)]
+                      const linkSource = link.source as any
+                      const linkTarget = link.target as any
+                      const nonTargetId =
+                        linkSource.type === SankeyItemType.Contract && !contracts.some(c => c.id === linkSource.id)
+                        || linkSource.type === SankeyItemType.Certificate && !userPurchases.some(p => p.id === linkTarget.id)
+                      const linkColor = nonTargetId
+                        ? sankeyNonTargetColors[linkSource.type as keyof(BeneficiarySankeyColors)]
+                        : sankeyColors[linkSource.type as keyof(BeneficiarySankeyColors)]
                       return (
                         <Link
                           key={`sankey-link-${i}`}
                           beneficiary={beneficiary}
                           link={link}
-                          color={linkColor}
+                          color={linkColor as string}
                         />
                       )
                     })
                   }
                   {graph &&
                     graph.nodes.map(node => {
-                      // const nodeHeight = !isEmptyContractNode(node)
-                      //   ? isContractNode(node)
-                      //     ? node.sourceLinks?.reduce(
-                      //         (prev, current) => prev + getNodeHeight(
-                      //             columnData[SankeyItemType.Certificate].amountOfBlocksInColumn,
-                      //             current.value,
-                      //             columnData[SankeyItemType.Certificate].columnTotalEnergy,
-                      //           ),
-                      //       0)
-                      //     : getNodeHeight(
-                      //       columnData[node.type].amountOfBlocksInColumn,
-                      //       parseInt(node.volume),
-                      //       columnData[node.type].columnTotalEnergy
-                      //     )
-                      //   : 30
+                      const nonTargetNode = node.type === SankeyItemType.Contract && !contracts.some(c => c.id === node.id)
+                        || node.type === SankeyItemType.Proof && !userPurchases.some(p => p.id === node.id)
+                      const nodeColor = nonTargetNode
+                        ? sankeyNonTargetColors[node.type]
+                        : isEmptyContractNode(node)
+                          ? sankeyColors.NotDeliveredContract
+                          : sankeyColors[node.type]
                       return (
                         <Node
                           key={`sankey-node-${node.id}`}
                           link={node}
-                          color={sankeyColors[node.type]}
+                          color={nodeColor}
                           name={node.type}
                           graph={graph}
                           volume={node.volume}
@@ -317,5 +317,5 @@ const TotalText = styled(Typography)`
 const Loader = () => (
   <Box width="100%" mt="30px" textAlign="center">
     <CircularProgress />
-</Box>
+  </Box>
 )
