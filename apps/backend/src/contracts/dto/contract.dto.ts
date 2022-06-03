@@ -117,7 +117,7 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
 
   static toDto(dbEntity: ContractEntityWithRelations): ContractDto {
     const deliveredVolumeMwh = dbEntity.purchases
-      .map(p => p.certificate.energyWh)
+      .map(p => p.recsSoldWh)
       .reduce((partialSum, purchaseVolume) => BigInt(partialSum) + BigInt(purchaseVolume), BigInt(0));
     const openVolume = BigInt(dbEntity.volume) - deliveredVolumeMwh;
 
