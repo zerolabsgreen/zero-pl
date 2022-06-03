@@ -2,6 +2,5 @@ import { usePurchasesControllerGetBlockchainEvents } from '@energyweb/zero-proto
 
 export const useTableListProofsEffects = (purchaseId: string) => {
   const { data: blockchainEvents, isLoading } = usePurchasesControllerGetBlockchainEvents(purchaseId);
-
   return { blockchainEvents, isLoading };
 }
