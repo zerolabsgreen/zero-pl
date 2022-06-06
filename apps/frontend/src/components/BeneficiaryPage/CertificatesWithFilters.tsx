@@ -7,17 +7,13 @@ import { styled, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography"
 import { FormSelect, GenericTable, SelectOption, TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import dayjs from "dayjs";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { FindContractDto, FullPurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import PageSection from "../PageSection"
-import { ReactComponent as SankeySVG } from '../../assets/svg/sankey.svg';
-import { ReactComponent as ListSVG } from '../../assets/svg/list.svg';
 import EthereumAddress from "../EthereumAddress";
 import { Unit, formatPower, ProductEnumType, getContractTotalVolume, getRegionString } from "../../utils";
 import FuelType, { FuelTypeEnum } from "../FuelType";
 import ButtonRight from "./ButtonRight";
-import SecondaryButton from "../SecondaryButton";
-import SankeyView from "./SankeyView";
 
 interface CertificatesWithFiltersProps {
   userId: string;
@@ -25,11 +21,6 @@ interface CertificatesWithFiltersProps {
   handleCertificateTypeChange: (event: SelectChangeEvent) => void;
   contracts?: FindContractDto[];
   transactionsData?: FullPurchaseDto[];
-}
-
-const enum ViewModeEnum {
-  List = 'List',
-  Sankey = 'Sankey'
 }
 
 const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
@@ -40,14 +31,11 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
   transactionsData = []
 }) => {
   const navigate = useNavigate()
-  const [viewMode, setViewMode] = useState(ViewModeEnum.List);
-  const handleListView = () => setViewMode(ViewModeEnum.List)
-  const handleSankeyView = () => setViewMode(ViewModeEnum.Sankey)
   const [productType, setProductType] = useState<ProductEnumType | 'Any'>('Any')
 
-  const handleProductTypeChange = useCallback((event: SelectChangeEvent) => {
+  const handleProductTypeChange = (event: SelectChangeEvent) => {
     setProductType(event.target.value as ProductEnumType)
-  }, [])
+  }
 
   const title = certificateType === CertificateBlocksEnum.Redeemed ? 'REC Redemptions' : 'Contracts (Futures)'
   const headers = certificateType === CertificateBlocksEnum.Redeemed ? redeemedRecsHeaders : contractsHeaders;
@@ -175,29 +163,9 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
         >
           {title}
         </Typography>
-        <Box display={'flex'}>
-          <SecondaryButton
-            active={viewMode === ViewModeEnum.List}
-            onClick={handleListView}
-            startIcon={<ListSVG />}
-            sx={{ marginRight: '10px' }}
-          >
-            List view
-          </SecondaryButton>
-          <SecondaryButton
-            active={viewMode === ViewModeEnum.Sankey}
-            onClick={handleSankeyView}
-            startIcon={<SankeySVG />}
-          >
-            Sankey view
-          </SecondaryButton>
-        </Box>
       </Box>
       <Box mt="20px">
-        {viewMode === ViewModeEnum.List
-          ? <GenericTable headers={headers} data={filteredTableData} />
-          : <SankeyView contracts={contracts} beneficiary={userId} />
-        }
+        <GenericTable headers={headers} data={filteredTableData} />
       </Box>
     </PageSection>
   )

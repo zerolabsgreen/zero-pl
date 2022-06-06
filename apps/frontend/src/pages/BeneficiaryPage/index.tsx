@@ -5,6 +5,8 @@ import utc from 'dayjs/plugin/utc';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import {
   FilecoinNodesControllerGetTransactions200TransactionsItem,
   FullPurchaseDto,
@@ -23,6 +25,8 @@ import YearlyCertificatesTable, { CertificatePerYear } from '../../components/Be
 import { ReactComponent as RedeemedCertificateSVG } from '../../assets/svg/certificate_locked.svg';
 import { ReactComponent as ContractsSVG } from '../../assets/svg/certificate_timer.svg';
 import { formatPower, getContractTotalVolume, Unit } from '../../utils';
+import SankeyView from '../../components/BeneficiaryPage/SankeyView';
+import SecondaryButton from '../../components/SecondaryButton';
 
 dayjs.extend(utc);
 
@@ -36,6 +40,10 @@ const yearsToUse: CertificatePerYear[] = [
 
 const BeneficiaryPage: FC = () => {
   const { minerId } = useParams();
+
+  const [seeFullSankey, setSeeFullSankey] = useState(false)
+  const toggleSankeyMode = () => setSeeFullSankey(!seeFullSankey)
+
   const [certificateType, setCertificateType] = useState(CertificateBlocksEnum.Redeemed)
 
   const filecoinNodeId = minerId as string;
@@ -158,6 +166,27 @@ const BeneficiaryPage: FC = () => {
           contracts={filecoinNodeContracts.contracts}
           transactionsData={transactionsData}
         />
+        <PageSection>
+          <Typography
+            mt={'15px'}
+            mb={'18px'}
+            fontWeight={700}
+            fontSize={'20px'}
+            color='primary'
+          >
+            Sankey view
+          </Typography>
+          <Box display='flex' justifyContent="flex-end" width="100%">
+            <SecondaryButton onClick={toggleSankeyMode}>
+              {seeFullSankey ? 'see more' : 'see less'}
+            </SecondaryButton>
+          </Box>
+          <SankeyView
+            contracts={filecoinNodeContracts.contracts}
+            fullView={seeFullSankey}
+            beneficiary={filecoinNodeId}
+          />
+        </PageSection>
       </Grid>
     </Grid>
     </Container>
