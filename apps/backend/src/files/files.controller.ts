@@ -57,13 +57,13 @@ export class FilesController {
   @UseInterceptors(NoDataInterceptor, FileInterceptor('file', {
     storage: multer.memoryStorage(),
     limits: {
-      fileSize: parseInt(process.env.UPLOADED_FILE_SIZE_LIMIT)
+      fileSize: parseInt(process.env.UPLOADED_FILE_SIZE_LIMIT || 5e6.toString())
     }
   }))
   create(
     @UploadedFile() file: Express.Multer.File
   ): Promise<FileMetadataDto> {
-    this.logger.debug(`file uploaded ${JSON.stringify({ ...file, buffer: undefined })}`);
+    this.logger.debug(`Uploading file: ${JSON.stringify({ ...file, buffer: undefined })}`);
     if (!file) {
       throw new BadRequestException(`Please provide a file`);
     }

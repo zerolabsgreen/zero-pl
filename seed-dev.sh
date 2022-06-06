@@ -1,6 +1,7 @@
 X_API_KEY=$(grep SUPERADMIN_API_KEY .env | cut -d "=" -f2 | tr -d '"');
 PORT=$(grep -e "^PORT=" .env | cut -d "=" -f2 | tr -d '"');
 TOKENIZATION_PORT=$(grep -e "^TOKENIZATION_PORT=" .env | cut -d "=" -f2 | tr -d '"');
+TX_WAIT_TIME=5
 
 echo
 echo "creating sellerId=00000000-0000-0000-0000-000000000001"
@@ -98,9 +99,23 @@ curl -w "\n" -s -X 'POST' \
 }]'
 
 echo
-echo "creating a batch"
-BATCH_ID=$(curl -w "\n" -s -X 'POST' "http://localhost:$PORT/api/partners/filecoin/batch" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' |  jq -r '.id')
-echo "created batch $BATCH_ID"
+echo "creating an empty batch on-chain"
+BATCH_TX_HASH=$(curl -w "\n" -s -X 'POST' "http://localhost:$TOKENIZATION_PORT/api/batch" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' |  jq -r '.txHash')
+echo "triggered batch creation: $BATCH_TX_HASH"
+
+echo
+echo "waiting $TX_WAIT_TIME seconds for $BATCH_TX_HASH to be mined..."
+sleep $TX_WAIT_TIME
+
+echo
+echo "getting the batch ID"
+BATCH_ID=$(curl -w "\n" -s -X 'GET' "http://localhost:$TOKENIZATION_PORT/api/batch/id/$BATCH_TX_HASH" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' | jq -r first )
+echo "batch ID: $BATCH_ID"
+
+echo
+echo "creating a batch off-chain"
+curl -w "\n" -s -X 'POST' "http://localhost:$PORT/api/partners/filecoin/batch/$BATCH_ID" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json'
+echo "created off-chain batch: $BATCH_ID"
 
 echo
 echo "storing the redemption statement file"
@@ -121,14 +136,31 @@ curl -w "\n" -s -X 'POST' \
 END
 
 echo
+echo "waiting $TX_WAIT_TIME seconds for redemption statement to be mined..."
+sleep $TX_WAIT_TIME
+
+echo
 echo "minting certificates on-chain"
-curl -w "\n" -s -X 'POST' \
+MINT_TX_HASH=$(curl -w "\n" -s -X 'POST' \
   "http://localhost:$PORT/api/partners/filecoin/batch/$BATCH_ID/mint" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "certificateIds": ["00000000-0000-0000-0000-000000000333"]
-    }'
+    }')
+echo "Triggered the minting transaction $MINT_TX_HASH"
+
+echo
+echo "waiting $TX_WAIT_TIME seconds for the minting transaction to be mined $MINT_TX_HASH..."
+sleep $TX_WAIT_TIME
+
+echo
+echo "detecting and attaching minted certificates"
+curl -w "\n" -s -X 'PATCH' \
+  "http://localhost:$PORT/api/partners/filecoin/batch/attach/$MINT_TX_HASH" \
+  -H "X-API-KEY: $X_API_KEY" \
+  -H 'Content-Type: application/json'
+echo "Successfully attached certificates for $MINT_TX_HASH"
 
 echo
 echo "creating a contract"

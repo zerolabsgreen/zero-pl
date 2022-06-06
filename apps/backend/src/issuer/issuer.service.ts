@@ -1,15 +1,16 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
+import { utils } from 'ethers';
 import { pick } from 'lodash';
 import polly from 'polly-js';
-
-type TxHash = string;
-type UnixTimestamp = number;
+import { TxHash, UnixTimestamp } from '../utils/types';
 
 const TIMEOUT = 90; // Seconds
 const RETRY_EVERY = 2; // Seconds
 const RETRY_INTERVALS = Array.from({ length: TIMEOUT / RETRY_EVERY }, (v, i) => i * RETRY_EVERY + 1).map(seconds => seconds * 1e3); // Returns [1, 3, 5...]
+
+export type CertificateIds = { onchainId: string, certificateId: string };
 
 interface ISetRedemptionStatementDTO {
   value: string;
@@ -81,8 +82,8 @@ export class IssuerService {
     private readonly configService: ConfigService
   ) {
     this.axiosInstance = axios.create({
-      baseURL: `${configService.get('TOKENIZATION_BASE_URL')}/api`,
-      headers: { 'X-Api-Key': configService.get('SUPERADMIN_API_KEY') }
+      baseURL: `${this.configService.get('TOKENIZATION_BASE_URL')}/api`,
+      headers: { 'X-Api-Key': this.configService.get('SUPERADMIN_API_KEY') }
     });
   }
 
@@ -97,154 +98,45 @@ export class IssuerService {
     }
   }
 
-  async createBatch(): Promise<number> {
-    const response = (
-      await this.axiosInstance.post('/batch').catch((err) => {
-        this.logger.error(`POST /batch error response: ${err}`);
-        this.logger.error(`error response body: ${err.message}`);
-        throw err;
-      })
-    );
-
-    await this.waitForTxMined(response.data.txHash);
-
-    const batchId = await polly()
-      .waitAndRetry(RETRY_INTERVALS)
-      .executeForPromise(async () => {
-        const certData = await this.getBatchByTransactionHash(response.data.txHash);
-        if (!certData) {
-          this.logger.debug(`transaction ${response.data.txHash} not mined yet`);
-          throw new Error('not mined yet');
-        }
-
-        return certData;
-      });
-
-    return batchId;
-  }
-
   async setRedemptionStatement(
     batchId: number,
     dto: ISetRedemptionStatementDTO
   ): Promise<TxHash> {
-    let txHash: string;
-
     this.logger.debug(`[Batch ${batchId}] Setting redemption statement to: ${JSON.stringify(dto)}`);
 
-    try {
-      const responseData = (
-        await this.axiosInstance.post(
-          `/batch/redemption-statement/${batchId}`,
-          dto
-        ).catch((err) => {
-          this.logger.error(`POST /batch/redemption-statement/${batchId} error response: ${err}`);
-          this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
-          throw err;
-        })
-      ).data;
+    const response = (
+      await this.axiosInstance.post(
+        `/batch/redemption-statement/${batchId}`,
+        dto
+      ).catch((err) => {
+        this.logger.error(`POST /batch/redemption-statement/${batchId} error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      })
+    );
 
-      txHash = responseData.txHash;
-    } catch (err) {
-      this.logger.error(`error setting a redemption statement: ${err}`);
-      this.logger.error(`payload: ${err.message}`);
-      throw err;
-    }
-
-    this.logger.debug(`[${txHash}] Waiting to be mined...`);
-
-    await this.waitForTxMined(txHash);
-
-    this.logger.debug(`[${txHash}] Mined.`);
-
-    await polly()
-      .waitAndRetry(RETRY_INTERVALS)
-      .executeForPromise(async () => {
-        const response = await this.axiosInstance.get(
-          `/batch/${batchId}`
-        );
-
-        if (!response.data.redemptionStatement) {
-          throw new NotFoundException(`Redemption statement not detected yet for batch ${batchId}`);
-        }
-      });
-
-    return txHash;
+    return response.data.txHash;
   }
 
   async mint(
     batchId: number,
     dto: MintDTO[]
-  ): Promise<{
-    txHash: string,
-    certificateIds: number[]
-  }> {
-    let txHash: string;
+  ): Promise<TxHash> {
+    const response = (
+      await this.axiosInstance.post(
+        `/batch/mint/${batchId}`,
+        dto
+      ).catch((err) => {
+        this.logger.error(`POST /batch/mint/${batchId} error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      })
+    );
 
-    try {
-      const responseData = (
-        await this.axiosInstance.post(
-          `/batch/mint/${batchId}`,
-          dto
-        ).catch((err) => {
-          this.logger.error(`POST /batch/mint/${batchId} error response: ${err}`);
-          this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
-          throw err;
-        })
-      ).data;
-
-      txHash = responseData.txHash;
-    } catch (err) {
-      this.logger.error(`error minting: ${err}`);
-      this.logger.error(`payload: ${err.message}`);
-      throw err;
-    }
-
-    await this.waitForTxMined(txHash);
-
-    const ids = await polly()
-      .waitAndRetry(RETRY_INTERVALS)
-      .executeForPromise(async () => {
-        const response = await this.axiosInstance.get(`/certificate/id/${txHash}`);
-
-        if (response.data.length < 1) {
-          throw new NotFoundException(`No certificates minted in ${txHash}`);
-        }
-
-        return response.data.map(id => Number(id));
-      });
-
-    return {
-      txHash,
-      certificateIds: ids
-    };
+    return response.data.txHash;
   }
 
-  async getBatchByTransactionHash(txHash: string): Promise<number> {
-    try {
-      this.logger.debug(`getting chain data for the batch (txHash=${txHash})`);
-      const response = (await this.axiosInstance.get(
-        `/batch/id/${txHash}`
-      ));
-      return Number(response.data.pop());
-    } catch (err) {
-      if (err.isAxiosError) {
-        const axiosError = err as AxiosError;
-
-        if (axiosError.response) {
-          if (axiosError.response.status === 404) {
-            this.logger.debug(`no batch data for txHash=${txHash}`);
-            return null;
-          }
-        }
-      }
-
-      this.logger.error(`error getting batch by transaction hash: ${err}`);
-
-      throw err;
-    }
-  }
-
-  async transferCertificate(transferCertificateDTO: TransferCertificateDTO): Promise<string> {
+  async transferCertificate(transferCertificateDTO: TransferCertificateDTO): Promise<TxHash> {
     const { id, ...requestPayload } = transferCertificateDTO;
 
     this.logger.debug(`requesting POST /certificate/${id}/transfer with ${JSON.stringify(requestPayload)}`);
@@ -258,12 +150,10 @@ export class IssuerService {
       throw err;
     });
 
-    await this.waitForTxMined(res.data.txHash);
-
     return res.data.txHash;
   }
 
-  async claimCertificate(claimCertificateDTO: ClaimCertificateDTO): Promise<string> {
+  async claimCertificate(claimCertificateDTO: ClaimCertificateDTO): Promise<TxHash> {
     const { id,  ...requestPayload } = claimCertificateDTO;
 
     this.logger.debug(`requesting POST /certificate/claim/${id} with ${JSON.stringify(requestPayload)}`);
@@ -276,8 +166,6 @@ export class IssuerService {
       this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
       throw err;
     });
-
-    await this.waitForTxMined(res.data.txHash);
 
     return res.data.txHash;
   }
@@ -315,5 +203,38 @@ export class IssuerService {
       });
 
       return (await this.axiosInstance.get(`/blockchain/${txHash}`)).data;
+  }
+
+  public async getCertificatesMintedIn(txHash: string): Promise<CertificateIds[]> {
+    const res = await this.axiosInstance.get(
+      `/certificate/id/${txHash}`
+    ).catch((err) => {
+      this.logger.error(`GET /certificate/id/${txHash} error response: ${err}`);
+      this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+      throw err;
+    });
+
+    const onchainIds = res.data;
+
+    const certificates: CertificateIds[] = [];
+
+    for (const onchainId of onchainIds) {
+      const res = await this.axiosInstance.get(
+        `/certificate/${onchainId}`
+      ).catch((err) => {
+        this.logger.error(`GET /certificate/${onchainId} error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      });
+
+      const [certificateId] = utils.defaultAbiCoder.decode(['string'], res.data.data);
+
+      certificates.push({
+        onchainId,
+        certificateId
+      });
+    }
+
+    return certificates;
   }
 }
