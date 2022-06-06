@@ -11,7 +11,7 @@ export const contractTableHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
   beneficiary: { label: 'Beneficiary' },
   product: { label: 'Product' },
-  amount: { label: 'Open (Full amount | Delivered)' },
+  amount: { label: 'Open (Full Amount | Delivered)' },
   period: { label: 'Period' },
   energySource: { label: 'Energy Source' },
   region: { label: 'Country, Region' },

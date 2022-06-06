@@ -87,11 +87,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     beneficiary: contract?.filecoinNode?.id ?? '',
     amount: contract?.openVolume || contract?.deliveredVolume
       ? <>
-          {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })}
-          <br />
-          <SmallText>
-            ({formatPower(contract.openVolume, { unit: Unit.MWh, includeUnit: true })} | {formatPower(contract.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
-          </SmallText>
+          {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })} | {formatPower(contract.deliveredVolume, { unit: Unit.MWh, includeUnit: true })}
         </>
       : '',
     period: (
@@ -114,7 +110,7 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     ),
     location: contract?.countryRegionMap.map(item => (
       <div key={item.country+item.region}>
-        {item.country}, {item.region}
+        {item.country}{getRegionString(item.region)}
       </div>
     )),
     contractDate: dayjs(contract?.contractDate).isValid()
@@ -240,7 +236,7 @@ const contractsHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
   beneficiary: { label: 'Beneficiary' },
   product: { label: 'Product' },
-  amount: { label: 'Amount (Open | Delivered)' },
+  amount: { label: 'Open (Full Amount | Delivered)' },
   period: { label: 'Period' },
   energySource: { label: 'Energy Source' },
   location: { label: 'Location' },
@@ -264,10 +260,5 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => `
     color: ${theme.palette.primary.main};
   };
 `);
-
-const SmallText = styled('span')`
-  font-size: 14px;
-  font-weight: 500;
-`;
 
 export default CertificatesWithFilters
