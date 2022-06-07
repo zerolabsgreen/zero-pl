@@ -6,6 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import EthereumAddress from "../../components/EthereumAddress";
 import FuelType, { FuelTypeEnum } from "../../components/FuelType";
 import { formatPower, getRegionString, Unit } from "../../utils";
+import { styled } from "@mui/material/styles";
 
 export const contractTableHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
@@ -22,7 +23,6 @@ export const contractTableHeaders: TableHeader = {
 
 export const useProductPageEffects = () => {
   const { id: contractId } = useParams();
-
   const { data, isLoading, isFetched } = useContractsControllerFindOne(contractId ?? '');
 
   const totalAmount = (BigNumber.from(data?.openVolume ?? 0).add(BigNumber.from(data?.deliveredVolume ?? 0))).toString();
@@ -34,7 +34,11 @@ export const useProductPageEffects = () => {
     beneficiary: data?.filecoinNode?.id ?? '',
     amount: data?.openVolume || data?.deliveredVolume
       ? <>
-          {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: Unit.MWh, includeUnit: true })}
+          {formatPower(data.openVolume, { unit: Unit.MWh, includeUnit: true })}
+          <br />
+          <SmallText>
+            ({formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
+          </SmallText>
         </>
       : '',
     period: (
@@ -71,3 +75,8 @@ export const useProductPageEffects = () => {
 
   return { contractTableData, data, isLoading, isFetched, contractId, totalAmount };
 }
+
+const SmallText = styled('span')`
+  font-size: 14px;
+  font-weight: 500;
+`;

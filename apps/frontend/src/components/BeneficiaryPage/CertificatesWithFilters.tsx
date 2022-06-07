@@ -87,7 +87,11 @@ const CertificatesWithFilters: FC<CertificatesWithFiltersProps> = ({
     beneficiary: contract?.filecoinNode?.id ?? '',
     amount: contract?.openVolume || contract?.deliveredVolume
       ? <>
-          {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })} | {formatPower(contract.deliveredVolume, { unit: Unit.MWh, includeUnit: true })}
+           {formatPower(contract.openVolume, { unit: Unit.MWh, includeUnit: true })}
+          <br />
+          <SmallText>
+            ({formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })} | {formatPower(contract.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
+          </SmallText>
         </>
       : '',
     period: (
@@ -260,5 +264,10 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => `
     color: ${theme.palette.primary.main};
   };
 `);
+
+const SmallText = styled('span')`
+  font-size: 14px;
+  font-weight: 500;
+`;
 
 export default CertificatesWithFilters
