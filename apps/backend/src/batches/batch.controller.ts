@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -21,6 +22,9 @@ import { ApiKeyPermissions } from '@prisma/client';
 import { SetRedemptionStatementDto } from './dto/set-redemption-statement.dto';
 import { MintDto } from './dto/mint.dto';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { CreateBatchDto } from './dto/create-batch.dto';
+import { TxHash } from '../utils/types';
+import { CertificateIdsDTO } from './dto/certificate-ids.dto';
 
 @Controller('/partners/filecoin/batch')
 @ApiTags('Filecoin Batches')
@@ -31,14 +35,14 @@ import { PaginatedDto } from '../utils/paginated.dto';
 export class BatchController {
   constructor(private readonly batchService: BatchService) {}
 
-  @Post()
+  @Post(':id')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiCreatedResponse({
-      type: [BatchDto],
-      description: 'Creates a batch and returns an ID'
+      type: [CreateBatchDto],
+      description: 'Creates the off-chain batch entry'
   })
-  create() {
-    return this.batchService.create();
+  create(@Param('id') id: string) {
+    return this.batchService.create(Number(id));
   }
 
   @Get()
@@ -74,20 +78,30 @@ export class BatchController {
     return this.batchService.setRedemptionStatement(id, redemptionStatementId, totalVolume);
   }
 
-
-
   @Post(':id/mint')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.CREATE]))
   @ApiBody({ type: MintDto })
   @ApiCreatedResponse({
-      type: [Number],
-      description: 'Certificate on-chain IDs'
+      type: String,
+      description: 'Minting transaction hash'
   })
   mint(
     @Param('id') id: string,
     @Body() { certificateIds }: MintDto
-  ): Promise<number[]>
+  ): Promise<TxHash>
   {
     return this.batchService.mint(id, certificateIds ?? []);
+  }
+
+  @Patch('attach/:txHash')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiCreatedResponse({
+    type: [CertificateIdsDTO],
+    description: 'Attached certificates'
+  })
+  async attachCertificates(
+    @Param('txHash') txHash: TxHash,
+  ): Promise<CertificateIdsDTO[]> {
+    return this.batchService.attachCerts(txHash);
   }
 }
