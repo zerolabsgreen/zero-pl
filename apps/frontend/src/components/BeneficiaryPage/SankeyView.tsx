@@ -73,10 +73,12 @@ type ColumnData = {
 const createSankeyData = (
   contracts: FindContractDto[],
   batches: BatchDto[],
-  certificates: CertificateWithPurchasesDto[]
+  certificates: CertificateWithPurchasesDto[],
+  fullView: boolean,
+  beneficiary: string
 ): { sankeyData: SankeyData; columnData: ColumnData }  => {
-
-  const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
+  const onlyDeliveredContracts = contracts.filter(c => Number(c.deliveredVolume) !== 0)
+  const contractsNodes: ExtendedNodeProperties[] = onlyDeliveredContracts.map(contract => ({
     id: contract.id,
     targetIds: contract.purchases.map(p => p.certificate.batchId ?? ''),
     type: SankeyItemType.Contract,
@@ -98,9 +100,14 @@ const createSankeyData = (
     volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh }),
   }))
 
+  const allPurchases: PurchaseDto[] = certificates.flatMap(c => c.purchases)
+  const purchasesToUse = fullView
+    ? allPurchases
+    : allPurchases.filter(p => p.filecoinNodeId === beneficiary)
+
   const certificatesNodes: ExtendedNodeProperties[] = certificates.map(certificate => ({
     id: certificate.id,
-    targetIds: certificate.purchases.map(p => p.id),
+    targetIds: purchasesToUse.map(p => p.id),
     type: SankeyItemType.Certificate,
     volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
     period: `${dayjs(certificate.generationStart).utc().format('YYYY.MM.DD')} - ${dayjs(certificate.generationEnd).utc().format('YYYY.MM.DD')}`,
@@ -109,9 +116,7 @@ const createSankeyData = (
     generator: certificate.generatorName
   }))
 
-  const allPurchases: PurchaseDto[] = certificates.flatMap(c => c.purchases)
-
-  const proofsNodes: ExtendedNodeProperties[] = allPurchases.map(purchase => {
+  const proofsNodes: ExtendedNodeProperties[] = purchasesToUse.map(purchase => {
     const certificate = certificates.find(c => c.id === purchase.certificateId)
     return {
       id: purchase.id,
@@ -184,21 +189,21 @@ const createSankeyData = (
 
 interface SankeyViewProps {
   contracts: FindContractDto[];
-  beneficiary?: string;
+  fullView: boolean;
+  beneficiary: string;
 }
 
-const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
+const SankeyView: FC<SankeyViewProps> = ({ contracts, fullView, beneficiary }) => {
   const batchesIds = contracts.flatMap(c => c.purchases.map(p => p.certificate.batchId ?? '')) ?? []
   const filteredBatchesIds = batchesIds.filter(id => Boolean(id))
   const { batches } = useBatchesByIds(filteredBatchesIds)
-
   const userPurchases = contracts.flatMap(contract => contract.purchases)
   const certificatesIds = userPurchases.map(p => p.certificate.id)
   const { certificates } = useCertificatesByIds(certificatesIds)
 
   if (!batches.length || !certificates.length) return <Loader />
 
-  const { sankeyData, columnData } = createSankeyData(contracts, batches, certificates)
+  const { sankeyData, columnData } = createSankeyData(contracts, batches, certificates, fullView, beneficiary)
   const hasNodesAndLinks = sankeyData.nodes.length > 0 && sankeyData.links.length > 0
 
   if (!hasNodesAndLinks) {
@@ -242,12 +247,15 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, beneficiary }) => {
                       const linkColor = nonTargetId
                         ? sankeyNonTargetColors[linkSource.type as keyof(BeneficiarySankeyColors)]
                         : sankeyColors[linkSource.type as keyof(BeneficiarySankeyColors)]
+                      const centerLink = linkSource.type === SankeyItemType.Contract
+                        || (linkSource.type === SankeyItemType.Certificate && !fullView)
                       return (
                         <Link
                           key={`sankey-link-${i}`}
                           beneficiary={beneficiary}
                           link={link}
-                          color={linkColor as string}
+                          color={linkColor ?? '#000'}
+                          centered={centerLink}
                         />
                       )
                     })
