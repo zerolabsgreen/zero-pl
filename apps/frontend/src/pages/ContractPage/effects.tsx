@@ -3,16 +3,16 @@ import dayjs from "dayjs";
 import { FindContractDto, useContractsControllerFindOne } from '@energyweb/zero-protocol-labs-api-client'
 import { TableHeader, TableRowData } from "@zero-labs/zero-ui-components";
 import { BigNumber } from '@ethersproject/bignumber';
-import { styled } from "@mui/material/styles";
 import EthereumAddress from "../../components/EthereumAddress";
 import FuelType, { FuelTypeEnum } from "../../components/FuelType";
 import { formatPower, getRegionString, Unit } from "../../utils";
+import { styled } from "@mui/material/styles";
 
 export const contractTableHeaders: TableHeader = {
   orderId: { label: 'Order ID' },
   beneficiary: { label: 'Beneficiary' },
   product: { label: 'Product' },
-  amount: { label: 'Amount (Open | Delivered)' },
+  amount: { label: 'Open (Full Amount | Delivered)' },
   period: { label: 'Period' },
   energySource: { label: 'Energy Source' },
   region: { label: 'Country, Region' },
@@ -23,7 +23,6 @@ export const contractTableHeaders: TableHeader = {
 
 export const useProductPageEffects = () => {
   const { id: contractId } = useParams();
-
   const { data, isLoading, isFetched } = useContractsControllerFindOne(contractId ?? '');
 
   const totalAmount = (BigNumber.from(data?.openVolume ?? 0).add(BigNumber.from(data?.deliveredVolume ?? 0))).toString();
@@ -35,10 +34,10 @@ export const useProductPageEffects = () => {
     beneficiary: data?.filecoinNode?.id ?? '',
     amount: data?.openVolume || data?.deliveredVolume
       ? <>
-          {formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })}
+          {formatPower(data.openVolume, { unit: Unit.MWh, includeUnit: true })}
           <br />
           <SmallText>
-            ({formatPower(data.openVolume, { unit: Unit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
+            ({formatPower(totalAmount, { unit: Unit.MWh, includeUnit: true })} | {formatPower(data.deliveredVolume, { unit: Unit.MWh, includeUnit: true })})
           </SmallText>
         </>
       : '',

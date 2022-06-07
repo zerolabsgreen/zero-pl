@@ -8,6 +8,7 @@ export const ThCell = styled(TableCell)(({ theme }) => `
     font-size: 12px;
     border: none;
     line-height: 16px;
+    padding: 12px;
     ${theme.breakpoints.down('sm')} {
       padding: 4px
     }
@@ -18,6 +19,7 @@ export const TbCell = styled(TableCell)(({ theme }) => `
     font-weight: 700;
     font-size: 18px;
     border: none;
+    padding: 12px;
     ${theme.breakpoints.down('sm')} {
       padding: 4px
     }

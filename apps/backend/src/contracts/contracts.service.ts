@@ -6,8 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { BuyersService } from '../buyers/buyers.service';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
-import { ContractDto, ContractEntityWithRelations } from './dto/contract.dto';
-import { Contract } from '@prisma/client';
+import { ContractDto } from './dto/contract.dto';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { FindContractDto } from './dto/find-contract.dto';
 
@@ -46,11 +45,11 @@ export class ContractsService {
           throw new NotFoundException(`sellerId=${createContractDto.sellerId} not found`);
         }
 
-        let filecoinNode; 
+        let filecoinNode;
 
         if (createContractDto.filecoinNodeId) {
           filecoinNode = await this.filecoinNodesService.findOne(createContractDto.filecoinNodeId);
-  
+
           if (!filecoinNode) {
             this.logger.error(`Contract submitted for non-existing filecoinNodeId=${createContractDto.filecoinNodeId}`);
             throw new NotFoundException(`filecoinNodeId=${createContractDto.filecoinNodeId} not found`);
