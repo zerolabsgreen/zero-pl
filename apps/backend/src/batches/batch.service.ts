@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BatchDto } from './dto/batch.dto';
-import { IssuerService } from '../issuer/issuer.service';
+import { CertificateIds, IssuerService } from '../issuer/issuer.service';
 import { Batch } from '@prisma/client';
 import { FilesService } from '../files/files.service';
 import { CertificatesService } from '../certificates/certificates.service';
@@ -12,7 +12,8 @@ import { dateTimeToUnix } from '../utils/unix';
 import { ConfigService } from '@nestjs/config';
 import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
+import { TxHash } from '../utils/types';
 
 @Injectable()
 export class BatchService {
@@ -27,18 +28,16 @@ export class BatchService {
     private readonly configService: ConfigService
   ) {}
 
-  async create(): Promise<BatchDto> {
-    this.logger.log(`received a request to create a batch...`);
-
-    const onchainId = await this.generateOnChainId();
+  async create(onchainBatchId: number): Promise<BatchDto> {
+    this.logger.log(`received a request to create a batch ${onchainBatchId}...`);
   
     let newBatch: Batch;
 
     try {
       newBatch = await this.prisma.batch.create(
-        { data: { id: onchainId } }
+        { data: { id: onchainBatchId } }
       );
-      this.logger.debug(`created a new batch with ID ${onchainId}`);
+      this.logger.debug(`created a new batch with ID ${onchainBatchId}`);
     } catch (err) {
       this.logger.error(`error creating a new batch: ${err.message}`);
       throw err;
@@ -95,7 +94,7 @@ export class BatchService {
     batchId: string,
     redemptionStatementFileId: string,
     totalVolume: string
-  ): Promise<string> {
+  ): Promise<TxHash> {
     if (!redemptionStatementFileId) {
       throw new NotFoundException(`Please provide a valid redemption statement ID. Got: ${redemptionStatementFileId}`);
     }
@@ -145,25 +144,10 @@ export class BatchService {
     });
   }
 
-  async generateOnChainId(): Promise<number> {
-    let onchainId: number;
-
-    try {
-      onchainId = await this.issuerService.createBatch();
-
-      this.logger.debug(`created a new on-chain batch with ID ${onchainId}`);
-    } catch (err) {
-      this.logger.error(`error creating a new batch on chain: ${err.message}`);
-      throw err;
-    }
-
-    return onchainId;
-  }
-  
   async mint(
     batchId: string,
     certificateIds: string[]
-  ): Promise<number[]> {
+  ): Promise<TxHash> {
     const batch = await this.findOne(batchId);
 
     const certificates = await this.certificatesService.find(certificateIds);
@@ -216,18 +200,15 @@ export class BatchService {
             capacity: c.nameplateCapacityW.toString(),
           },
         },
-        data: '0x',
+        data: utils.defaultAbiCoder.encode(['string'], [c.id]),
       };
     }));
 
-    const {
-      certificateIds: onchainCertificateIds, 
-      txHash
-    } = await this.issuerService.mint(
-      Number(batch.id),  
+    const txHash = await this.issuerService.mint(
+      Number(batch.id),
       mintingData
     );
-
+    
     await this.prisma.$transaction(async (prisma) => {
       await prisma.batch.update({
         data: { 
@@ -241,7 +222,6 @@ export class BatchService {
       for (let i = 0; i < certificateIds.length; i++) {
         await prisma.certificate.update({
           data: {
-            onchainId: BigInt(onchainCertificateIds[i]),
             batchId: BigInt(batch.id),
             txHash
           },
@@ -255,6 +235,25 @@ export class BatchService {
       throw err;
     });
 
-    return onchainCertificateIds; 
+    return txHash;
+  }
+
+  async attachCerts(
+    txHash: TxHash,
+  ): Promise<CertificateIds[]> {
+    const ids = await this.issuerService.getCertificatesMintedIn(txHash);
+
+    for (const { onchainId, certificateId } of ids) {
+      await this.prisma.certificate.update({
+        data: {
+          onchainId: BigInt(onchainId)
+        },
+        where: {
+          id: certificateId
+        }
+      });
+    }
+
+    return ids;
   }
 }

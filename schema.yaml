@@ -193,7 +193,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransferCertificateDTO"
+              $ref: "#/components/schemas/TransferDTO"
       responses:
         201:
           description: "Transfers the certificate and returns the tx hash"
@@ -217,7 +217,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ClaimCertificateDTO"
+              $ref: "#/components/schemas/ClaimDTO"
       responses:
         201:
           description: "Claims and returns the tx hash"
@@ -245,6 +245,45 @@ paths:
                 type: "array"
                 items:
                   type: "string"
+      tags:
+        - "certificates"
+  /certificate/{id}/events:
+    get:
+      operationId: "CertificateController_getEventsForCertificate"
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+        - name: "pageSize"
+          required: false
+          in: "query"
+          example: 20
+          description: "Number of events on one page"
+          schema:
+            type: "number"
+        - name: "currentPage"
+          required: false
+          in: "query"
+          example: 1
+          description: "Current page number"
+          schema:
+            type: "number"
+        - name: "eventType"
+          required: false
+          in: "query"
+          description: "Filer by event type"
+          example: "transfer"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns paginated and filtered set of available certificate events"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventsResponseDTO"
       tags:
         - "certificates"
 info:
@@ -455,7 +494,7 @@ components:
         - "generator"
         - "owners"
         - "claimed"
-    TransferCertificateDTO:
+    TransferDTO:
       type: "object"
       properties:
         from:
@@ -510,7 +549,7 @@ components:
         - "purpose"
         - "consumptionEntityID"
         - "proofID"
-    ClaimCertificateDTO:
+    ClaimDTO:
       type: "object"
       properties:
         claimData:
@@ -531,3 +570,49 @@ components:
       required:
         - "claimData"
         - "from"
+    EventsResponseDTO:
+      type: "object"
+      properties:
+        dataSet:
+          example:
+            - eventType: "transfer"
+              id: "1"
+              certificateId: "1"
+              from: "0x0000000000000000000000000000000000000000"
+              to: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+              value: "1000000"
+              operator: "0x384A377D142F5bF9c5649b3fED322F45E0261A0C"
+              blockNumber: 73
+              txHash: "0xac40070dc36e7fc274573326d776f21652e125716e879ca4578cf4a4539365aa"
+              blockHash: "0x795f32868489b9edbf4daef6eb3cdae215836b7eb786ba8763b66d82ec19709d"
+          description: "Paginated set of certificate events"
+          type: "array"
+          items:
+            type: "string"
+        totalCount:
+          type: "number"
+          example: 50
+          description: "Number of events on all pages"
+        pageSize:
+          type: "number"
+          example: 20
+          description: "Number of events on one page"
+        currentPage:
+          type: "number"
+          example: 1
+          description: "Current page number"
+        lastPage:
+          type: "number"
+          example: 3
+          description: "Last page number"
+        nextPage:
+          type: "number"
+          example: 2
+          description: "Next page number"
+      required:
+        - "dataSet"
+        - "totalCount"
+        - "pageSize"
+        - "currentPage"
+        - "lastPage"
+        - "nextPage"
