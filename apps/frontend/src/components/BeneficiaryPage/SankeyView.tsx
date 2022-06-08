@@ -156,8 +156,6 @@ const createSankeyData = (
       : nodes.find(node => node.id === link.targetIds)?.beneficiary
   })).filter(item => !!item);
 
-  console.log({ links })
-
   const sankeyData = { nodes, links }
 
   const columnData: ColumnData = {
