@@ -8,6 +8,11 @@ heroku container:login
 heroku pg:backups:capture -a zero-api-app
 heroku pg:backups:capture -a zero-tokenization-app
 
+# Turn maintenance ON
+heroku maintenance:on -a zero-tokenization-app
+heroku maintenance:on -a zero-api-app
+heroku maintenance:on -a zero-ui-app
+
 # UI
 docker tag zero-pl-frontend registry.heroku.com/zero-ui-app/web
 docker push registry.heroku.com/zero-ui-app/web
@@ -26,3 +31,8 @@ docker tag zero-pl-tokenization registry.heroku.com/zero-tokenization-app/web
 docker push registry.heroku.com/zero-tokenization-app/web
 heroku container:release web -a zero-tokenization-app
 docker rmi registry.heroku.com/zero-tokenization-app/web
+
+# Turn maintenance OFF
+heroku maintenance:off -a zero-tokenization-app
+heroku maintenance:off -a zero-api-app
+heroku maintenance:off -a zero-ui-app

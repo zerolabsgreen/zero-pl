@@ -92,7 +92,5 @@ yarn clean && yarn && yarn build
 
 Deploy
 ```
-bash deployment/maintenance-on.sh
-bash deployment/deploy-heroku.sh
-bash deployment/maintenance-off.sh
+./deployment/deploy-heroku.sh
 ```
