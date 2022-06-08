@@ -3,12 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { utils } from 'ethers';
 import { pick } from 'lodash';
-import polly from 'polly-js';
 import { TxHash, UnixTimestamp } from '../utils/types';
-
-const TIMEOUT = 90; // Seconds
-const RETRY_EVERY = 2; // Seconds
-const RETRY_INTERVALS = Array.from({ length: TIMEOUT / RETRY_EVERY }, (v, i) => i * RETRY_EVERY + 1).map(seconds => seconds * 1e3); // Returns [1, 3, 5...]
 
 export type CertificateIds = { onchainId: string, certificateId: string };
 
@@ -192,18 +187,6 @@ export class IssuerService {
     //   throw err;
     // }
     return [];
-  }
-
-  public async waitForTxMined(txHash: string): Promise<TxReceiptDTO> {
-    await polly()
-      .waitAndRetry(RETRY_INTERVALS)
-      .executeForPromise(async () => {
-        await this.axiosInstance.get(
-          `/blockchain/${txHash}`
-        );
-      });
-
-      return (await this.axiosInstance.get(`/blockchain/${txHash}`)).data;
   }
 
   public async getCertificatesMintedIn(txHash: string): Promise<CertificateIds[]> {
