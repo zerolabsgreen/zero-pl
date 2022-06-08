@@ -123,21 +123,10 @@ export class PurchasesService {
           throw err;
         });
 
-        const transferTxHash = await this.issuerService.transferCertificate({
+        const txHash = await this.issuerService.claimCertificate({
           id: Number(certData.onchainId),
           from: sellerData.blockchainAddress,
           to: buyerData.blockchainAddress,
-          amount: purchase.recsSoldWh,
-        });
-
-        const waitTimeSec = Number(process.env.TX_WAIT_TIME_SEC || 15);
-
-        this.logger.debug(`[${transferTxHash}] Transaction has been mined. Waiting for ${waitTimeSec} seconds for the tokenization API to detect the tx...`);
-        await sleep(waitTimeSec * 1e3); // Give time to the Tokenization API to detect the transaction and make changes
-
-        const txHash = await this.issuerService.claimCertificate({
-          id: Number(certData.onchainId),
-          from: buyerData.blockchainAddress,
           amount: purchase.recsSoldWh,
           claimData: {
             beneficiary: newPurchase.beneficiary ?? buyerData.name,
