@@ -33,6 +33,7 @@ export type ExtendedNodeProperties = {
   generator?: string;
   energySources?: string[];
   location?: string;
+  beneficiary?: string;
 };
 
 export const isContractNode = (node: SankeyNode<ExtendedNodeProperties, Record<string, any>>) => {

@@ -48,7 +48,8 @@ export const createSankeyData = (
     ),
     period: `${dayjs(contract.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(contract.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: contract.energySources,
-    location: contract.countryRegionMap.map(pair => `${pair.country}, ${pair.region}`).join('; '),
+    location: contract.countryRegionMap.map(pair => `${pair.country}${getRegionString(pair.region)}`).join('; '),
+    beneficiary: contract.purchases.map(p => p.filecoinNodeId).join(', ')
   }))
 
   const redemptionNode: ExtendedNodeProperties[] = [{
@@ -76,8 +77,10 @@ export const createSankeyData = (
     targetIds: [],
     period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [purchase.certificate.energySource],
-    location: `${purchase.certificate.country}, ${purchase.certificate.region}`,
-    generator: purchase.certificate.generatorName
+    location: `${purchase.certificate.country}${getRegionString(purchase.certificate.region)}`,
+    generator: purchase.certificate.generatorName,
+    // missing type for purchase
+    beneficiary: (purchase as any).filecoinNodeId
   }))
 
   const nodes: ExtendedNodeProperties[] = [...contractsNodes, ...redemptionNode, ...certificatesNodes, ...proofsNodes];
@@ -98,7 +101,10 @@ export const createSankeyData = (
     target: nodes.findIndex(node => node.id === link.targetIds),
     value: link.type === SankeyItemType.Certificate
       ? parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
-      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0')
+      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0'),
+    beneficiary: link.type === SankeyItemType.Contract
+      ? link.beneficiary
+      : nodes.find(node => node.id === link.targetIds)?.beneficiary
   })).filter(item => !!item);
 
   const sankeyData = { nodes, links }
@@ -169,7 +175,6 @@ export const SankeyProof = ({ proof }: Props) => {
   const validContractIds = contractsIds?.filter(c => Boolean(c))
   const { contracts } = useContractsByIds(validContractIds ?? [])
 
-  const beneficiary = proof.filecoinNode?.id
   const isLoading = isContractLoading || isBatchLoading || arePurchasesLoading
 
   if (proofContract && batch && !isLoading) {
@@ -204,6 +209,7 @@ export const SankeyProof = ({ proof }: Props) => {
                     {graph &&
                       graph.links.map((link, i) => {
                         const linkSource = link.source as any as SankeyLink<ExtendedNodeProperties, Record<string, any>>
+                        const linkTarget = link.target as any as SankeyLink<ExtendedNodeProperties, Record<string, any>>
                         const linkColor = linkSource.id === proof.certificate.id
                           || (link.target as any).id === proof.certificate.id
                           || linkSource.id === proofContract?.id
@@ -214,7 +220,9 @@ export const SankeyProof = ({ proof }: Props) => {
                             key={`sankey-link-${i}`}
                             link={link}
                             color={linkColor}
-                            beneficiary={beneficiary}
+                            beneficiary={linkSource.type === SankeyItemType.Contract
+                              ? linkSource.beneficiary
+                              : linkTarget.beneficiary}
                             centered={!isExtendedSankey}
                             hidePopoverBtn={linkSource.type === SankeyItemType.Redemption}
                           />
