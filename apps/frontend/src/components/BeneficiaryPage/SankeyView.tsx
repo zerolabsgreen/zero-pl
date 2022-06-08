@@ -80,7 +80,7 @@ const createSankeyData = (
   const onlyDeliveredContracts = contracts.filter(c => Number(c.deliveredVolume) !== 0)
   const contractsNodes: ExtendedNodeProperties[] = onlyDeliveredContracts.map(contract => ({
     id: contract.id,
-    targetIds: contract.purchases.map(p => p.certificate.batchId ?? ''),
+    targetIds: contract.purchases.map(p => batches.find(b => b.id === p.certificate.batchId)?.redemptionStatementId ?? ''),
     type: SankeyItemType.Contract,
     volume: formatPower(
       BigNumber.from(contract.openVolume ?? 0)
@@ -91,13 +91,14 @@ const createSankeyData = (
     period: `${dayjs(contract.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(contract.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: contract.energySources,
     location: contract.countryRegionMap.map(pair => `${pair.country}${getRegionString(pair.region)}`).join('; '),
+    beneficiary: contract.filecoinNode.id
   }))
 
   const redemptionNodes: ExtendedNodeProperties[] = batches.map(batch => ({
-    id: batch.id,
-    targetIds: certificates.map(c => c.id),
+    id: batch.redemptionStatementId,
+    targetIds: certificates.filter(c => c.batchId === batch.id).map(c => c.id),
     type: SankeyItemType.Redemption,
-    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh }),
+    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh })
   }))
 
   const allPurchases: PurchaseDto[] = certificates.flatMap(c => c.purchases)
@@ -107,7 +108,7 @@ const createSankeyData = (
 
   const certificatesNodes: ExtendedNodeProperties[] = certificates.map(certificate => ({
     id: certificate.id,
-    targetIds: purchasesToUse.map(p => p.id),
+    targetIds: purchasesToUse.filter(p => p.certificateId === certificate.id).map(p => p.id),
     type: SankeyItemType.Certificate,
     volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
     period: `${dayjs(certificate.generationStart).utc().format('YYYY.MM.DD')} - ${dayjs(certificate.generationEnd).utc().format('YYYY.MM.DD')}`,
@@ -126,7 +127,8 @@ const createSankeyData = (
       period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
       energySources: [certificate?.energySource ?? ''],
       location: `${certificate?.country ?? ''}${getRegionString(certificate?.region ?? '')}`,
-      generator: certificate?.generatorName ?? ''
+      generator: certificate?.generatorName ?? '',
+      beneficiary: purchase.filecoinNodeId
     }
   })
 
@@ -142,12 +144,16 @@ const createSankeyData = (
     }
     return link
   })
+
   const links = clonedLinks.map(link => ({
     source: nodes.findIndex(node => node.id === link.id),
     target: nodes.findIndex(node => node.id === link.targetIds),
     value: link.type === SankeyItemType.Certificate
       ? parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
-      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0')
+      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0'),
+    beneficiary: link.type === SankeyItemType.Contract
+      ? link.beneficiary
+      : nodes.find(node => node.id === link.targetIds)?.beneficiary
   })).filter(item => !!item);
 
   const sankeyData = { nodes, links }
@@ -252,10 +258,13 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, fullView, beneficiary }) =
                       return (
                         <Link
                           key={`sankey-link-${i}`}
-                          beneficiary={beneficiary}
+                          beneficiary={linkSource.type === SankeyItemType.Contract
+                            ? linkSource.beneficiary
+                            : linkTarget.beneficiary}
                           link={link}
                           color={linkColor ?? '#000'}
                           centered={centerLink}
+                          hidePopoverBtn={linkSource.type === SankeyItemType.Redemption}
                         />
                       )
                     })

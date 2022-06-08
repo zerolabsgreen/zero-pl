@@ -178,7 +178,7 @@ const BeneficiaryPage: FC = () => {
           </Typography>
           <Box display='flex' justifyContent="flex-end" width="100%">
             <SecondaryButton onClick={toggleSankeyMode}>
-              {seeFullSankey ? 'see more' : 'see less'}
+              {seeFullSankey ? 'see less' : 'see more'}
             </SecondaryButton>
           </Box>
           <SankeyView

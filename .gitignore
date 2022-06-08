@@ -45,3 +45,4 @@ swagger.json
 .vscode/
 .env
 .env.local
+.npmrc
