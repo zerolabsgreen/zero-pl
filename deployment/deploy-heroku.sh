@@ -9,9 +9,9 @@ heroku pg:backups:capture -a zero-api-app
 heroku pg:backups:capture -a zero-tokenization-app
 
 # Turn maintenance ON
-heroku maintenance:on -a zero-tokenization-app
-heroku maintenance:on -a zero-api-app
 heroku maintenance:on -a zero-ui-app
+heroku maintenance:on -a zero-api-app
+heroku maintenance:on -a zero-tokenization-app
 
 # UI
 docker tag zero-pl-frontend registry.heroku.com/zero-ui-app/web
