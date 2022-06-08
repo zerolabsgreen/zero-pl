@@ -150,8 +150,6 @@ export class PurchasesService {
           }
         });
 
-        await this.issuerService.waitForTxMined(txHash);
-
         await prisma.purchase.update({
           where: {
             id: newPurchase.id
