@@ -60,6 +60,7 @@ interface TransferCertificateDTO {
 interface ClaimCertificateDTO {
   id: number,
   from: string,
+  to: string;
   amount: string,
   claimData: {
     beneficiary: string,
