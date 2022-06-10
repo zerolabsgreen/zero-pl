@@ -13,7 +13,7 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import { BatchService } from './batch.service';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { BatchDto } from "./dto/batch.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
@@ -95,6 +95,7 @@ export class BatchController {
 
   @Patch('attach/:txHash')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiParam({ name: 'txHash', type: String })
   @ApiCreatedResponse({
     type: [CertificateIdsDTO],
     description: 'Attached certificates'
