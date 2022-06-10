@@ -189,7 +189,7 @@ export class BatchService {
             id: c.generatorId,
             name: c.generatorName,
             energySource: c.energySource,
-            region: c.region,
+            region: c.region ?? '',
             country: c.country,
             commissioningDate: c.commissioningDate ? dateTimeToUnix(
               toDateTimeWithOffset(
@@ -197,7 +197,7 @@ export class BatchService {
                 c.commissioningDateTimezoneOffset ?? 0
               )
             ) : 0,
-            capacity: c.nameplateCapacityW.toString(),
+            capacity: c.nameplateCapacityW?.toString() ?? '0',
           },
         },
         data: utils.defaultAbiCoder.encode(['string'], [c.id]),
