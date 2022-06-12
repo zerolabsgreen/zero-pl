@@ -94,12 +94,13 @@ const BeneficiaryPage: FC = () => {
     }
   }, [transactions])
 
+
   const yearlyRedeemedData = useMemo(() => yearsToUse.map(yearItem => {
     const allTransactionsFromYear = transactionsData.filter(purchase => dayjs(purchase.reportingEnd).get('year') === yearItem.year);
     return {
       ...yearItem,
       amount: allTransactionsFromYear?.reduce(
-        (prev, current) => prev + parseFloat(formatPower(current.recsSoldWh)), yearItem.amount)
+        (prev, current) => prev + parseInt(formatPower(current.recsSoldWh, { unit: Unit.MWh, withoutComma: true })), yearItem.amount)
     }
   }), [transactionsData]);
 
