@@ -1,10 +1,9 @@
 import {
   BatchDto,
-  CertificateDto,
+  CertificateWithPurchasesDto,
   FindContractDto,
   FullPurchaseDto,
   useBatchControllerFindOne,
-  useCertificatesControllerFindOneWithPurchases,
   useContractsControllerFindOne,
 } from "@energyweb/zero-protocol-labs-api-client"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -22,6 +21,7 @@ import Sankey from "../Sankey"
 import Link from "../Sankey/Link"
 import Node, { ExtendedNodeProperties, SankeyItemType } from "../Sankey/Node"
 import SecondaryButton from "../SecondaryButton"
+import { useCertificatesWithPurchases } from "../../hooks/fetch/useCertificatesWithPurchases"
 
 const sankeyWidth = 1000
 
@@ -33,7 +33,7 @@ type SankeyData = {
 export const createSankeyData = (
   contracts: FindContractDto[],
   batch: BatchDto,
-  certificates: CertificateDto[],
+  certificates: CertificateWithPurchasesDto[],
   purchases: FullPurchaseDto[]
 ): { sankeyData: SankeyData }  => {
   const contractsNodes: ExtendedNodeProperties[] = contracts.map(contract => ({
@@ -44,7 +44,7 @@ export const createSankeyData = (
       BigNumber.from(contract.openVolume ?? 0)
       .add(BigNumber.from(contract.deliveredVolume ?? 0))
       .toString(),
-      { includeUnit: true, unit: Unit.MWh }
+      { includeUnit: true, unit: Unit.MWh, withoutComma: true }
     ),
     period: `${dayjs(contract.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(contract.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: contract.energySources,
@@ -56,14 +56,14 @@ export const createSankeyData = (
     id: batch.redemptionStatementId,
     targetIds: certificates.map(c => c.id),
     type: SankeyItemType.Redemption,
-    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh }),
+    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh, withoutComma: true }),
   }]
 
   const certificatesNodes: ExtendedNodeProperties[] = certificates.map(certificate => ({
     id: certificate.id,
-    targetIds: purchases.map(p => p.id),
+    targetIds: certificate.purchases ? certificate.purchases.map(p => p.id) : purchases.map(p => p.id),
     type: SankeyItemType.Certificate,
-    volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
+    volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh, withoutComma: true }),
     period: `${dayjs(certificate.generationStart).utc().format('YYYY.MM.DD')} - ${dayjs(certificate.generationEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [certificate.energySource],
     location: `${certificate.country}${getRegionString(certificate.region)}`,
@@ -73,7 +73,7 @@ export const createSankeyData = (
   const proofsNodes: ExtendedNodeProperties[] = purchases.map(purchase => ({
     id: purchase.id,
     type: SankeyItemType.Proof,
-    volume: formatPower(purchase.recsSoldWh, { includeUnit: true, unit: Unit.MWh }),
+    volume: formatPower(purchase.recsSoldWh, { includeUnit: true, unit: Unit.MWh, withoutComma: true }),
     targetIds: [],
     period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [purchase.certificate.energySource],
@@ -99,13 +99,13 @@ export const createSankeyData = (
   const links = clonedLinks.map(link => ({
     source: nodes.findIndex(node => node.id === link.id),
     target: nodes.findIndex(node => node.id === link.targetIds),
-    value: link.type === SankeyItemType.Certificate
-      ? parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
-      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0'),
+    value: link.type === SankeyItemType.Contract
+      ? parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0')
+      : parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0'),
     beneficiary: link.type === SankeyItemType.Contract
       ? link.beneficiary
       : nodes.find(node => node.id === link.targetIds)?.beneficiary
-  })).filter(item => !!item);
+  })).filter(item => !!item)
 
   const sankeyData = { nodes, links }
 
@@ -159,29 +159,29 @@ export const SankeyProof = ({ proof }: Props) => {
     { query: { enabled: !!proof.certificate.batchId } }
   )
 
+  const certificates = batch?.certificates
+  const certificateIds = certificates?.map(c => c.id) ?? []
+
   const {
-    data: certificateWithPurchases,
-    isLoading: arePurchasesLoading
-  } = useCertificatesControllerFindOneWithPurchases(
-    proof.certificate.id,
-    { query: { enabled: isExtendedSankey } }
-  )
+    data: certificatesWithPurchases,
+    isLoading: areCertificatesLoading
+  } = useCertificatesWithPurchases(certificateIds)
 
   const purchases = isExtendedSankey
-    ? certificateWithPurchases?.purchases?.map(p => ({...p,certificate: proof.certificate})) ?? []
+    ? certificatesWithPurchases?.flatMap(c => c?.purchases?.map(p => ({...p,certificate: proof.certificate}))) ?? []
     : []
 
   const contractsIds = purchases.map(p => p.contractId ?? '')
   const validContractIds = contractsIds?.filter(c => Boolean(c))
   const { contracts } = useContractsByIds(validContractIds ?? [])
 
-  const isLoading = isContractLoading || isBatchLoading || arePurchasesLoading
+  const isLoading = isContractLoading || isBatchLoading || areCertificatesLoading
 
   if (proofContract && batch && !isLoading) {
     const { sankeyData } = !isExtendedSankey
-      ? createSankeyData([proofContract], batch, [proof.certificate], [proof])
-      : createSankeyData(contracts, batch, [proof.certificate], purchases as any as FullPurchaseDto[])
-    const sankeyHeight = isExtendedSankey ? purchases.length*130 : undefined
+      ? createSankeyData([proofContract], batch, [proof.certificate as CertificateWithPurchasesDto], [proof])
+      : createSankeyData(contracts, batch, certificatesWithPurchases, purchases as any as FullPurchaseDto[])
+    const sankeyHeight = isExtendedSankey ? purchases.length*50 : undefined
 
     if (isExtendedSankey && contracts.length < 1) return (<Loader />)
 
@@ -210,7 +210,7 @@ export const SankeyProof = ({ proof }: Props) => {
                       graph.links.map((link, i) => {
                         const linkSource = link.source as any as SankeyLink<ExtendedNodeProperties, Record<string, any>>
                         const linkTarget = link.target as any as SankeyLink<ExtendedNodeProperties, Record<string, any>>
-                        const linkColor = linkSource.id === proof.certificate.id
+                        const linkColor = linkTarget.id === proof.id
                           || (link.target as any).id === proof.certificate.id
                           || linkSource.id === proofContract?.id
                             ? sankeyColors[linkSource.type as keyof(SankeyColors)]
