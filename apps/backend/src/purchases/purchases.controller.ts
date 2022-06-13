@@ -20,7 +20,6 @@ import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
-import { purchaseEventsSchema } from './purchases.service';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
@@ -28,6 +27,7 @@ import { GenerateAttestationsDto } from './dto/generate-attestations.dto';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { PurchaseEventDTO } from './dto/purchase-events.dto';
 
 @Controller('/partners/filecoin/purchases')
 @ApiTags('Filecoin purchases')
@@ -86,10 +86,10 @@ export class PurchasesController {
 
   @Get(':id/blockchain-events')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.PUBLIC, ApiKeyPermissions.READ]))
-  @ApiOkResponse({ schema: purchaseEventsSchema })
+  @ApiOkResponse({ type: [PurchaseEventDTO] })
   @ApiParam({ name: 'id', type: String })
-  async getBlockchainEvents(@Param('id') id: string) {
-    return []; // this.purchasesService.getChainEvents(id); TODO: RE-ENABLE 
+  async getBlockchainEvents(@Param('id') id: string): Promise<PurchaseEventDTO[]> {
+    return this.purchasesService.getChainEvents(id);
   }
 
   @Post('/generate/attestations')
