@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { BigNumber } from "@ethersproject/bignumber";
-import { maxBy, uniq } from 'lodash'
+import { isEqual, maxBy, uniq, uniqWith } from 'lodash'
 import { BatchDto, CertificateWithPurchasesDto, FindContractDto, PurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import Sankey from "../Sankey";
 import Link from "../Sankey/Link";
@@ -135,7 +135,7 @@ const createSankeyData = (
   const nodes: ExtendedNodeProperties[] = [...contractsNodes, ...redemptionNodes, ...certificatesNodes, ...proofsNodes];
 
   const linksArr = nodes.filter(node => node.targetIds.length > 0)
-  const clonedLinks = linksArr.flatMap(link => {
+  const clonedLinks = uniqWith(linksArr.flatMap(link => {
     if (link.targetIds?.length === 1) {
       return { ...link, targetIds: link.targetIds[0] }
     }
@@ -143,7 +143,7 @@ const createSankeyData = (
       return link.targetIds.map(targetId => ({ ...link, targetIds: targetId }))
     }
     return link
-  })
+  }), isEqual)
 
   const links = clonedLinks.map(link => ({
     source: nodes.findIndex(node => node.id === link.id),
@@ -204,10 +204,12 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, fullView, beneficiary }) =
   const filteredBatchesIds = uniq(batchesIds.filter(id => Boolean(id)))
   const { batches } = useBatchesByIds(filteredBatchesIds)
   const userPurchases = contracts.flatMap(contract => contract.purchases)
-  const certificatesIds = uniq(userPurchases.map(p => p.certificate.id))
-  const { certificates } = useCertificatesByIds(certificatesIds)
+  const certificatesIds = fullView
+    ? uniq(batches.flatMap(b => b.certificates.map(c => c.id)))
+    : uniq(userPurchases.map(p => p.certificate.id))
+  const { certificates, isLoading } = useCertificatesByIds(certificatesIds)
 
-  if (!batches.length || !certificates.length) return <Loader />
+  if (!batches.length || !certificates.length || isLoading) return <Loader />
 
   const { sankeyData, columnData } = createSankeyData(contracts, batches, certificates, fullView, beneficiary)
   const hasNodesAndLinks = sankeyData.nodes.length > 0 && sankeyData.links.length > 0

@@ -167,10 +167,7 @@ export const SankeyProof = ({ proof }: Props) => {
     isLoading: areCertificatesLoading
   } = useCertificatesWithPurchases(certificateIds)
 
-  const purchases = isExtendedSankey
-    ? certificatesWithPurchases?.flatMap(c => c?.purchases?.map(p => ({...p,certificate: proof.certificate}))) ?? []
-    : []
-
+  const purchases = certificatesWithPurchases?.flatMap(c => c?.purchases?.map(p => ({...p,certificate: proof.certificate}))) ?? []
   const contractsIds = purchases.map(p => p.contractId ?? '')
   const validContractIds = contractsIds?.filter(c => Boolean(c))
   const { contracts } = useContractsByIds(validContractIds ?? [])
@@ -181,7 +178,7 @@ export const SankeyProof = ({ proof }: Props) => {
     const { sankeyData } = !isExtendedSankey
       ? createSankeyData([proofContract], batch, [proof.certificate as CertificateWithPurchasesDto], [proof])
       : createSankeyData(contracts, batch, certificatesWithPurchases, purchases as any as FullPurchaseDto[])
-    const sankeyHeight = isExtendedSankey ? purchases.length*50 : undefined
+    const sankeyHeight = isExtendedSankey && purchases.length > 2 ? purchases.length*50 : undefined
 
     if (isExtendedSankey && contracts.length < 1) return (<Loader />)
 
