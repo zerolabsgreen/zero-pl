@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { BigNumber } from "@ethersproject/bignumber";
-import { maxBy } from 'lodash'
+import { isEqual, maxBy, uniq, uniqWith } from 'lodash'
 import { BatchDto, CertificateWithPurchasesDto, FindContractDto, PurchaseDto } from "@energyweb/zero-protocol-labs-api-client";
 import Sankey from "../Sankey";
 import Link from "../Sankey/Link";
@@ -86,7 +86,7 @@ const createSankeyData = (
       BigNumber.from(contract.openVolume ?? 0)
       .add(BigNumber.from(contract.deliveredVolume ?? 0))
       .toString(),
-      { includeUnit: true, unit: Unit.MWh }
+      { includeUnit: true, unit: Unit.MWh, withoutComma: true }
     ),
     period: `${dayjs(contract.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(contract.reportingEnd).utc().format('YYYY.MM.DD')}`,
     energySources: contract.energySources,
@@ -98,7 +98,7 @@ const createSankeyData = (
     id: batch.redemptionStatementId,
     targetIds: certificates.filter(c => c.batchId === batch.id).map(c => c.id),
     type: SankeyItemType.Redemption,
-    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh })
+    volume: formatPower(batch.mintedVolume, { includeUnit: true, unit: Unit.MWh, withoutComma: true })
   }))
 
   const allPurchases: PurchaseDto[] = certificates.flatMap(c => c.purchases)
@@ -110,7 +110,7 @@ const createSankeyData = (
     id: certificate.id,
     targetIds: purchasesToUse.filter(p => p.certificateId === certificate.id).map(p => p.id),
     type: SankeyItemType.Certificate,
-    volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh }),
+    volume: formatPower(certificate.energyWh, { includeUnit: true, unit: Unit.MWh, withoutComma: true }),
     period: `${dayjs(certificate.generationStart).utc().format('YYYY.MM.DD')} - ${dayjs(certificate.generationEnd).utc().format('YYYY.MM.DD')}`,
     energySources: [certificate.energySource],
     location: `${certificate.country}${getRegionString(certificate.region)}`,
@@ -122,7 +122,7 @@ const createSankeyData = (
     return {
       id: purchase.id,
       type: SankeyItemType.Proof,
-      volume: formatPower(purchase.recsSoldWh, { includeUnit: true, unit: Unit.MWh }),
+      volume: formatPower(purchase.recsSoldWh, { includeUnit: true, unit: Unit.MWh, withoutComma: true }),
       targetIds: [],
       period: `${dayjs(purchase.reportingStart).utc().format('YYYY.MM.DD')} - ${dayjs(purchase.reportingEnd).utc().format('YYYY.MM.DD')}`,
       energySources: [certificate?.energySource ?? ''],
@@ -135,7 +135,7 @@ const createSankeyData = (
   const nodes: ExtendedNodeProperties[] = [...contractsNodes, ...redemptionNodes, ...certificatesNodes, ...proofsNodes];
 
   const linksArr = nodes.filter(node => node.targetIds.length > 0)
-  const clonedLinks = linksArr.flatMap(link => {
+  const clonedLinks = uniqWith(linksArr.flatMap(link => {
     if (link.targetIds?.length === 1) {
       return { ...link, targetIds: link.targetIds[0] }
     }
@@ -143,14 +143,14 @@ const createSankeyData = (
       return link.targetIds.map(targetId => ({ ...link, targetIds: targetId }))
     }
     return link
-  })
+  }), isEqual)
 
   const links = clonedLinks.map(link => ({
     source: nodes.findIndex(node => node.id === link.id),
     target: nodes.findIndex(node => node.id === link.targetIds),
-    value: link.type === SankeyItemType.Certificate
-      ? parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0')
-      : parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0'),
+    value: link.type === SankeyItemType.Contract
+    ? parseInt(nodes.find(node => node.id === link.id)?.volume ?? '0')
+    : parseInt(nodes.find(node => node.id === link.targetIds)?.volume ?? '0'),
     beneficiary: link.type === SankeyItemType.Contract
       ? link.beneficiary
       : nodes.find(node => node.id === link.targetIds)?.beneficiary
@@ -163,7 +163,7 @@ const createSankeyData = (
       amountOfBlocksInColumn: contractsNodes.length,
       columnTotalEnergy: contractsNodes.reduce((prev, current) => prev + parseInt(current.volume ?? '0') , 0),
       openAmount: contracts.reduce((prev, current) => prev + parseInt(formatPower(current.openVolume, { unit: Unit.MWh })), 0),
-      deliveredAmount: contracts.reduce((prev, current) => prev + parseInt(formatPower(current.deliveredVolume, { unit: Unit.MWh })), 0),
+      deliveredAmount: contracts.reduce((prev, current) => prev + parseInt(formatPower(current.deliveredVolume, { unit: Unit.MWh, withoutComma: true })), 0),
     },
     [SankeyItemType.Certificate]: {
       amountOfBlocksInColumn: certificatesNodes.length,
@@ -201,13 +201,15 @@ interface SankeyViewProps {
 
 const SankeyView: FC<SankeyViewProps> = ({ contracts, fullView, beneficiary }) => {
   const batchesIds = contracts.flatMap(c => c.purchases.map(p => p.certificate.batchId ?? '')) ?? []
-  const filteredBatchesIds = batchesIds.filter(id => Boolean(id))
+  const filteredBatchesIds = uniq(batchesIds.filter(id => Boolean(id)))
   const { batches } = useBatchesByIds(filteredBatchesIds)
   const userPurchases = contracts.flatMap(contract => contract.purchases)
-  const certificatesIds = userPurchases.map(p => p.certificate.id)
-  const { certificates } = useCertificatesByIds(certificatesIds)
+  const certificatesIds = fullView
+    ? uniq(batches.flatMap(b => b.certificates.map(c => c.id)))
+    : uniq(userPurchases.map(p => p.certificate.id))
+  const { certificates, isLoading } = useCertificatesByIds(certificatesIds)
 
-  if (!batches.length || !certificates.length) return <Loader />
+  if (!batches.length || !certificates.length || isLoading) return <Loader />
 
   const { sankeyData, columnData } = createSankeyData(contracts, batches, certificates, fullView, beneficiary)
   const hasNodesAndLinks = sankeyData.nodes.length > 0 && sankeyData.links.length > 0
@@ -253,8 +255,8 @@ const SankeyView: FC<SankeyViewProps> = ({ contracts, fullView, beneficiary }) =
                       const linkColor = nonTargetId
                         ? sankeyNonTargetColors[linkSource.type as keyof(BeneficiarySankeyColors)]
                         : sankeyColors[linkSource.type as keyof(BeneficiarySankeyColors)]
-                      const centerLink = linkSource.type === SankeyItemType.Contract
-                        || (linkSource.type === SankeyItemType.Certificate && !fullView)
+                      const centerLink = linkSource.type === SankeyItemType.Contract && contracts.length < 4
+                        || (linkSource.type === SankeyItemType.Certificate && userPurchases.length < 4 &&  !fullView)
                       return (
                         <Link
                           key={`sankey-link-${i}`}
