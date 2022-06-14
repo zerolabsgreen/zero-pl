@@ -2,8 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException, ConflictExc
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { BigNumber } from 'ethers';
-import { pick } from 'lodash';
+import { BigNumber, constants } from 'ethers';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -21,8 +20,6 @@ import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { BatchService } from '../batches/batch.service';
 import { PurchaseEventDTO } from './dto/purchase-event.dto';
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 @Injectable()
 export class PurchasesService {
@@ -345,7 +342,13 @@ export class PurchasesService {
   }
 
   async getChainEvents(id: string): Promise<PurchaseEventDTO[]> {
-    const purchase = await this.prisma.purchase.findUnique({ where: { id } });
+    const purchase = await this.prisma.purchase.findUnique({
+      where: { id },
+      include: {
+        seller: true,
+        buyer: true
+      }
+    });
 
     if (!purchase) {
       throw new NotFoundException(`${id} purchase not found`);
@@ -359,7 +362,12 @@ export class PurchasesService {
 
     const events = await this.issuerService.getCertificateEvents(certificate.onchainId.toString());
 
-    return events.map((event) => ({
+    return events.filter(
+      event => (
+        event.to === purchase.buyer.blockchainAddress
+          && BigNumber.from(event.value).eq(purchase.recsSoldWh)
+        ) || event.from === constants.AddressZero
+    ).map((event) => ({
       timestamp: event.timestamp,
       txHash: event.txHash,
       blockHash: event.blockHash,
