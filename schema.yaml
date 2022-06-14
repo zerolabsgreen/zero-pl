@@ -427,11 +427,16 @@ components:
           example: "IREC"
         generator:
           $ref: "#/components/schemas/GeneratorDTO"
+        data:
+          type: "string"
+          description: "Data that was set when the certificate was minted"
+          example: "0x"
       required:
         - "generationStartTime"
         - "generationEndTime"
         - "productType"
         - "generator"
+        - "data"
     MintCertificateDTO:
       type: "object"
       properties:
@@ -477,6 +482,10 @@ components:
           example: "IREC"
         generator:
           $ref: "#/components/schemas/GeneratorDTO"
+        data:
+          type: "string"
+          description: "Data that was set when the certificate was minted"
+          example: "0x"
         owners:
           type: "object"
           example:
@@ -492,6 +501,7 @@ components:
         - "generationEndTime"
         - "productType"
         - "generator"
+        - "data"
         - "owners"
         - "claimed"
     TransferDTO:
@@ -585,6 +595,7 @@ components:
               blockNumber: 73
               txHash: "0xac40070dc36e7fc274573326d776f21652e125716e879ca4578cf4a4539365aa"
               blockHash: "0x795f32868489b9edbf4daef6eb3cdae215836b7eb786ba8763b66d82ec19709d"
+              timestamp: 1651661990566
           description: "Paginated set of certificate events"
           type: "array"
           items:

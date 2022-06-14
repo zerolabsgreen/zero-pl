@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, ConflictException, PreconditionFailedException } from '@nestjs/common';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
+import { BigNumber } from 'ethers';
+import { pick } from 'lodash';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -9,18 +12,15 @@ import { IssuerService } from '../issuer/issuer.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
 import { FilesService } from '../files/files.service';
-import { firstValueFrom } from 'rxjs';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
-import { BigNumber } from 'ethers';
 import { SellersService } from '../sellers/sellers.service';
 import { dateTimeToUnix } from '../utils/unix';
 import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { BatchService } from '../batches/batch.service';
-import { pick } from 'lodash';
-import { PurchaseEventDTO } from './dto/purchase-events.dto';
+import { PurchaseEventDTO } from './dto/purchase-event.dto';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

@@ -14,20 +14,21 @@ import {
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiKeyPermissions } from '@prisma/client';
+
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { GenerateAttestationsDto } from './dto/generate-attestations.dto';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
-import { ApiKeyPermissions } from '@prisma/client';
 import { PaginatedDto } from '../utils/paginated.dto';
-import { PurchaseEventDTO } from './dto/purchase-events.dto';
+import { PurchaseEventDTO } from './dto/purchase-event.dto';
 
 @Controller('/partners/filecoin/purchases')
 @ApiTags('Filecoin purchases')

@@ -1,5 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { CertificateEventType } from "@zero-labs/tokenization-api";
+
+export enum CertificateEventType {
+    CLAIM = 'claim',
+    TRANSFER = 'transfer',
+}
 
 export class PurchaseEventDTO {
     @ApiProperty({ example: 1655107807 })

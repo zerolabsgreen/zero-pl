@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { utils } from 'ethers';
 import { pick } from 'lodash';
-import { ICertificateEvent } from '@zero-labs/tokenization-api';
 import { TxHash, UnixTimestamp } from '../utils/types';
 
 export type CertificateIds = { onchainId: string, certificateId: string };
@@ -167,7 +166,7 @@ export class IssuerService {
     return res.data.txHash;
   }
 
-  async getCertificateEvents(certificateId: string): Promise<ICertificateEvent[]> {
+  async getCertificateEvents(certificateId: string): Promise<any[]> {
     const res = await this.axiosInstance.get(`/certificate/${certificateId}/events`)
       .catch((err) => {
         this.logger.error(`GET /certificate/${certificateId}/events error response: ${err}`);

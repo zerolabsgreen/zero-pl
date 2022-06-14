@@ -11,6 +11,8 @@ import { styled, useTheme } from '@mui/material/styles';
 import EthereumAddress from '../EthereumAddress';
 import { BlockchainEventIcons } from '../BlockchainEventIcons';
 import { useTableListProofsEffects } from './effects';
+import { formatBlockchainEvents } from '../../utils/formatters';
+import { BigNumber } from 'ethers';
 
 interface TableListProofsProps {
   purchaseId?: string;
@@ -19,6 +21,12 @@ interface TableListProofsProps {
 export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) => {
   const theme = useTheme();
   const { blockchainEvents, isLoading } = useTableListProofsEffects(purchaseId);
+
+  const formattedBlockchainEvents = formatBlockchainEvents(blockchainEvents ?? []);
+
+  console.log({
+    formattedBlockchainEvents
+  });
 
   if (isLoading) {
     return (
@@ -30,7 +38,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
 
   return (
     <Box mb={4}>
-      {blockchainEvents &&
+      {formattedBlockchainEvents.length > 0 &&
       <Box display="flex" alignItems="center">
         <Typography
           mt={'30px'}
@@ -46,11 +54,11 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
         <TableWrapper>
           <StyledTable>
             <TableBody>
-              {blockchainEvents ?
-              blockchainEvents.map((event) => {
+              {formattedBlockchainEvents.length > 0 ?
+              formattedBlockchainEvents.map((event) => {
                 return (
                   <TableRow
-                    key={event.transactionHash}
+                    key={event.txHash}
                     sx={{ backgroundColor: '#F6F3F9' }}
                   >
                       <StyledTableCell>
@@ -84,7 +92,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                         }}
                       >
                         <StyledThCell>Amount</StyledThCell>
-                        <span>{event.recs} RECs</span>
+                        <span>{BigNumber.from(event.recs).div(1e6).toString()} RECs</span>
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{
@@ -107,7 +115,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                           <StyledThCell>
                             Transaction proof
                           </StyledThCell>
-                          <EthereumAddress shortify visibility address={event.transactionHash ?? ''} />
+                          <EthereumAddress shortify visibility address={event.txHash ?? ''} />
                         </span>
                       </StyledTableCell>
                   </TableRow>

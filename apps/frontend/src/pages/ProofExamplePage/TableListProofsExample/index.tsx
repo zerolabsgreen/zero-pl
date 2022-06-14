@@ -10,9 +10,13 @@ import { styled, useTheme } from '@mui/material/styles';
 import { EthereumAddress } from '../../../components/EthereumAddress';
 import { BlockchainEventIcons } from '../../../components/BlockchainEventIcons';
 import { blockchainEventsMock } from './blockchainEvents';
+import { formatBlockchainEvents } from '../../../utils/formatters';
 
 export const TableListProofsExample: FC = () => {
   const theme = useTheme();
+
+  const formattedBlockchainEvents = formatBlockchainEvents(blockchainEventsMock);
+
   return (
     <Box mb={4}>
       <Box display="flex" alignItems="center">
@@ -30,9 +34,9 @@ export const TableListProofsExample: FC = () => {
         <TableWrapper>
           <StyledTable>
             <TableBody>
-              {blockchainEventsMock.map(event => (
+              {formattedBlockchainEvents.map(event => (
                   <TableRow
-                    key={event.transactionHash}
+                    key={event.txHash}
                     sx={{ backgroundColor: '#F6F3F9' }}
                   >
                       <StyledTableCell>
@@ -89,7 +93,7 @@ export const TableListProofsExample: FC = () => {
                           <StyledThCell>
                             Transaction proof
                           </StyledThCell>
-                          <EthereumAddress shortify visibility address={event.transactionHash ?? ''} />
+                          <EthereumAddress shortify visibility address={event.txHash ?? ''} />
                         </span>
                       </StyledTableCell>
                   </TableRow>))}
