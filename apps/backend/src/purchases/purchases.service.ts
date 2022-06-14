@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, ConflictException, PreconditionFailedException } from '@nestjs/common';
 import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
+import { BigNumber } from 'ethers';
+import { pick } from 'lodash';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -9,16 +12,15 @@ import { IssuerService } from '../issuer/issuer.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { BuyersService } from '../buyers/buyers.service';
 import { FilesService } from '../files/files.service';
-import { firstValueFrom } from 'rxjs';
 import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
-import { BigNumber } from 'ethers';
 import { SellersService } from '../sellers/sellers.service';
 import { dateTimeToUnix } from '../utils/unix';
 import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { BatchService } from '../batches/batch.service';
+import { PurchaseEventDTO } from './dto/purchase-event.dto';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -342,123 +344,30 @@ export class PurchasesService {
     return await this.filesService.findOne(batch.redemptionStatementId);
   }
 
-  // async getChainEvents(id: string) {
-  //   const purchase = await this.prisma.purchase.findUnique({ where: { id } });
+  async getChainEvents(id: string): Promise<PurchaseEventDTO[]> {
+    const purchase = await this.prisma.purchase.findUnique({ where: { id } });
 
-  //   if (!purchase) {
-  //     throw new NotFoundException(`${id} purchase not found`);
-  //   }
+    if (!purchase) {
+      throw new NotFoundException(`${id} purchase not found`);
+    }
 
-  //   const cacheKey = `purchase:${id}:chain-events`;
+    const certificate = await this.prisma.certificate.findUnique({ where: { id: purchase.certificateId } });
 
-  //   const purchaseEventsCached = await this.cacheManager.get(cacheKey);
+    if (!certificate) {
+      throw new NotFoundException(`${purchase.certificateId} certificate not found`);
+    }
 
-  //   const certificate = await this.prisma.certificate.findUnique({ where: { id: purchase.certificateId } });
+    const events = await this.issuerService.getCertificateEvents(certificate.onchainId.toString());
 
-  //   if (!certificate) {
-  //     throw new NotFoundException(`${purchase.certificateId} certificate not found`);
-  //   }
-
-  //   if (purchaseEventsCached) {
-  //     this.logger.debug(`cache hit (cacheKey=${cacheKey})`);
-  //     return purchaseEventsCached;
-  //   } else {
-  //     this.logger.debug(`cache miss (cacheKey=${cacheKey})`);
-
-  //     const issuerApiCerData = await this.issuerService.getCertificateByTransactionHash(certificate.txHash);
-
-  //     const events = (await this.issuerService.getCertificateEvents(issuerApiCerData.id))
-  //       .filter((event) => event.name === 'TransferSingle')
-  //       .map(e => ({
-  //         ...e,
-  //         date: new Date(e.timestamp * 1000),
-  //         recs: e.value ? BigInt(e.value.hex).toString() : undefined
-  //       }))
-  //       .map((event) => pick(event, [
-  //         'name',
-  //         'timestamp',
-  //         'transactionHash',
-  //         'blockHash',
-  //         'from',
-  //         'to',
-  //         'recs'
-  //       ]));
-
-  //     const lastTransactionHash = purchase.txHash;
-
-  //     const indexOfClaimTransaction = events.findIndex((event) => {
-  //       return event.to === '0x0000000000000000000000000000000000000000' && event.transactionHash === lastTransactionHash;
-  //     });
-
-  //     const purchaseEvents = [];
-
-  //     if (indexOfClaimTransaction > -1) {
-  //       events[indexOfClaimTransaction].name = 'Certificate Redemption';
-  //       purchaseEvents.unshift(events[indexOfClaimTransaction]);
-  //     }
-
-  //     let cursor = indexOfClaimTransaction - 1;
-
-  //     while (cursor > -1) {
-  //       const currentEvent = events[cursor];
-  //       const lastMatchedEvent = purchaseEvents[0];
-
-  //       if (currentEvent.recs === events[indexOfClaimTransaction].recs && currentEvent.to === lastMatchedEvent.from) {
-  //         currentEvent.name = 'Transfer of Ownership';
-  //         purchaseEvents.unshift(currentEvent);
-  //       }
-
-  //       cursor--;
-  //     }
-
-  //     events[1].name = 'Transfer of Ownership';
-  //     purchaseEvents.unshift(events[1]); // transfer to escrow
-  //     events[0].name = 'On Chain Registration';
-  //     purchaseEvents.unshift(events[0]); // cert. issuance
-
-  //     const ttl = this.configService.get('CHAIN_EVENTS_TTL');
-  //     this.logger.debug(`saving data to cache (cacheKey=${cacheKey}, ttl=${ttl}s)`);
-  //     this.cacheManager.set(cacheKey, purchaseEvents, { ttl });
-
-  //     return purchaseEvents;
-  //   }
-  // }
-}
-
-export const purchaseEventsSchema = {
-  type: 'array',
-  items: {
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        example: 'On Chain Registration'
-      },
-      timestamp: {
-        type: 'number',
-        example: 1635372100
-      },
-      transactionHash: {
-        type: 'string',
-        example: '0x34fc277d9748647b3f2de3e38941bb859d77caed62349ab4e12e3d3853681e77'
-      },
-      blockHash: {
-        type: 'string',
-        example: '0x75a45ef1232f1210586477d57d5aa666261911b3d4e5fc0a46fbcf23ec28a694'
-      },
-      from: {
-        type: 'string',
-        example: '0x0000000000000000000000000000000000000000'
-      },
-      to: {
-        type: 'string',
-        example: '0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8'
-      },
-      recs: {
-        type: 'string',
-        example: '10000'
-      }
-    },
-    required: ['name']
+    return events.map((event) => ({
+      timestamp: event.timestamp,
+      txHash: event.txHash,
+      blockHash: event.blockHash,
+      from: event.from,
+      to: event.to,
+      recs: event.value ? BigInt(event.value).toString() : undefined,
+      type: event.eventType,
+      date: new Date(event.timestamp * 1e3)
+    }));
   }
-};
+}

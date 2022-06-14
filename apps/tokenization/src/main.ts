@@ -8,13 +8,13 @@ import { Logger, LogLevel } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { intersection } from 'lodash';
 
-import { AppModule } from './app/app.module';
+import { TokenizationModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 dotenv.config({ path: ".env" });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(TokenizationModule, {
     logger: getLogLevelsFromEnv()
   });
 

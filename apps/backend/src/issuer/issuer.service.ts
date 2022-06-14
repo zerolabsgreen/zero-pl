@@ -166,27 +166,15 @@ export class IssuerService {
     return res.data.txHash;
   }
 
-  async getCertificateEvents(certificateId: number): Promise<any[]> {
-    // try {
-    //   this.logger.debug(`getting events for certificateId=${certificateId}`);
-    //   return (await this.axiosInstance.get(`/certificate/${certificateId}/events`)).data
-    // } catch (err) {
-    //   if (err.isAxiosError) {
-    //     const axiosError = err as AxiosError;
+  async getCertificateEvents(certificateId: string): Promise<any[]> {
+    const res = await this.axiosInstance.get(`/certificate/${certificateId}/events`)
+      .catch((err) => {
+        this.logger.error(`GET /certificate/${certificateId}/events error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      });
 
-    //     if (axiosError.response) {
-    //       if (axiosError.response.status === 404) {
-    //         this.logger.warn(`no events for certificateId=${certificateId}`);
-    //         return null;
-    //       }
-    //     }
-    //   }
-
-    //   this.logger.error(`error getting certificate by transaction hash: ${err}`);
-
-    //   throw err;
-    // }
-    return [];
+    return res.data.dataSet;
   }
 
   public async getCertificatesMintedIn(txHash: string): Promise<CertificateIds[]> {

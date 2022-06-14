@@ -74,7 +74,7 @@ const storageAdapter = new PostgresTypeORMAdapter();
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
+export class TokenizationModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(HttpLoggerMiddleware) //, HttpsRedirectMiddleware) - Disabling for now, doesn't work as expected
     .forRoutes('*');

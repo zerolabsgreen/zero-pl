@@ -40,7 +40,7 @@
     "db:migrate:reset": "prisma migrate reset",
     "db:migrate:ci": "prisma migrate reset --skip-generate --skip-seed --force",
     "db:migrate:deploy": "prisma migrate deploy",
-    "swagger:schema:generate": "cd apps/backend && REDIS_HOST= DATABASE_URL=postgresql://localhost:5432 TS_NODE_PROJECT=tsconfig.app.json ts-node src/generateSchema.ts",
+    "swagger:schema:generate": "cd apps/backend && REDIS_HOST= DATABASE_URL=postgresql://localhost:5432 TS_NODE_PROJECT=tsconfig.app.json ts-node src/generateSchema.ts && cd ../..",
     "build:api-client": "cd libs/api-client && yarn build",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migrate:tokenization": "DATABASE_URL=$(grep TOKENIZATION_DATABASE_URL .env | cut -d \"=\" -f2 | tr -d '\"') DB_SSL_OFF=$(grep DB_SSL_OFF .env | cut -d \"=\" -f2 | tr -d '\"') ENCRYPTION_KEY=$(grep ENCRYPTION_KEY .env | cut -d \"=\" -f2 | tr -d '\"') typeorm migration:run --dataSource node_modules/@zero-labs/tokenization-api/dist/ormconfig.js && yarn typeorm migration:run --dataSource apps/tokenization/ormconfig.ts",
@@ -72,7 +72,7 @@
     "@nestjs/typeorm": "8.0.3",
     "@prisma/client": "3.6.0",
     "@t00nday/nestjs-pdf": "2.0.6",
-    "@zero-labs/tokenization-api": "0.5.1",
+    "@zero-labs/tokenization-api": "0.6.0",
     "assert": "2.0.0",
     "axios": "0.24.0",
     "buffer": "6.0.3",
@@ -177,13 +177,5 @@
   },
   "prisma": {
     "schema": "apps/backend/prisma/schema.prisma"
-  },
-  "resolutions": {
-    "@ethersproject/abi": "5.3.1",
-    "@ethersproject/abstract-provider": "5.3.0",
-    "@ethersproject/abstract-signer": "5.3.0",
-    "@ethersproject/contracts": "5.3.0",
-    "@ethersproject/providers": "5.3.1",
-    "@ethersproject/wallet": "5.3.0"
   }
 }

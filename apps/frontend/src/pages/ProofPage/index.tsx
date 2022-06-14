@@ -7,7 +7,7 @@ import { GenericTable } from '@zero-labs/zero-ui-components';
 import { BuyerSellerInformation } from '../../components/BuyerSellerInformation';
 import { PageSection } from '../../components/PageSection';
 import { DownloadSection } from '../../components/DownloadSection';
-// import { TableListProofs } from '../../components/TableListProofs';
+import { TableListProofs } from '../../components/TableListProofs';
 import { LoadingBlock } from '../../components/LoadingBlock';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { shortifyEthAddr } from '../../components/EthereumAddress';
@@ -92,7 +92,7 @@ export const ProofPage = () => {
           </Grid>
         </Box>
         <Box width={'100%'}>
-          {/* <TableListProofs purchaseId={purchaseId} /> */}
+          <TableListProofs purchaseId={purchaseId} />
           <SankeyProof proof={data} />
         </Box>
       </Grid>
