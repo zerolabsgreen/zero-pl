@@ -11,8 +11,8 @@ import { styled, useTheme } from '@mui/material/styles';
 import EthereumAddress from '../EthereumAddress';
 import { BlockchainEventIcons } from '../BlockchainEventIcons';
 import { useTableListProofsEffects } from './effects';
-import { formatBlockchainEvents } from '../../utils/formatters';
-import { BigNumber } from 'ethers';
+import { formatBlockchainEvents, formatPower } from '../../utils/formatters';
+import { Unit } from '../../utils';
 
 interface TableListProofsProps {
   purchaseId?: string;
@@ -23,10 +23,6 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
   const { blockchainEvents, isLoading } = useTableListProofsEffects(purchaseId);
 
   const formattedBlockchainEvents = formatBlockchainEvents(blockchainEvents ?? []);
-
-  console.log({
-    formattedBlockchainEvents
-  });
 
   if (isLoading) {
     return (
@@ -61,12 +57,6 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                     key={event.txHash}
                     sx={{ backgroundColor: '#F6F3F9' }}
                   >
-                      <StyledTableCell>
-                        <span style={{ marginLeft: '20px', marginRight: '30px' }}>
-                          <StyledThCell>Date</StyledThCell>
-                          <span>{dayjs(event.timestamp!*1000).format('YYYY.MM.DD')}</span>
-                        </span>
-                      </StyledTableCell>
                       <StyledTableCell
                         sx={{
                           display: 'flex',
@@ -84,6 +74,12 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                         }}
                         >{event.name}</span>
                       </StyledTableCell>
+                      <StyledTableCell>
+                        <span style={{ marginLeft: '20px', marginRight: '30px' }}>
+                          <StyledThCell>Date</StyledThCell>
+                          <span>{dayjs(event.timestamp!*1000).format('YYYY.MM.DD')}</span>
+                        </span>
+                      </StyledTableCell>
                       <StyledTableCell
                         sx={{
                           display: 'flex',
@@ -92,7 +88,7 @@ export const TableListProofs: FC<TableListProofsProps> = ({ purchaseId = '' }) =
                         }}
                       >
                         <StyledThCell>Amount</StyledThCell>
-                        <span>{BigNumber.from(event.recs).div(1e6).toString()} RECs</span>
+                        <span>{formatPower(event.recs, { unit: Unit.MWh })} RECs</span>
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{
