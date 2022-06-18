@@ -3,7 +3,7 @@ import { BuyerDto } from '../../buyers/dto/buyer.dto';
 import { SellerDto } from '../../sellers/dto/seller.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
 import { Buyer, Contract, CountryEnumType, EnergySourceEnumType, FilecoinNode, LabelEnumType, ProductEnumType, Seller } from '@prisma/client';
-import { ArrayMinSize, IsEnum, IsInt, IsISO8601, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsEnum, IsInt, IsISO8601, IsOptional, IsString, IsUUID, Max, Min, Validate, ValidateNested } from 'class-validator';
 import { IsDatetimePrismaCompatible } from '../../validators';
 import { PositiveBNStringValidator } from '../../utils/positiveBNStringValidator';
 import { PurchaseWithCertificateDto, PurchaseWithCertificateEntity } from '../../purchases/dto/purchase-with-certificate.dto';
@@ -95,6 +95,10 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
   @IsString()
   externalId: string;
 
+  @ApiProperty({ type: String, example: "0xF36706dd093AdB90C3AC9F01f1629713e7094c1f" })
+  @IsString()
+  onchainId: string;
+
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   @IsEnum(LabelEnumType)
   label: LabelEnumType;
@@ -139,6 +143,7 @@ export class ContractDto implements Omit<Contract, 'buyerId' | 'sellerId' | 'fil
       region: dbEntity.region,
       countries: dbEntity.countries,
       externalId: dbEntity.externalId,
+      onchainId: dbEntity.onchainId,
       label: dbEntity.label,
       createdAt: dbEntity.createdAt,
       updatedAt: dbEntity.updatedAt

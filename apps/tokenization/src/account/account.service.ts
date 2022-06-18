@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { AccountDTO } from './account.dto';
 import { Account } from './account.entity';
 import { SignerService } from './get-signer.service';
+import { NotFoundException } from '@nestjs/common';
 
 export class AccountService {
   constructor(
@@ -62,6 +63,19 @@ export class AccountService {
     return {
       blockchainAddress: savedAccount.address,
       privateKey: savedAccount.privateKey
+    };
+  }
+
+  public async get(address: string): Promise<AccountDTO> {
+    const account = await this.repository.findOneBy({ address });
+
+    if (!account) {
+      throw new NotFoundException(`No account with address ${address} found`);
+    }
+    
+    return {
+      blockchainAddress: account.address,
+      privateKey: account.privateKey
     };
   }
 }
