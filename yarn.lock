@@ -5284,10 +5284,10 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.6.0.tgz#19906a901cd7ef27b71a5b7ff13fed1198bc479a"
-  integrity sha512-baPdACjvO8LF0twmn0LaxYmhVRcMpdlFjTG2JMnrb+/VzUfshQaVwZdAYjYI6grlrRWpl94gF3sh9RK2wkdF1g==
+"@zero-labs/tokenization-api@0.7.3":
+  version "0.7.3"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.7.3.tgz#51087dee3d998372cef1851b54cb3a80dfd6d689"
+  integrity sha512-U/bGd2yMxL8qxJJO2GbHXA9LEk+a5Ph4DM4lczJTscfFD98Kzs8biHQuQXuG7T9My9NexFUUSPMt0gL4JnAXQQ==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/bull" "0.5.5"
@@ -5298,7 +5298,7 @@
     "@nestjs/platform-express" "8.4.4"
     "@nestjs/swagger" "5.2.1"
     "@nestjs/typeorm" "8.0.3"
-    "@zero-labs/tokenization" "0.3.6"
+    "@zero-labs/tokenization" "0.4.1"
     bull "4.8.3"
     class-transformer "0.5.1"
     class-validator "0.13.2"
@@ -5315,10 +5315,10 @@
     swagger-ui-express "4.3.0"
     typeorm "0.3.6"
 
-"@zero-labs/tokenization@0.3.6":
-  version "0.3.6"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.3.6.tgz#9b41b77aa0d3969c74ec5d75a1d2c67f96d269a0"
-  integrity sha512-AgHczFvW4gf9yR8thu/ZHVwS434qs3rROkmW59G3sofJ2tbAGCjvB2Fil7kKG9sZwlgSF6ab1PIwJJxx5Ffbrg==
+"@zero-labs/tokenization@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.4.1.tgz#68d2f6ec514144ea9f4554352574d9f693b33ec2"
+  integrity sha512-Nh9iYGebYfdV7sNuG6AfKHt10iRZK1JSfJD8+IdBSvQ6ih5VXqwBU/svVCvo/hniH8XhOU/OWOswFigXzSFHtw==
   dependencies:
     "@openzeppelin/contracts" "4.6.0"
     "@openzeppelin/contracts-upgradeable" "4.5.2"

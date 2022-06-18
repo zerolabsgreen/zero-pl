@@ -1,20 +1,27 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import {
   BlockchainProperties,
   Certificate,
-  TokenAPIModule,
   Batch,
   Generator,
   TransferSingle,
   ClaimSingle,
-  PostgresTypeORMAdapter
+  PostgresTypeORMAdapter,
+  BlockchainPropertiesModule,
+  BatchModule,
+  CertificateModule,
+  WatcherModule,
+  AgreementModule,
+  Agreement
 } from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BullModule } from '@nestjs/bull';
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AccountModule } from '../account/account.module';
 import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
@@ -32,6 +39,7 @@ const OriginAppTypeOrmModule = () => {
     Generator,
     TransferSingle,
     ClaimSingle,
+    Agreement
   ];
 
   return TypeOrmModule.forRoot({
@@ -69,7 +77,22 @@ const storageAdapter = new PostgresTypeORMAdapter();
       }),
     }),
     AccountModule.register(storageAdapter),
-    TokenAPIModule.register(storageAdapter),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: Number(process.env.REDIS_PORT || 6379),
+        username: process.env.REDIS_USERNAME || '',
+        password: process.env.REDIS_PASSWORD || '',
+        tls: Boolean(process.env.REDIS_TLS_OFF)
+          ? undefined
+          : { rejectUnauthorized: false },
+      },
+    }),
+    BlockchainPropertiesModule.register(storageAdapter),
+    BatchModule.register(storageAdapter),
+    CertificateModule.register(storageAdapter),
+    WatcherModule.register(storageAdapter),
+    AgreementModule.register(storageAdapter),
   ],
   controllers: [AppController],
   providers: [AppService],

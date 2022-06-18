@@ -211,6 +211,8 @@ model Contract {
   externalId     String?
   label          LabelEnumType?
 
+  onchainId      String?
+
   purchases Purchase[]
 
   createdAt DateTime @default(now())

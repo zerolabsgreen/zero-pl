@@ -286,6 +286,81 @@ paths:
                 $ref: "#/components/schemas/EventsResponseDTO"
       tags:
         - "certificates"
+  /agreement:
+    post:
+      operationId: "AgreementController_deploy"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAgreementDTO"
+      responses:
+        201:
+          description: "Deployed agreement data"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgreementDTO"
+      tags:
+        - "agreement"
+    get:
+      operationId: "AgreementController_getAll"
+      parameters: []
+      responses:
+        200:
+          description: "Returns all agreements"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/AgreementDTO"
+      tags:
+        - "agreement"
+  /agreement/{address}/sign:
+    post:
+      operationId: "AgreementController_sign"
+      parameters:
+        - name: "address"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignAgreementDTO"
+      responses:
+        201:
+          description: "Signed agreement"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgreementDTO"
+      tags:
+        - "agreement"
+  /agreement/{address}:
+    get:
+      operationId: "AgreementController_get"
+      parameters:
+        - name: "address"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Returns the agreement"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgreementDTO"
+      tags:
+        - "agreement"
 info:
   title: "Zero - Tokenization Module API"
   description: ""
@@ -627,3 +702,94 @@ components:
         - "currentPage"
         - "lastPage"
         - "nextPage"
+    EnergySource:
+      type: "string"
+      enum:
+        - SOLAR: "SOLAR"
+          WIND: "WIND"
+          HYDRO: "HYDRO"
+          MARINE: "MARINE"
+          THERMAL: "THERMAL"
+          BIOMASS: "BIOMASS"
+          BIOGAS: "BIOGAS"
+    CreateAgreementDTO:
+      type: "object"
+      properties:
+        buyer:
+          type: "string"
+          description: "Buyer blockchain address"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+        seller:
+          type: "string"
+          description: "Seller blockchain address"
+          example: "0x384A377D142F5bF9c5649b3fED322F45E0261A0C"
+        amount:
+          type: "string"
+          description: "Total deliverable amount agreed in the agreement"
+          example: "10000000"
+        energySources:
+          type: "array"
+          example:
+            - "SOLAR"
+          items:
+            $ref: "#/components/schemas/EnergySource"
+      required:
+        - "buyer"
+        - "seller"
+        - "amount"
+        - "energySources"
+    AgreementDTO:
+      type: "object"
+      properties:
+        address:
+          type: "string"
+          description: "Agreement address"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+        buyer:
+          type: "string"
+          description: "Buyer blockchain address"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+        seller:
+          type: "string"
+          description: "Seller blockchain address"
+          example: "0x384A377D142F5bF9c5649b3fED322F45E0261A0C"
+        amount:
+          type: "string"
+          description: "Total deliverable amount agreed in the agreement"
+          example: "10000000"
+        filledAmount:
+          type: "string"
+          description: "Delivered amount"
+          example: "1000000"
+        energySources:
+          type: "array"
+          example:
+            - "SOLAR"
+          items:
+            $ref: "#/components/schemas/EnergySource"
+        txHash:
+          type: "string"
+          description: "Transaction hash in which the agreement was created"
+          example: "0xac40070dc36e7fc274573326d776f21652e125716e879ca4578cf4a4539365aa"
+      required:
+        - "address"
+        - "buyer"
+        - "seller"
+        - "amount"
+        - "filledAmount"
+        - "energySources"
+        - "txHash"
+    SignAgreementDTO:
+      type: "object"
+      properties:
+        sellerSignature:
+          type: "string"
+          description: "Seller's signature"
+          example: "0xf86c0a8502540be400825208944bbeeb066ed09b7aed07bf39eee0460dfa261520880de0b6b3a7640000801ca0f3ae52c1ef3300f44df0bcfd1341c232ed6134672b16e35699ae3f5fe2493379a023d23d2955a239dd6f61c4e8b2678d174356ff424eac53da53e17706c43ef871"
+        buyerSignature:
+          type: "string"
+          description: "Buyer's signature"
+          example: "0xf86c0a8502540be400825208944bbeeb066ed09b7aed07bf39eee0460dfa261520880de0b6b3a7640000801ca0f3ae52c1ef3300f44df0bcfd1341c232ed6134672b16e35699ae3f5fe2493379a023d23d2955a239dd6f61c4e8b2678d174356ff424eac53da53e17706c43ef871"
+      required:
+        - "sellerSignature"
+        - "buyerSignature"

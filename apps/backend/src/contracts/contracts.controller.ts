@@ -69,6 +69,16 @@ export class ContractsController {
     })
   }
 
+  @Post(':id/deploy/on-chain')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiOkResponse({ type: FindContractDto })
+  @ApiParam({ name: 'id', type: String })
+  deployOnChain(@Param('id') id: string): Promise<FindContractDto> {
+    return this.contractsService.deployOnChain(id).then((contract) => {
+      return FindContractDto.toDto(contract)
+    })
+  }
+
   @Patch(':id')
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   @ApiParam({ name: 'id', type: String })

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -9,10 +9,18 @@ import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
 import { ContractDto } from './dto/contract.dto';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { FindContractDto } from './dto/find-contract.dto';
+import { Buyer, Contract, EnergySourceEnumType, Seller } from '@prisma/client';
+import { AgreementDTO, CreateAgreementDTO } from '@zero-labs/tokenization-api';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+
+export type CreateDto = Omit<CreateAgreementDTO, 'energySources'> & {
+  energySources: EnergySourceEnumType[]
+}
 
 @Injectable()
 export class ContractsService {
   private readonly logger = new Logger(ContractsService.name, { timestamp: true });
+  private readonly axiosInstance: AxiosInstance;
 
   constructor(
     private prisma: PrismaService,
@@ -22,6 +30,11 @@ export class ContractsService {
     private filecoinNodesService: FilecoinNodesService
   ) {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
+
+    this.axiosInstance = axios.create({
+      baseURL: `${this.configService.get('TOKENIZATION_BASE_URL')}/api`,
+      headers: { 'X-Api-Key': this.configService.get('SUPERADMIN_API_KEY') }
+    });
   }
 
   async create(createContractDtos: CreateContractDto[]): Promise<ContractDto[]> {
@@ -123,7 +136,7 @@ export class ContractsService {
     };
   }
 
-  async findOne(id: string): Promise<ContractDto> {
+  async findOne(id: Contract['id']): Promise<ContractDto> {
     const data = await this.prisma.contract.findUnique({
       where: {
         id
@@ -137,13 +150,29 @@ export class ContractsService {
     });
 
     if (!data) {
-      return null;
+      throw new NotFoundException(`No contract with ID ${id} exists.`)
     }
 
     return ContractDto.toDto(data);
   }
 
-  async update(id: string, updateContractDto: UpdateContractDto): Promise<ContractDto> {
+  async findOneRaw(id: Contract['id']): Promise<Contract & { seller: Seller, buyer: Buyer }> {
+    const data = await this.prisma.contract.findUnique({
+      where: { id },
+      include: {
+        seller: true,
+        buyer: true,
+      }
+    });
+
+    if (!data) {
+      throw new NotFoundException(`No contract with ID ${id} exists.`)
+    }
+
+    return data;
+  }
+
+  async update(id: Contract['id'], updateContractDto: UpdateContractDto): Promise<ContractDto> {
     return await this.prisma.$transaction(async () => {
       const newContract = await this.prisma.contract.update({
         where: { id },
@@ -174,12 +203,53 @@ export class ContractsService {
     });
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: Contract['id']): Promise<boolean> {
     await this.prisma.$transaction([
       this.prisma.contract.delete({ where: { id } })
     ]);
 
     return true;
+  }
+
+  async deployOnChain(contractId: Contract['id']): Promise<ContractDto> {
+    const contract = await this.findOneRaw(contractId);
+
+    if (contract.onchainId) {
+      throw new ConflictException(`Contract ${contractId} already has an onchainId: ${contract.onchainId}`);
+    }
+
+    const dto: CreateDto = {
+      seller: contract.seller.blockchainAddress,
+      buyer: contract.buyer.blockchainAddress,
+      amount: contract.volume.toString(),
+      energySources: contract.energySources
+    };
+
+    this.logger.debug(`[Contract ${contractId}] Deploying on-chain...`);
+
+    const { data: agreement } = (
+      await this.axiosInstance.post<any, AxiosResponse<AgreementDTO>, CreateDto>(
+        `/agreement`,
+        dto
+      ).catch((err) => {
+        this.logger.error(`POST /agreement error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      })
+    );
+
+    const updatedContract = await this.prisma.contract.update({
+      where: { id: contractId },
+      data: { onchainId: agreement.address },
+      include: {
+        seller: true,
+        buyer: true,
+        filecoinNode: true,
+        purchases: { include: { certificate: true } }
+      }
+    });
+
+    return ContractDto.toDto(updatedContract);
   }
 
 }
