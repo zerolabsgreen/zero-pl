@@ -1,4 +1,7 @@
+import axios, { AxiosInstance } from 'axios';
 import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Buyer, Contract, Seller } from '@prisma/client';
+
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -9,13 +12,6 @@ import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
 import { ContractDto } from './dto/contract.dto';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { FindContractDto } from './dto/find-contract.dto';
-import { Buyer, Contract, EnergySourceEnumType, Seller } from '@prisma/client';
-import { AgreementDTO, CreateAgreementDTO } from '@zero-labs/tokenization-api';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-
-export type CreateDto = Omit<CreateAgreementDTO, 'energySources'> & {
-  energySources: EnergySourceEnumType[]
-}
 
 @Injectable()
 export class ContractsService {
@@ -218,7 +214,7 @@ export class ContractsService {
       throw new ConflictException(`Contract ${contractId} already has an onchainId: ${contract.onchainId}`);
     }
 
-    const dto: CreateDto = {
+    const dto = {
       seller: contract.seller.blockchainAddress,
       buyer: contract.buyer.blockchainAddress,
       amount: contract.volume.toString(),
@@ -228,7 +224,7 @@ export class ContractsService {
     this.logger.debug(`[Contract ${contractId}] Deploying on-chain...`);
 
     const { data: agreement } = (
-      await this.axiosInstance.post<any, AxiosResponse<AgreementDTO>, CreateDto>(
+      await this.axiosInstance.post(
         `/agreement`,
         dto
       ).catch((err) => {
