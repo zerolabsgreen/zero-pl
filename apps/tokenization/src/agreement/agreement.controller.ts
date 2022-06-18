@@ -5,6 +5,7 @@ import {
   Logger,
   Param,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -12,16 +13,20 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { AgreementDTO, AgreementService, BlockchainPropertiesService, CreateAgreementDTO } from '@zero-labs/tokenization-api';
 import { providers, Wallet } from 'ethers';
 import { signAgreement } from '@zero-labs/tokenization';
 import { AccountService } from '../account/account.service';
+import { IssuerGuard } from '../auth/issuer.guard';
 
 @ApiTags('agreement')
 @Controller('agreement')
 @UsePipes(ValidationPipe)
+@ApiSecurity('api-key')
+@UseGuards(IssuerGuard)
 export class AgreementController {
   private readonly logger = new Logger(AgreementController.name, {
     timestamp: true,

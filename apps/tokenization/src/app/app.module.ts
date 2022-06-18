@@ -10,21 +10,19 @@ import {
   TransferSingle,
   ClaimSingle,
   PostgresTypeORMAdapter,
-  BlockchainPropertiesModule,
-  BatchModule,
-  CertificateModule,
-  WatcherModule,
-  AgreementModule,
   Agreement
 } from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AccountModule } from '../account/account.module';
 import { Account } from '../account/account.entity';
 import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
+import { AgreementModule } from '../agreement';
+import { WatcherModule } from '../watcher/watcher.module';
+import { BatchModule } from '../batch/batch.module';
+import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
+import { CertificateModule } from '../certificate/certificate.module';
 
 const OriginAppTypeOrmModule = () => {
   if (!process.env.TOKENIZATION_DATABASE_URL) {
@@ -94,8 +92,6 @@ const storageAdapter = new PostgresTypeORMAdapter();
     WatcherModule.register(storageAdapter),
     AgreementModule.register(storageAdapter),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class TokenizationModule {
   configure(consumer: MiddlewareConsumer) {

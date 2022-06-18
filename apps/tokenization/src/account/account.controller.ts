@@ -5,9 +5,9 @@ import { IssuerGuard } from '../auth/issuer.guard';
 import { AccountDTO } from './account.dto';
 import { AccountService } from './account.service';
 
-@ApiSecurity('api-key')
 @ApiTags('account')
 @Controller('account')
+@ApiSecurity('api-key')
 @UseGuards(IssuerGuard)
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
