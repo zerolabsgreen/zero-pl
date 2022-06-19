@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { utils } from 'ethers';
 import { pick } from 'lodash';
 import { TxHash, UnixTimestamp } from '../utils/types';
@@ -69,6 +69,8 @@ interface ClaimCertificateDTO {
   }
 }
 
+type TxHashResponseDTO = { txHash: string };
+
 @Injectable()
 export class IssuerService {
   private readonly logger = new Logger(IssuerService.name, { timestamp: true });
@@ -119,7 +121,7 @@ export class IssuerService {
     dto: MintDTO[]
   ): Promise<TxHash> {
     const response = (
-      await this.axiosInstance.post(
+      await this.axiosInstance.post<any, AxiosResponse<TxHashResponseDTO>, MintDTO[]>(
         `/batch/mint/${batchId}`,
         dto
       ).catch((err) => {
@@ -137,7 +139,7 @@ export class IssuerService {
 
     this.logger.debug(`requesting POST /certificate/${id}/transfer with ${JSON.stringify(requestPayload)}`);
 
-    const res = await this.axiosInstance.post(
+    const res = await this.axiosInstance.post<any, AxiosResponse<TxHashResponseDTO>, Omit<TransferCertificateDTO, 'id'>>(
       `/certificate/transfer/${id}`,
       requestPayload
     ).catch((err) => {
@@ -154,7 +156,7 @@ export class IssuerService {
 
     this.logger.debug(`requesting POST /certificate/claim/${id} with ${JSON.stringify(requestPayload)}`);
 
-    const res = await this.axiosInstance.post(
+    const res = await this.axiosInstance.post<any, AxiosResponse<{ txHash: string }>, Omit<ClaimCertificateDTO, 'id'>>(
       `/certificate/claim/${id}`,
       requestPayload
     ).catch((err) => {
@@ -178,7 +180,7 @@ export class IssuerService {
   }
 
   public async getCertificatesMintedIn(txHash: string): Promise<CertificateIds[]> {
-    const res = await this.axiosInstance.get(
+    const res = await this.axiosInstance.get<any, AxiosResponse<CertificateIds['onchainId'][]>, CertificateIds['onchainId'][]>(
       `/certificate/id/${txHash}`
     ).catch((err) => {
       this.logger.error(`GET /certificate/id/${txHash} error response: ${err}`);
@@ -208,5 +210,17 @@ export class IssuerService {
     }
 
     return certificates;
+  }
+
+  public async getTransaction(txHash: string): Promise<TxReceiptDTO> {
+    const res = await this.axiosInstance.get<any, AxiosResponse<TxReceiptDTO>, TxReceiptDTO>(
+      `/blockchain/${txHash}`
+    ).catch((err) => {
+      this.logger.error(`GET /blockchain/${txHash} error response: ${err}`);
+      this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+      throw err;
+    });
+
+    return res.data;
   }
 }

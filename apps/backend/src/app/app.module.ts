@@ -6,6 +6,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { PDFModule } from '@t00nday/nestjs-pdf';
+import { BullModule } from '@nestjs/bull';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -54,6 +55,17 @@ import { BatchModule } from '../batches/batch.module';
           .default('smtp://localhost:1025'),
         SMTP_FROM: Joi.string().default('"Zero" <notification@zerolabs.green>'),
       })
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: Number(process.env.REDIS_PORT || 6379),
+        username: process.env.REDIS_USERNAME || '',
+        password: process.env.REDIS_PASSWORD || '',
+        tls: Boolean(process.env.REDIS_TLS_OFF)
+          ? undefined
+          : { rejectUnauthorized: false },
+      },
     }),
     PDFModule.register({
       view: {

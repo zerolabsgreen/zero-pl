@@ -3,6 +3,8 @@ import { PDFService } from '@t00nday/nestjs-pdf';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { BigNumber, constants } from 'ethers';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -15,11 +17,11 @@ import { FileMetadataDto } from '../files/dto/file-metadata.dto';
 import { ShortPurchaseDto } from './dto/short-purchase.dto';
 import { FullPurchaseDto } from './dto/full-purchase.dto';
 import { SellersService } from '../sellers/sellers.service';
-import { dateTimeToUnix } from '../utils/unix';
-import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { BatchService } from '../batches/batch.service';
 import { PurchaseEventDTO } from './dto/purchase-event.dto';
+import { ContractsService } from '../contracts/contracts.service';
+import { getClaimData } from './utils';
 
 @Injectable()
 export class PurchasesService {
@@ -34,7 +36,9 @@ export class PurchasesService {
     private buyersService: BuyersService,
     private pdfService: PDFService,
     private filesService: FilesService,
-    private batchService: BatchService
+    private batchService: BatchService,
+    private contractsService: ContractsService,
+    @InjectQueue('purchase') private readonly purchaseQueue: Queue,
   ) {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
@@ -122,42 +126,47 @@ export class PurchasesService {
           throw err;
         });
 
-        const txHash = await this.issuerService.claimCertificate({
-          id: Number(certData.onchainId),
-          from: sellerData.blockchainAddress,
-          to: buyerData.blockchainAddress,
-          amount: purchase.recsSoldWh,
-          claimData: {
-            beneficiary: newPurchase.beneficiary ?? buyerData.name,
-            region: existingFilecoinNode.region ?? '',
-            countryCode: existingFilecoinNode.country ?? '',
-            periodStartDate: dateTimeToUnix(
-              toDateTimeWithOffset(
-                createPurchaseDto.reportingStart,
-                createPurchaseDto.reportingStartTimezoneOffset ?? 0
-              )
-            ).toString(),
-            periodEndDate: dateTimeToUnix(
-              toDateTimeWithOffset(
-                createPurchaseDto.reportingEnd,
-                createPurchaseDto.reportingEndTimezoneOffset ?? 0
-              )
-            ).toString(),
-            purpose: newPurchase.purpose ?? `Decarbonizing Filecoin Mining Operation`,
-            consumptionEntityID: existingFilecoinNode.id,
-            proofID: newPurchase.id
-          }
-        });
+        if (newPurchase.contractId) {
+          const contract = await this.contractsService.findOne(newPurchase.contractId);
 
-        await prisma.purchase.update({
-          where: {
-            id: newPurchase.id
-          }, 
-          data: { txHash }
-        }).catch(err => {
-          this.logger.error(`error updating the purchase with txHash: ${err}`);
-          throw err;
-        });
+          if (!contract) {
+            throw new BadRequestException(`Contract ${newPurchase.contractId} doesn't exist`);
+          }
+
+          if (!contract.onchainId) {
+            throw new BadRequestException(`Contract ${newPurchase.contractId} doesn't have an onchainId`);
+          }
+
+          await this.issuerService.transferCertificate({
+            id: Number(certData.onchainId),
+            from: sellerData.blockchainAddress,
+            to: contract.onchainId,
+            amount: purchase.recsSoldWh
+          });
+
+          // Push claiming to a queue, so that we don't have to wait for the transfer to finish and delay the request response
+          await this.purchaseQueue.add('claim', {
+            purchaseId: newPurchase.id,
+          });
+        } else {
+          const txHash = await this.issuerService.claimCertificate({
+            id: Number(certData.onchainId),
+            from: sellerData.blockchainAddress,
+            to: buyerData.blockchainAddress,
+            amount: purchase.recsSoldWh,
+            claimData: getClaimData(await this.findOne(newPurchase.id))
+          });
+
+          await prisma.purchase.update({
+            where: {
+              id: purchase.id
+            }, 
+            data: { txHash }
+          }).catch(err => {
+            this.logger.error(`error updating the purchase with txHash: ${err}`);
+            throw err;
+          });
+        }
 
         purchases.push(await this.findOne(newPurchase.id));
       }
