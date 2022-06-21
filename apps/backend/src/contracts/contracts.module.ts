@@ -27,6 +27,7 @@ import { FilecoinNodesModule } from '../filecoin-nodes/filecoin-nodes.module';
     })
   ],
   controllers: [ContractsController],
-  providers: [ContractsService]
+  providers: [ContractsService],
+  exports: [ContractsService]
 })
 export class ContractsModule {}

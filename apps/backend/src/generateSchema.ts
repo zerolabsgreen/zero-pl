@@ -17,6 +17,8 @@ export const generateSchema = async () => {
   const document = SwaggerModule.createDocument(app, getSwaggerDocumentationConfig());
 
   writeFileSync(resolve(__dirname, '..', 'swagger.json'), JSON.stringify(document, null, 2));
+
+  process.exit(0);
 };
 
 generateSchema().catch((err) => {

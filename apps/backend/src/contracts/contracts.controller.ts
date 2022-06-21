@@ -24,6 +24,7 @@ import { NoDataInterceptor } from '../interceptors/NoDataInterceptor';
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { ContractDto } from './dto/contract.dto';
 
 @Controller('/partners/filecoin/contracts')
 @ApiTags('Filecoin contracts')
@@ -75,7 +76,7 @@ export class ContractsController {
   @ApiParam({ name: 'id', type: String })
   deployOnChain(@Param('id') id: string): Promise<FindContractDto> {
     return this.contractsService.deployOnChain(id).then((contract) => {
-      return FindContractDto.toDto(contract)
+      return FindContractDto.toDto(ContractDto.toDto(contract))
     })
   }
 

@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { BuyersService } from '../buyers/buyers.service';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
-import { ContractDto } from './dto/contract.dto';
+import { ContractDto, ContractEntityWithRelations } from './dto/contract.dto';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { FindContractDto } from './dto/find-contract.dto';
 
@@ -65,7 +65,7 @@ export class ContractsService {
           }
         }
 
-        const newRecord = await prisma.contract.create({
+        let contract = await prisma.contract.create({
           data: {
             id: createContractDto.id,
             buyer: { connect: { id: createContractDto.buyerId }},
@@ -82,6 +82,7 @@ export class ContractsService {
             countries: createContractDto.countries,
             region: createContractDto.region ?? '',
             externalId: createContractDto.externalId,
+            onchainId: createContractDto.onchainId,
             label: createContractDto.label
           },
           include: {
@@ -95,7 +96,11 @@ export class ContractsService {
           throw err;
         });
 
-        contracts.push(ContractDto.toDto(newRecord));
+        if (!contract.onchainId) {
+          contract = await this.deployOnChain(contract.id);
+        }
+
+        contracts.push(ContractDto.toDto(contract));
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
@@ -207,7 +212,7 @@ export class ContractsService {
     return true;
   }
 
-  async deployOnChain(contractId: Contract['id']): Promise<ContractDto> {
+  async deployOnChain(contractId: Contract['id']): Promise<ContractEntityWithRelations> {
     const contract = await this.findOneRaw(contractId);
 
     if (contract.onchainId) {
@@ -245,7 +250,7 @@ export class ContractsService {
       }
     });
 
-    return ContractDto.toDto(updatedContract);
+    return updatedContract;
   }
 
 }
