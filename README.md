@@ -90,7 +90,12 @@ Make sure the latest `master` branch is built
 yarn clean && yarn && yarn build
 ```
 
-Deploy
+Deploy staging
 ```
-./deployment/deploy-heroku.sh
+./deployment/deploy-staging.sh
+```
+
+Deploy prod
+```
+./deployment/deploy-prod.sh
 ```

@@ -1,6 +1,5 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
-import * as redisStore from 'cache-manager-redis-store';
 import * as process from 'process';
 import { PDFModule } from '@t00nday/nestjs-pdf';
 
@@ -29,17 +28,6 @@ import { PurchaseProcessor } from './purchase.processor';
     FilesModule,
     BuyersModule,
     SellersModule,
-    CacheModule.registerAsync({
-      useFactory: () => {
-        if (process.env.REDIS_HOST && process.env.REDIS_PORT) {
-          return {
-            store: redisStore,
-            host: process.env.REDIS_HOST,
-            port: process.env.REDIS_PORT
-          }
-        }
-      }
-    }),
     CertificatesModule,
     IssuerModule,
     BatchModule,
