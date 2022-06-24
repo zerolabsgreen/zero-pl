@@ -1,5 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
-import * as redisStore from 'cache-manager-redis-store';
+import { Module } from '@nestjs/common';
 import * as process from 'process';
 
 import { BuyersModule } from '../buyers/buyers.module';
@@ -13,18 +12,7 @@ import { FilecoinNodesModule } from '../filecoin-nodes/filecoin-nodes.module';
   imports: [
     BuyersModule,
     SellersModule,
-    FilecoinNodesModule,
-    CacheModule.registerAsync({
-      useFactory: () => {
-        if (process.env.REDIS_HOST && process.env.REDIS_PORT) {
-          return {
-            store: redisStore,
-            host: process.env.REDIS_HOST,
-            port: process.env.REDIS_PORT
-          }
-        }
-      }
-    })
+    FilecoinNodesModule
   ],
   controllers: [ContractsController],
   providers: [ContractsService],
