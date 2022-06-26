@@ -42,7 +42,7 @@ jobs:
     needs: run-tests
 
     steps:
-      name: deploy-app
+    - name: deploy-app
       run: |
         sh deployment/deploy-staging.sh
 
