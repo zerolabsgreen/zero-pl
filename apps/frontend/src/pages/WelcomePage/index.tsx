@@ -12,7 +12,7 @@ import {
 } from "../../components/HomePage";
 
 export const WelcomePage = () => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.ENVIRONMENT === 'production') {
     window.onload = function() {
       window.location.href = "https://zerolabs.green";
     }
