@@ -4,7 +4,9 @@ on:
   pull_request:
     branches:
       - '*'
-      - '!stage-test'
+
+  push:
+    - '!stage-test'
 
 jobs:
   cancel-previous:
