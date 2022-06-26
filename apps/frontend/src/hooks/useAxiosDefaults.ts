@@ -6,6 +6,7 @@ declare global {
       API_BASE_URL: string;
       BLOCK_EXPLORER: string;
       UI_API_KEY: string
+      ENVIRONMENT: string;
     };
   }
 }
