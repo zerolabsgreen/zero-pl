@@ -235,6 +235,8 @@ enum ProductEnumType {
   GO
   TIGR
   LGC
+  REGO
+  NFC
 }
 
 enum EnergySourceEnumType {
