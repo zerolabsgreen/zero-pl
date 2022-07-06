@@ -96,9 +96,10 @@ export class ContractsService {
           throw err;
         });
 
-        if (!contract.onchainId) {
-          contract = await this.deployOnChain(contract.id);
-        }
+        // Commenting out for now, as we want to separate off-chain and on-chain contracts creation
+        // if (!contract.onchainId) {
+        //   contract = await this.deployOnChain(contract.id);
+        // }
 
         contracts.push(ContractDto.toDto(contract));
       }
