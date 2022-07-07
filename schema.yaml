@@ -179,6 +179,25 @@ paths:
                   $ref: "#/components/schemas/CertificateWithOwnersDTO"
       tags:
         - "certificates"
+  /certificate/transfer/batch:
+    post:
+      operationId: "CertificateController_transferBatch"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferBatchDTO"
+      responses:
+        201:
+          description: "Transfers the certificates and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "certificates"
   /certificate/transfer/{id}:
     post:
       operationId: "CertificateController_transfer"
@@ -336,11 +355,11 @@ paths:
               $ref: "#/components/schemas/SignAgreementDTO"
       responses:
         201:
-          description: "Signed agreement"
+          description: "Signing ceremony transaction hash"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgreementDTO"
+                type: "string"
       tags:
         - "agreement"
   /agreement/{address}:
@@ -579,6 +598,40 @@ components:
         - "data"
         - "owners"
         - "claimed"
+    TransferWithIdDTO:
+      type: "object"
+      properties:
+        from:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        to:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        amount:
+          type: "string"
+          example: "1000000"
+        certificateId:
+          type: "string"
+          description: "Certificate Id"
+          example: "1"
+      required:
+        - "from"
+        - "to"
+        - "amount"
+        - "certificateId"
+    TransferBatchDTO:
+      type: "object"
+      properties:
+        transfers:
+          description: "Transfers"
+          example: "[\n      {\n        \"certificateId\": \"1\",\n        \"from\": \"0xD173313A51f8fc37BcF67569b463abd89d81844f\",\n        \"to\": \"0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8\",\n        \"amount\": \"600\"\n      },\n      {\n        \"certificateId\": \"1\",\n        \"from\": \"0xD173313A51f8fc37BcF67569b463abd89d81844f\",\n        \"to\": \"0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8\",\n        \"amount\": \"700\"\n      }\n    ]"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransferWithIdDTO"
+      required:
+        - "transfers"
     TransferDTO:
       type: "object"
       properties:
@@ -592,10 +645,11 @@ components:
           description: "Public blockchain address"
         amount:
           type: "string"
-          example: 1000000
+          example: "1000000"
       required:
         - "from"
         - "to"
+        - "amount"
     ClaimDataDTO:
       type: "object"
       properties:

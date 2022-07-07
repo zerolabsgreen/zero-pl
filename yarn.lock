@@ -3072,10 +3072,10 @@
     tslib "2.3.1"
     uuid "8.3.2"
 
-"@nestjs/cqrs@8.0.1":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@nestjs/cqrs/-/cqrs-8.0.1.tgz#43242aaa76d74b647682aa64135f7145b09b0cce"
-  integrity sha512-hjEMl9WOgp55SCDaI79lKqJD/GgW2ZqndQbIb6VfMeR7Ue7Rt25GGGQ3KkZ5i+TDvlTDSzco8wqmQ4x/PTsVMA==
+"@nestjs/cqrs@8.0.5":
+  version "8.0.5"
+  resolved "https://registry.npmjs.org/@nestjs/cqrs/-/cqrs-8.0.5.tgz#a24ee5e47ac9ca41b6f8ff29bc81dddacf7fed61"
+  integrity sha512-uOG7xY0e5WGEuCHKCqSsuy79i5fq6pj+zPQG/6LwpSdwHWaraIUR1N4ExAVof19AGQvDQMpCqMiTrb4O+HjlIg==
   dependencies:
     uuid "8.3.2"
 
@@ -5279,16 +5279,17 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.7.6":
-  version "0.7.6"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.7.6.tgz#66399b9b101cda9749b45e5e0112810ce33e5155"
-  integrity sha512-pUhFjmR7GMehGTzCEIM6J2OcpLhXatvLpvA18svmjwNdG4gL5zDeaWKnCiWdJs5WSfp90Jvg59/DIUctH5rjUQ==
+"@zero-labs/tokenization-api@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.9.0.tgz#16903ff3632804316452593c415b529625edc121"
+  integrity sha512-N0tVW1R//v4PRAFsuuUT2fRQh0/Cu+Feh3ccHSxIqPuV4L+PePfWUNF6QnLdh/eIiTsZO0web0+A+jUmBGSlIA==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/bull" "0.5.5"
     "@nestjs/common" "8.4.4"
     "@nestjs/config" "2.0.0"
     "@nestjs/core" "8.4.4"
+    "@nestjs/cqrs" "8.0.5"
     "@nestjs/passport" "8.2.1"
     "@nestjs/platform-express" "8.4.4"
     "@nestjs/swagger" "5.2.1"

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { Buyer, Contract, Seller } from '@prisma/client';
 
 import { CreateContractDto } from './dto/create-contract.dto';
@@ -12,6 +12,7 @@ import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
 import { ContractDto, ContractEntityWithRelations } from './dto/contract.dto';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { FindContractDto } from './dto/find-contract.dto';
+import { TxHash } from '../utils/types';
 
 @Injectable()
 export class ContractsService {
@@ -213,7 +214,7 @@ export class ContractsService {
     return true;
   }
 
-  async deployOnChain(contractId: Contract['id']): Promise<ContractEntityWithRelations> {
+  async deployOnchain(contractId: Contract['id']): Promise<ContractEntityWithRelations> {
     const contract = await this.findOneRaw(contractId);
 
     if (contract.onchainId) {
@@ -252,6 +253,43 @@ export class ContractsService {
     });
 
     return updatedContract;
+  }
+
+  async signOnchain(contractId: Contract['id']): Promise<TxHash> {
+    const contract = await this.findOneRaw(contractId);
+    this.logger.debug(`[Contract ${contractId}] Signing on-chain...`);
+
+    if (!contract.onchainId) {
+      throw new PreconditionFailedException(
+        `Contract ${contractId} hasn't been deployed onchain yet. Please deploy before signing.`
+      );
+    }
+
+    const { data: onchainAgreement } = (
+      await this.axiosInstance.get(
+        `/agreement/${contract.onchainId}`
+      ).catch((err) => {
+        this.logger.error(`GET /agreement/${contract.onchainId} error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      })
+    );
+
+    if (onchainAgreement.signed) {
+      throw new ConflictException(`Contract ${contractId} has already been signed.`);
+    }
+
+    const { data: signatureTxHash } = (
+      await this.axiosInstance.post(
+        `/agreement/${onchainAgreement.id}/sign`
+      ).catch((err) => {
+        this.logger.error(`POST /agreement/${onchainAgreement.id}/sign error response: ${err}`);
+        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+        throw err;
+      })
+    );
+
+    return signatureTxHash;
   }
 
 }
