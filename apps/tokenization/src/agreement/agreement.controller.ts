@@ -62,7 +62,7 @@ export class AgreementController {
     return AgreementDTO.toDto(await this.agreementService.create(params));
   }
 
-  @Post(':address/sign')
+  @Post('/:address/sign')
   @ApiCreatedResponse({
     type: String,
     description: 'Signing ceremony transaction hash',

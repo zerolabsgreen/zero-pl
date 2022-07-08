@@ -66,7 +66,7 @@ export class ContractsService {
           }
         }
 
-        let contract = await prisma.contract.create({
+        const contract = await prisma.contract.create({
           data: {
             id: createContractDto.id,
             buyer: { connect: { id: createContractDto.buyerId }},
@@ -281,9 +281,9 @@ export class ContractsService {
 
     const { data: signatureTxHash } = (
       await this.axiosInstance.post(
-        `/agreement/${onchainAgreement.id}/sign`
+        `/agreement/${onchainAgreement.address}/sign`
       ).catch((err) => {
-        this.logger.error(`POST /agreement/${onchainAgreement.id}/sign error response: ${err}`);
+        this.logger.error(`POST /agreement/${onchainAgreement.address}/sign error response: ${err}`);
         this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
         throw err;
       })
