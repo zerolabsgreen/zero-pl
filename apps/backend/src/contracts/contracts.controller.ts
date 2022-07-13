@@ -71,22 +71,24 @@ export class ContractsController {
     })
   }
 
-  @Post(':id/on-chain/deploy')
+  @Post('on-chain/deploy')
+  @ApiBody({ type: [String] })
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
-  @ApiOkResponse({ type: FindContractDto })
-  @ApiParam({ name: 'id', type: String })
-  deployOnchain(@Param('id') id: string): Promise<FindContractDto> {
-    return this.contractsService.deployOnchain(id).then((contract) => {
+  @ApiOkResponse({ type: [FindContractDto] })
+  async deployOnchain(@Body() ids: string[]): Promise<FindContractDto[]> {
+    const contracts = await this.contractsService.deployOnchain(ids);
+    
+    return contracts.map((contract) => {
       return FindContractDto.toDto(ContractDto.toDto(contract))
-    })
+    });
   }
 
-  @Post(':id/on-chain/sign')
+  @Post('on-chain/sign')
+  @ApiBody({ type: [String] })
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
   @ApiOkResponse({ type: String })
-  @ApiParam({ name: 'id', type: String })
-  signOnchain(@Param('id') id: string): Promise<TxHash> {
-    return this.contractsService.signOnchain(id);
+  signOnchain(@Body() ids: string[]): Promise<TxHash> {
+    return this.contractsService.signOnchain(ids);
   }
 
   @Patch(':id')

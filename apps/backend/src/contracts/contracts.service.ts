@@ -175,6 +175,22 @@ export class ContractsService {
     return data;
   }
 
+  async findMultipleRaw(ids: Contract['id'][]): Promise<(Contract & { seller: Seller, buyer: Buyer })[]> {
+    const data = await this.prisma.contract.findMany({
+      where: { id: { in: ids } },
+      include: {
+        seller: true,
+        buyer: true,
+      }
+    });
+
+    if (data.length !== ids.length) {
+      throw new NotFoundException(`Incorrect contract ID`);
+    }
+
+    return data;
+  }
+
   async update(id: Contract['id'], updateContractDto: UpdateContractDto): Promise<ContractDto> {
     return await this.prisma.$transaction(async () => {
       const newContract = await this.prisma.contract.update({
@@ -214,26 +230,30 @@ export class ContractsService {
     return true;
   }
 
-  async deployOnchain(contractId: Contract['id']): Promise<ContractEntityWithRelations> {
-    const contract = await this.findOneRaw(contractId);
+  async deployOnchain(contractIds: Contract['id'][]): Promise<ContractEntityWithRelations[]> {
+    const contracts = await this.findMultipleRaw(contractIds);
 
-    if (contract.onchainId) {
-      throw new ConflictException(`Contract ${contractId} already has an onchainId: ${contract.onchainId}`);
+    const dtos = [];
+
+    for (const contract of contracts) {
+      if (contract.onchainId) {
+        throw new ConflictException(`Contract ${contract.id} already has an onchainId: ${contract.onchainId}`);
+      }
+
+      dtos.push({
+        seller: contract.seller.blockchainAddress,
+        buyer: contract.buyer.blockchainAddress,
+        amount: contract.volume.toString(),
+        energySources: contract.energySources
+      });
     }
 
-    const dto = {
-      seller: contract.seller.blockchainAddress,
-      buyer: contract.buyer.blockchainAddress,
-      amount: contract.volume.toString(),
-      energySources: contract.energySources
-    };
+    this.logger.debug(`Deploying contracts on-chain...`);
 
-    this.logger.debug(`[Contract ${contractId}] Deploying on-chain...`);
-
-    const { data: agreement } = (
+    const { data: agreements } = (
       await this.axiosInstance.post(
         `/agreement`,
-        dto
+        dtos
       ).catch((err) => {
         this.logger.error(`POST /agreement error response: ${err}`);
         this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
@@ -241,49 +261,58 @@ export class ContractsService {
       })
     );
 
-    const updatedContract = await this.prisma.contract.update({
-      where: { id: contractId },
-      data: { onchainId: agreement.address },
-      include: {
-        seller: true,
-        buyer: true,
-        filecoinNode: true,
-        purchases: { include: { certificate: true } }
-      }
-    });
+    const updatedContracts = [];
 
-    return updatedContract;
-  }
+    for (const [index, agreement] of agreements.entries()) {
+      const updatedContract = await this.prisma.contract.update({
+        where: { id: contractIds[index] },
+        data: { onchainId: agreement.address },
+        include: {
+          seller: true,
+          buyer: true,
+          filecoinNode: true,
+          purchases: { include: { certificate: true } }
+        }
+      });
 
-  async signOnchain(contractId: Contract['id']): Promise<TxHash> {
-    const contract = await this.findOneRaw(contractId);
-    this.logger.debug(`[Contract ${contractId}] Signing on-chain...`);
-
-    if (!contract.onchainId) {
-      throw new PreconditionFailedException(
-        `Contract ${contractId} hasn't been deployed onchain yet. Please deploy before signing.`
-      );
+      updatedContracts.push(updatedContract);
     }
 
-    const { data: onchainAgreement } = (
-      await this.axiosInstance.get(
-        `/agreement/${contract.onchainId}`
-      ).catch((err) => {
-        this.logger.error(`GET /agreement/${contract.onchainId} error response: ${err}`);
-        this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
-        throw err;
-      })
-    );
+    return updatedContracts;
+  }
 
-    if (onchainAgreement.signed) {
-      throw new ConflictException(`Contract ${contractId} has already been signed.`);
+  async signOnchain(contractIds: Contract['id'][]): Promise<TxHash> {
+    const contracts = await this.findMultipleRaw(contractIds);
+    this.logger.debug(`Signing contracts on-chain...`);
+
+    for (const contract of contracts) {
+      if (!contract.onchainId) {
+        throw new PreconditionFailedException(
+          `Contract ${contract.id} hasn't been deployed onchain yet. Please deploy before signing.`
+        );
+      }
+
+      const { data: onchainAgreement } = (
+        await this.axiosInstance.get(
+          `/agreement/${contract.onchainId}`
+        ).catch((err) => {
+          this.logger.error(`GET /agreement/${contract.onchainId} error response: ${err}`);
+          this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
+          throw err;
+        })
+      );
+  
+      if (onchainAgreement.signed) {
+        throw new ConflictException(`Contract ${contract.id} has already been signed.`);
+      }
     }
 
     const { data: signatureTxHash } = (
       await this.axiosInstance.post(
-        `/agreement/${onchainAgreement.address}/sign`
+        `/agreement/sign`,
+        contractIds
       ).catch((err) => {
-        this.logger.error(`POST /agreement/${onchainAgreement.address}/sign error response: ${err}`);
+        this.logger.error(`POST /agreement/sign error response: ${err}`);
         this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
         throw err;
       })

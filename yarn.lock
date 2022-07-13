@@ -5279,10 +5279,10 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.9.0":
-  version "0.9.0"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.9.0.tgz#16903ff3632804316452593c415b529625edc121"
-  integrity sha512-N0tVW1R//v4PRAFsuuUT2fRQh0/Cu+Feh3ccHSxIqPuV4L+PePfWUNF6QnLdh/eIiTsZO0web0+A+jUmBGSlIA==
+"@zero-labs/tokenization-api@0.10.0":
+  version "0.10.0"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.10.0.tgz#65d06987878480153cd4ab6e897601a7eac25eb2"
+  integrity sha512-3eFnOlR8ZWxxN9lGXBtrKrKGFSifWLBuOIrB30aWuo7QkCjjYBaTGfjslmcDv4SnVejVokT86tT00qwGhGvzeg==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/bull" "0.5.5"
@@ -5294,7 +5294,7 @@
     "@nestjs/platform-express" "8.4.4"
     "@nestjs/swagger" "5.2.1"
     "@nestjs/typeorm" "8.0.3"
-    "@zero-labs/tokenization" "0.4.1"
+    "@zero-labs/tokenization" "0.5.0"
     bull "4.8.3"
     class-transformer "0.5.1"
     class-validator "0.13.2"
@@ -5315,6 +5315,15 @@
   version "0.4.1"
   resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.4.1.tgz#68d2f6ec514144ea9f4554352574d9f693b33ec2"
   integrity sha512-Nh9iYGebYfdV7sNuG6AfKHt10iRZK1JSfJD8+IdBSvQ6ih5VXqwBU/svVCvo/hniH8XhOU/OWOswFigXzSFHtw==
+  dependencies:
+    "@openzeppelin/contracts" "4.6.0"
+    "@openzeppelin/contracts-upgradeable" "4.5.2"
+    luxon "2.3.2"
+
+"@zero-labs/tokenization@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.5.0.tgz#7a954869ca24e7ebfc392fe5418636ded2aadfdd"
+  integrity sha512-0lu2Gnmx5ZMqw9yugkmyVWbgkPRG50ClafliGH6qr0rwGrdRbgTDprMaHdAJED/tm/MSRqOHuE4SoXJB92RUlw==
   dependencies:
     "@openzeppelin/contracts" "4.6.0"
     "@openzeppelin/contracts-upgradeable" "4.5.2"
