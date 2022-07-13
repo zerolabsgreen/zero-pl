@@ -38,6 +38,16 @@ export class SellersService {
     return new SellerDto(await this.prisma.seller.findUnique({ where: { id: newSeller.id } }));
   }
 
+  async findByName(name: string): Promise<SellerDto> {
+    const [ row ] = await this.prisma.seller.findMany({ where: { name } });
+
+    if (!row) {
+      return null;
+    }
+
+    return new SellerDto(row);
+  }
+
   async findAll(query?: {
     skip?: number;
     take?: number;
