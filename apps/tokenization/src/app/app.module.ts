@@ -10,7 +10,9 @@ import {
   TransferSingle,
   ClaimSingle,
   PostgresTypeORMAdapter,
-  Agreement
+  Agreement,
+  TransferBatchMultipleTx,
+  TransferBatchMultiple
 } from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
@@ -36,6 +38,8 @@ const OriginAppTypeOrmModule = () => {
     Certificate,
     Generator,
     TransferSingle,
+    TransferBatchMultiple,
+    TransferBatchMultipleTx,
     ClaimSingle,
     Agreement
   ];

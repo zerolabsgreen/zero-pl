@@ -5279,10 +5279,10 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.10.0.tgz#65d06987878480153cd4ab6e897601a7eac25eb2"
-  integrity sha512-3eFnOlR8ZWxxN9lGXBtrKrKGFSifWLBuOIrB30aWuo7QkCjjYBaTGfjslmcDv4SnVejVokT86tT00qwGhGvzeg==
+"@zero-labs/tokenization-api@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.10.1.tgz#d10fd45c0af168271b60a627fc143fe2a823edd4"
+  integrity sha512-suc/ONG7cjtXpVi+eNhtg7J9sSnqtpBY9T62AeSla0YDmSYI8g3AR51UXzncUhAzwBJvKe6wylXCYmpDWYnkbQ==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/bull" "0.5.5"
@@ -5310,15 +5310,6 @@
     rxjs "7.5.5"
     swagger-ui-express "4.3.0"
     typeorm "0.3.6"
-
-"@zero-labs/tokenization@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.4.1.tgz#68d2f6ec514144ea9f4554352574d9f693b33ec2"
-  integrity sha512-Nh9iYGebYfdV7sNuG6AfKHt10iRZK1JSfJD8+IdBSvQ6ih5VXqwBU/svVCvo/hniH8XhOU/OWOswFigXzSFHtw==
-  dependencies:
-    "@openzeppelin/contracts" "4.6.0"
-    "@openzeppelin/contracts-upgradeable" "4.5.2"
-    luxon "2.3.2"
 
 "@zero-labs/tokenization@0.5.0":
   version "0.5.0"
