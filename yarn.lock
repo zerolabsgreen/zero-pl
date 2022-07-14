@@ -5279,10 +5279,10 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.10.1.tgz#d10fd45c0af168271b60a627fc143fe2a823edd4"
-  integrity sha512-suc/ONG7cjtXpVi+eNhtg7J9sSnqtpBY9T62AeSla0YDmSYI8g3AR51UXzncUhAzwBJvKe6wylXCYmpDWYnkbQ==
+"@zero-labs/tokenization-api@0.10.2":
+  version "0.10.2"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.10.2.tgz#5511005d69f1473605233dfd03d46aa088387e6a"
+  integrity sha512-Bh1URx/pSnpJStnWfnIAg4N5BtW007QDlmvN00IHy241WXrDjFhSWcMSLXG/yH9AvM8eeC13ju2RgvvP7kUhYg==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/bull" "0.5.5"
