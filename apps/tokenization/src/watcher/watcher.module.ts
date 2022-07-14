@@ -1,5 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
+import { CqrsModule } from '@nestjs/cqrs';
 import { AgreementModule } from '../agreement';
 import { IStorageAdapter, OnChainCertificateWatcher, OnChainEventProcessor } from '@zero-labs/tokenization-api';
 import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
@@ -12,6 +13,7 @@ export class WatcherModule {
     return {
       module: WatcherModule,
       imports: [
+        CqrsModule,
         BlockchainPropertiesModule.register(storageAdapter),
         CertificateModule.register(storageAdapter),
         BatchModule.register(storageAdapter),

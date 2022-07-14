@@ -25,6 +25,7 @@ import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { ContractDto } from './dto/contract.dto';
+import { TxHash } from '../utils/types';
 
 @Controller('/partners/filecoin/contracts')
 @ApiTags('Filecoin contracts')
@@ -70,14 +71,24 @@ export class ContractsController {
     })
   }
 
-  @Post(':id/deploy/on-chain')
+  @Post('on-chain/deploy')
+  @ApiBody({ type: [String] })
   @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
-  @ApiOkResponse({ type: FindContractDto })
-  @ApiParam({ name: 'id', type: String })
-  deployOnChain(@Param('id') id: string): Promise<FindContractDto> {
-    return this.contractsService.deployOnChain(id).then((contract) => {
+  @ApiOkResponse({ type: [FindContractDto] })
+  async deployOnchain(@Body() ids: string[]): Promise<FindContractDto[]> {
+    const contracts = await this.contractsService.deployOnchain(ids);
+    
+    return contracts.map((contract) => {
       return FindContractDto.toDto(ContractDto.toDto(contract))
-    })
+    });
+  }
+
+  @Post('on-chain/sign')
+  @ApiBody({ type: [String] })
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.UPDATE]))
+  @ApiOkResponse({ type: String })
+  signOnchain(@Body() ids: string[]): Promise<TxHash> {
+    return this.contractsService.signOnchain(ids);
   }
 
   @Patch(':id')

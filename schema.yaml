@@ -179,6 +179,25 @@ paths:
                   $ref: "#/components/schemas/CertificateWithOwnersDTO"
       tags:
         - "certificates"
+  /certificate/transfer/batch:
+    post:
+      operationId: "CertificateController_transferBatch"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferBatchDTO"
+      responses:
+        201:
+          description: "Transfers the certificates and returns the tx hash"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPendingDTO"
+      tags:
+        - "certificates"
   /certificate/transfer/{id}:
     post:
       operationId: "CertificateController_transfer"
@@ -295,14 +314,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateAgreementDTO"
+              type: "array"
+              items:
+                $ref: "#/components/schemas/CreateAgreementDTO"
       responses:
         201:
           description: "Deployed agreement data"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgreementDTO"
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/AgreementDTO"
       tags:
         - "agreement"
     get:
@@ -319,28 +342,25 @@ paths:
                   $ref: "#/components/schemas/AgreementDTO"
       tags:
         - "agreement"
-  /agreement/{address}/sign:
+  /agreement/sign:
     post:
       operationId: "AgreementController_sign"
-      parameters:
-        - name: "address"
-          required: true
-          in: "path"
-          schema:
-            type: "string"
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignAgreementDTO"
+              type: "array"
+              items:
+                $ref: "#/components/schemas/SignAgreementDTO"
       responses:
         201:
-          description: "Signed agreement"
+          description: "Signing ceremony transaction hash"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgreementDTO"
+                type: "string"
       tags:
         - "agreement"
   /agreement/{address}:
@@ -385,6 +405,9 @@ components:
         batchFactory:
           type: "string"
           example: "0x6c8d8D6c8a52Dc6ed1b89F9292e4dC88b20421ac"
+        agreementFactory:
+          type: "string"
+          example: "0x6c8d8D6c8a52Dc6ed1b89F9292e4dC88b20421ac"
         platformOperatorAddress:
           type: "string"
           example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
@@ -399,6 +422,7 @@ components:
         - "registry"
         - "topic"
         - "batchFactory"
+        - "agreementFactory"
         - "platformOperatorAddress"
         - "rpcNode"
     TransactionPendingDTO:
@@ -579,6 +603,40 @@ components:
         - "data"
         - "owners"
         - "claimed"
+    TransferWithIdDTO:
+      type: "object"
+      properties:
+        from:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        to:
+          type: "string"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          description: "Public blockchain address"
+        amount:
+          type: "string"
+          example: "1000000"
+        certificateId:
+          type: "string"
+          description: "Certificate Id"
+          example: "1"
+      required:
+        - "from"
+        - "to"
+        - "amount"
+        - "certificateId"
+    TransferBatchDTO:
+      type: "object"
+      properties:
+        transfers:
+          description: "Transfers"
+          example: "[\n      {\n        \"certificateId\": \"1\",\n        \"from\": \"0xD173313A51f8fc37BcF67569b463abd89d81844f\",\n        \"to\": \"0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8\",\n        \"amount\": \"600\"\n      },\n      {\n        \"certificateId\": \"1\",\n        \"from\": \"0xD173313A51f8fc37BcF67569b463abd89d81844f\",\n        \"to\": \"0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8\",\n        \"amount\": \"700\"\n      }\n    ]"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransferWithIdDTO"
+      required:
+        - "transfers"
     TransferDTO:
       type: "object"
       properties:
@@ -592,10 +650,11 @@ components:
           description: "Public blockchain address"
         amount:
           type: "string"
-          example: 1000000
+          example: "1000000"
       required:
         - "from"
         - "to"
+        - "amount"
     ClaimDataDTO:
       type: "object"
       properties:
@@ -718,11 +777,11 @@ components:
         buyer:
           type: "string"
           description: "Buyer blockchain address"
-          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
         seller:
           type: "string"
           description: "Seller blockchain address"
-          example: "0x384A377D142F5bF9c5649b3fED322F45E0261A0C"
+          example: "0x9442ED348b161af888e6cB999951aE8b961F7B4B"
         amount:
           type: "string"
           description: "Total deliverable amount agreed in the agreement"
@@ -748,11 +807,11 @@ components:
         buyer:
           type: "string"
           description: "Buyer blockchain address"
-          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
         seller:
           type: "string"
           description: "Seller blockchain address"
-          example: "0x384A377D142F5bF9c5649b3fED322F45E0261A0C"
+          example: "0x9442ED348b161af888e6cB999951aE8b961F7B4B"
         amount:
           type: "string"
           description: "Total deliverable amount agreed in the agreement"
@@ -771,6 +830,10 @@ components:
           type: "string"
           description: "Transaction hash in which the agreement was created"
           example: "0xac40070dc36e7fc274573326d776f21652e125716e879ca4578cf4a4539365aa"
+        signed:
+          type: "boolean"
+          description: "Flag to show whether the agreement has been signed"
+          example: true
       required:
         - "address"
         - "buyer"
@@ -779,17 +842,23 @@ components:
         - "filledAmount"
         - "energySources"
         - "txHash"
+        - "signed"
     SignAgreementDTO:
       type: "object"
       properties:
+        agreementAddress:
+          type: "string"
+          description: "Agreement address"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
         sellerSignature:
           type: "string"
           description: "Seller's signature"
-          example: "0xf86c0a8502540be400825208944bbeeb066ed09b7aed07bf39eee0460dfa261520880de0b6b3a7640000801ca0f3ae52c1ef3300f44df0bcfd1341c232ed6134672b16e35699ae3f5fe2493379a023d23d2955a239dd6f61c4e8b2678d174356ff424eac53da53e17706c43ef871"
+          example: "0xfff4db04e6fe6cf6b5c6327d240c3c430a5ec2e3a4d8dd1aa7c35b04398bd99017ab60163e49965b1d1602348fb9974e900c096c79ced6b118ec1218be1a5b461c"
         buyerSignature:
           type: "string"
           description: "Buyer's signature"
-          example: "0xf86c0a8502540be400825208944bbeeb066ed09b7aed07bf39eee0460dfa261520880de0b6b3a7640000801ca0f3ae52c1ef3300f44df0bcfd1341c232ed6134672b16e35699ae3f5fe2493379a023d23d2955a239dd6f61c4e8b2678d174356ff424eac53da53e17706c43ef871"
+          example: "0xb55b2521eda6d5f332e5b909bc610e2264dccf3f5d6d31b6096d6dbb11b3d728113efcd97fba6f2faa11b58aa767bb5f7b04121b82b7baa608fd5e4314202e351c"
       required:
+        - "agreementAddress"
         - "sellerSignature"
         - "buyerSignature"

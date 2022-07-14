@@ -16,7 +16,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { AgreementDTO, AgreementService, BlockchainPropertiesService, CreateAgreementDTO } from '@zero-labs/tokenization-api';
+import { AgreementDTO, AgreementService, BlockchainPropertiesService, CreateAgreementDTO, SignAgreementDTO, TransactionHash } from '@zero-labs/tokenization-api';
 import { providers, Wallet } from 'ethers';
 import { signAgreement } from '@zero-labs/tokenization';
 import { AccountService } from '../account/account.service';
@@ -39,31 +39,50 @@ export class AgreementController {
   ) {}
 
   @Post()
-  @ApiBody({ type: CreateAgreementDTO })
+  @ApiBody({ type: [CreateAgreementDTO] })
   @ApiCreatedResponse({
-    type: AgreementDTO,
+    type: [AgreementDTO],
     description: 'Agreement data',
   })
   public async create(
-    @Body() params: CreateAgreementDTO,
-  ): Promise<AgreementDTO> {
-    const agreement = await this.agreementService.create(params);
-    const seller = await this.accountService.get(params.seller);
-    const buyer = await this.accountService.get(params.buyer);
+    @Body() dtos: CreateAgreementDTO[],
+  ): Promise<AgreementDTO[]> {
+    const agreements = await this.agreementService.create(dtos);
+    return agreements.map((a) => AgreementDTO.toDto(a));
+  }
+
+  @Post('/sign')
+  @ApiBody({ type: [String] })
+  @ApiCreatedResponse({
+    type: String,
+    description: 'Signing ceremony transaction hash',
+  })
+  public async sign(
+    @Body() addresses: string[],
+  ): Promise<TransactionHash> {
+    const agreements = await this.agreementService.getMultiple(addresses);
 
     const { rpcNode } = await this.blockchainPropertiesService.get();
     const provider = new providers.JsonRpcProvider(rpcNode);
 
-    const buyerWallet = new Wallet(buyer.privateKey, provider);
-    const sellerWallet = new Wallet(seller.privateKey, provider);
+    const signatures: SignAgreementDTO[] = [];
 
-    return AgreementDTO.toDto(
-      await this.agreementService.sign(
-        agreement.address,
-        await signAgreement(sellerWallet, agreement.address),
-        await signAgreement(buyerWallet, agreement.address),
-      ),
-    );
+    for (const agreement of agreements) {
+      const seller = await this.accountService.get(agreement.seller);
+      const buyer = await this.accountService.get(agreement.buyer);
+  
+      const buyerWallet = new Wallet(buyer.privateKey, provider);
+      const sellerWallet = new Wallet(seller.privateKey, provider);
+
+      signatures.push({
+        agreementAddress: agreement.address,
+        sellerSignature: await signAgreement(sellerWallet, agreement.address),
+        buyerSignature: await signAgreement(buyerWallet, agreement.address),
+      })
+    }
+
+
+    return await this.agreementService.sign(signatures);
   }
 
   @Get('/:address')
