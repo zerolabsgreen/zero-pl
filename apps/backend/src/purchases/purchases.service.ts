@@ -22,6 +22,7 @@ import { BatchService } from '../batches/batch.service';
 import { PurchaseEventDTO } from './dto/purchase-event.dto';
 import { ContractsService } from '../contracts/contracts.service';
 import { getClaimData } from './utils';
+import { ClaimPurchaseData } from './purchase.processor';
 
 @Injectable()
 export class PurchasesService {
@@ -38,7 +39,7 @@ export class PurchasesService {
     private filesService: FilesService,
     private batchService: BatchService,
     private contractsService: ContractsService,
-    @InjectQueue('purchase') private readonly purchaseQueue: Queue,
+    @InjectQueue('purchase') private readonly purchaseQueue: Queue<ClaimPurchaseData>,
   ) {
     this.logger.debug(`PG_TRANSACTION_TIMEOUT=${this.configService.get('PG_TRANSACTION_TIMEOUT') / 1000}s`);
   }
@@ -137,7 +138,7 @@ export class PurchasesService {
             throw new BadRequestException(`Contract ${newPurchase.contractId} doesn't have an onchainId`);
           }
 
-          await this.issuerService.transferCertificate({
+          const transferTxHash = await this.issuerService.transferCertificate({
             id: Number(certData.onchainId),
             from: sellerData.blockchainAddress,
             to: contract.onchainId,
@@ -147,6 +148,7 @@ export class PurchasesService {
           // Push claiming to a queue, so that we don't have to wait for the transfer to finish and delay the request response
           await this.purchaseQueue.add('claim', {
             purchaseId: newPurchase.id,
+            previousTx: transferTxHash
           });
         } else {
           const txHash = await this.issuerService.claimCertificate({

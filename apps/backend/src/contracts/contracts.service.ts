@@ -310,7 +310,7 @@ export class ContractsService {
     const { data: signatureTxHash } = (
       await this.axiosInstance.post(
         `/agreement/sign`,
-        contractIds
+        contracts.map(c => c.onchainId)
       ).catch((err) => {
         this.logger.error(`POST /agreement/sign error response: ${err}`);
         this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);

@@ -314,14 +314,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateAgreementDTO"
+              type: "array"
+              items:
+                $ref: "#/components/schemas/CreateAgreementDTO"
       responses:
         201:
           description: "Deployed agreement data"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgreementDTO"
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/AgreementDTO"
       tags:
         - "agreement"
     get:
@@ -338,21 +342,18 @@ paths:
                   $ref: "#/components/schemas/AgreementDTO"
       tags:
         - "agreement"
-  /agreement/{address}/sign:
+  /agreement/sign:
     post:
       operationId: "AgreementController_sign"
-      parameters:
-        - name: "address"
-          required: true
-          in: "path"
-          schema:
-            type: "string"
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignAgreementDTO"
+              type: "array"
+              items:
+                $ref: "#/components/schemas/SignAgreementDTO"
       responses:
         201:
           description: "Signing ceremony transaction hash"
@@ -404,6 +405,9 @@ components:
         batchFactory:
           type: "string"
           example: "0x6c8d8D6c8a52Dc6ed1b89F9292e4dC88b20421ac"
+        agreementFactory:
+          type: "string"
+          example: "0x6c8d8D6c8a52Dc6ed1b89F9292e4dC88b20421ac"
         platformOperatorAddress:
           type: "string"
           example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
@@ -418,6 +422,7 @@ components:
         - "registry"
         - "topic"
         - "batchFactory"
+        - "agreementFactory"
         - "platformOperatorAddress"
         - "rpcNode"
     TransactionPendingDTO:
@@ -825,6 +830,10 @@ components:
           type: "string"
           description: "Transaction hash in which the agreement was created"
           example: "0xac40070dc36e7fc274573326d776f21652e125716e879ca4578cf4a4539365aa"
+        signed:
+          type: "boolean"
+          description: "Flag to show whether the agreement has been signed"
+          example: true
       required:
         - "address"
         - "buyer"
@@ -833,9 +842,14 @@ components:
         - "filledAmount"
         - "energySources"
         - "txHash"
+        - "signed"
     SignAgreementDTO:
       type: "object"
       properties:
+        agreementAddress:
+          type: "string"
+          description: "Agreement address"
+          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
         sellerSignature:
           type: "string"
           description: "Seller's signature"
@@ -845,5 +859,6 @@ components:
           description: "Buyer's signature"
           example: "0xb55b2521eda6d5f332e5b909bc610e2264dccf3f5d6d31b6096d6dbb11b3d728113efcd97fba6f2faa11b58aa767bb5f7b04121b82b7baa608fd5e4314202e351c"
       required:
+        - "agreementAddress"
         - "sellerSignature"
         - "buyerSignature"

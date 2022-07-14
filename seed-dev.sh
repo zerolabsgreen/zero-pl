@@ -193,9 +193,10 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "deploying the contract on-chain"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/contracts/00000000-0000-0000-0000-000000666666/on-chain/deploy" \
+  "$SEED_URL/api/partners/filecoin/contracts/on-chain/deploy" \
   -H "X-API-KEY: $X_API_KEY" \
-  -H 'Content-Type: application/json'
+  -H 'Content-Type: application/json' \
+  -d '["00000000-0000-0000-0000-000000666666"]'
 
 echo
 echo "waiting $TX_WAIT_TIME seconds for the on-chain deployment transaction to be mined..."
@@ -204,9 +205,10 @@ sleep $TX_WAIT_TIME
 echo
 echo "signing the on-chain contract"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/contracts/00000000-0000-0000-0000-000000666666/on-chain/sign" \
+  "$SEED_URL/api/partners/filecoin/contracts/on-chain/sign" \
   -H "X-API-KEY: $X_API_KEY" \
-  -H 'Content-Type: application/json'
+  -H 'Content-Type: application/json' \
+  -d '["00000000-0000-0000-0000-000000666666"]'
 
 echo
 echo "waiting $TX_WAIT_TIME seconds for the on-chain signing transaction to be mined..."
