@@ -11,7 +11,8 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
+  NotFoundException
 } from '@nestjs/common';
 import { SellersService } from './sellers.service';
 import { CreateSellerDto } from './dto/create-seller.dto';
@@ -23,6 +24,7 @@ import { NoDataInterceptor } from "../interceptors/NoDataInterceptor";
 import { ApiKeyPermissionsGuard } from '../guards/apikey-permissions.guard';
 import { ApiKeyPermissions } from '@prisma/client';
 import { PaginatedDto } from '../utils/paginated.dto';
+import { FindSellerByNameDto } from './dto/find-seller-by-name.dto';
 
 @Controller('/partners/filecoin/sellers')
 @ApiTags('Filecoin sellers')
@@ -39,6 +41,20 @@ export class SellersController {
   @ApiCreatedResponse({ type: SellerDto })
   create(@Body() createSellerDto: CreateSellerDto): Promise<SellerDto> {
     return this.sellersService.create(createSellerDto);
+  }
+
+  @Post('/findByName')
+  @UseGuards(ApiKeyPermissionsGuard([ApiKeyPermissions.READ]))
+  @ApiBody({ type: FindSellerByNameDto })
+  @ApiCreatedResponse({ type: SellerDto })
+  async findByName(@Body('name') name: string): Promise<SellerDto> {
+    const seller = await this.sellersService.findByName(name);
+
+    if (!seller) {
+      throw new NotFoundException('Seller was not found');
+    }
+
+    return seller;
   }
 
   @Get()
