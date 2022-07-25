@@ -792,10 +792,6 @@ components:
             - "SOLAR"
           items:
             $ref: "#/components/schemas/EnergySource"
-        salt:
-          type: "string"
-          description: "Salt for predicting the Agreement smart contract address"
-          example: "0xb5a5af7c80557741d4252c95b5561bd660bfad5236733bd4fd9207a4bd1c38f7"
       required:
         - "buyer"
         - "seller"
