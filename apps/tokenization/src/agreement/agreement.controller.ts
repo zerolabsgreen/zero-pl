@@ -48,7 +48,15 @@ export class AgreementController {
     @Body() dtos: CreateAgreementDTO[],
   ): Promise<AgreementDTO[]> {
     const agreements = await this.agreementService.create(dtos);
-    return agreements.map((a) => AgreementDTO.toDto(a));
+    
+    return await Promise.all(
+      agreements.map(async (agreement) => {
+        return await AgreementDTO.toDto(
+          agreement,
+          await this.agreementService.getFilledEvents(agreement.address),
+        );
+      }),
+    );
   }
 
   @Post('/sign')
@@ -91,7 +99,10 @@ export class AgreementController {
     description: 'Returns the agreement',
   })
   public async get(@Param('address') address: string): Promise<AgreementDTO> {
-    return AgreementDTO.toDto(await this.agreementService.get(address));
+    const agreement = await this.agreementService.get(address);
+    const filledEvents = await this.agreementService.getFilledEvents(address);
+
+    return AgreementDTO.toDto(agreement, filledEvents);
   }
 
   @Get()
@@ -100,8 +111,15 @@ export class AgreementController {
     description: 'Returns all agreements',
   })
   public async getAll(): Promise<AgreementDTO[]> {
-    return (await this.agreementService.getAll()).map((agreement) =>
-      AgreementDTO.toDto(agreement),
+    const allAgreements = await this.agreementService.getAll();
+
+    return await Promise.all(
+      allAgreements.map(async (agreement) => {
+        return await AgreementDTO.toDto(
+          agreement,
+          await this.agreementService.getFilledEvents(agreement.address),
+        );
+      }),
     );
   }
 }
