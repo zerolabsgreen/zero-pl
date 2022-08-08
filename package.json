@@ -74,7 +74,7 @@
     "@prisma/client": "3.6.0",
     "@t00nday/nestjs-pdf": "2.0.6",
     "@zero-labs/tokenization": "0.8.0",
-    "@zero-labs/tokenization-api": "0.13.5",
+    "@zero-labs/tokenization-api": "0.13.6",
     "assert": "2.0.0",
     "axios": "0.24.0",
     "buffer": "6.0.3",
