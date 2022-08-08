@@ -11,6 +11,7 @@ import {
   ClaimSingle,
   PostgresTypeORMAdapter,
   Agreement,
+  AgreementFilled,
   TransferBatchMultipleTx,
   TransferBatchMultiple
 } from '@zero-labs/tokenization-api';
@@ -41,7 +42,8 @@ const OriginAppTypeOrmModule = () => {
     TransferBatchMultiple,
     TransferBatchMultipleTx,
     ClaimSingle,
-    Agreement
+    Agreement,
+    AgreementFilled
   ];
 
   return TypeOrmModule.forRoot({

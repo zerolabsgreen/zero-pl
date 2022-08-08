@@ -1,8 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { CqrsModule } from '@nestjs/cqrs';
+import { ScheduleModule } from '@nestjs/schedule';
+
 import { AgreementModule } from '../agreement';
-import { IStorageAdapter, OnChainCertificateWatcher, OnChainEventProcessor } from '@zero-labs/tokenization-api';
+import { IStorageAdapter, OnChainEventWatcher, OnChainEventProcessor } from '@zero-labs/tokenization-api';
 import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
 import { CertificateModule } from '../certificate/certificate.module';
 import { BatchModule } from '../batch/batch.module';
@@ -14,6 +16,7 @@ export class WatcherModule {
       module: WatcherModule,
       imports: [
         CqrsModule,
+        ScheduleModule.forRoot(),
         BlockchainPropertiesModule.register(storageAdapter),
         CertificateModule.register(storageAdapter),
         BatchModule.register(storageAdapter),
@@ -22,8 +25,8 @@ export class WatcherModule {
           name: 'on-chain-event',
         }),
       ],
-      providers: [OnChainCertificateWatcher, OnChainEventProcessor],
-      exports: [OnChainCertificateWatcher],
+      providers: [OnChainEventWatcher, OnChainEventProcessor],
+      exports: [OnChainEventWatcher],
     };
   }
 }
