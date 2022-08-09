@@ -16,5 +16,6 @@ export const redisUrlToConfig = (
     username: username,
     password: password,
     tls: protocol === 'redis:' ? undefined : { rejectUnauthorized: false },
+    maxRetriesPerRequest: null,
   };
 };

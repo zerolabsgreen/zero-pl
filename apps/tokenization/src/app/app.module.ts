@@ -13,7 +13,8 @@ import {
   Agreement,
   AgreementFilled,
   TransferBatchMultipleTx,
-  TransferBatchMultiple
+  TransferBatchMultiple,
+  redisUrlToConfig
 } from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
@@ -82,15 +83,7 @@ const storageAdapter = new PostgresTypeORMAdapter();
     }),
     AccountModule.register(storageAdapter),
     BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: Number(process.env.REDIS_PORT || 6379),
-        username: process.env.REDIS_USERNAME || '',
-        password: process.env.REDIS_PASSWORD || '',
-        tls: Boolean(process.env.REDIS_TLS_OFF)
-          ? undefined
-          : { rejectUnauthorized: false },
-      },
+      redis: redisUrlToConfig(process.env.REDIS_URL),
     }),
     BlockchainPropertiesModule.register(storageAdapter),
     BatchModule.register(storageAdapter),
