@@ -24,6 +24,7 @@ import { EmailModule } from '../email/email.module';
 import { ContractsModule } from '../contracts/contracts.module';
 import { ApiKeysModule } from '../apikeys/apikeys.module';
 import { BatchModule } from '../batches/batch.module';
+import { redisUrlToConfig } from '../utils/redis';
 
 @Module({
   imports: [
@@ -57,15 +58,7 @@ import { BatchModule } from '../batches/batch.module';
       })
     }),
     BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: Number(process.env.REDIS_PORT || 6379),
-        username: process.env.REDIS_USERNAME || '',
-        password: process.env.REDIS_PASSWORD || '',
-        tls: Boolean(process.env.REDIS_TLS_OFF)
-          ? undefined
-          : { rejectUnauthorized: false },
-      },
+      redis: redisUrlToConfig(process.env.REDIS_URL),
     }),
     PDFModule.register({
       view: {

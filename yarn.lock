@@ -3121,6 +3121,14 @@
     multer "1.4.4"
     tslib "2.3.1"
 
+"@nestjs/schedule@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/@nestjs/schedule/-/schedule-2.1.0.tgz#a2e21b2078a0c3d56552d40cc97336aa5bbfecdf"
+  integrity sha512-4Xaw56WiW3VsxEPPnj/iDtfjcO+sUZyYAeRxD0gnF5havncxjAnv52Iw7UH3DuzzUA784xPGgGje3Fq0Gu925g==
+  dependencies:
+    cron "2.0.0"
+    uuid "8.3.2"
+
 "@nestjs/schematics@8.0.5", "@nestjs/schematics@^8.0.0":
   version "8.0.5"
   resolved "https://registry.yarnpkg.com/@nestjs/schematics/-/schematics-8.0.5.tgz#7154be7d85a135ea75bb275db042c2a663677a48"
@@ -4350,6 +4358,14 @@
   dependencies:
     "@types/node" "*"
 
+"@types/cron@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@types/cron/-/cron-2.0.0.tgz#4fe75f2720a3b69a1f7b80e656749f4c2c96d727"
+  integrity sha512-xZM08fqvwIXgghtPVkSPKNgC+JoMQ2OHazEvyTKnNf7aWu1aB6/4lBbQFrb03Td2cUGG7ITzMv3mFYnMu6xRaQ==
+  dependencies:
+    "@types/luxon" "*"
+    "@types/node" "*"
+
 "@types/d3-array@*":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-3.0.2.tgz#71c35bca8366a40d1b8fce9279afa4a77fb0065d"
@@ -4716,6 +4732,11 @@
   version "4.14.178"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.178.tgz#341f6d2247db528d4a13ddbb374bcdc80406f4f8"
   integrity sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw==
+
+"@types/luxon@*":
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/@types/luxon/-/luxon-3.0.0.tgz#47fb7891e41875fce7018a8bd3d09b204c5621f5"
+  integrity sha512-Lx+EZoJxUKw4dp8uei9XiUVNlgkYmax5+ovqt6Xf3LzJOnWhlfJw/jLBmqfGVwOP/pDr4HT8bI1WtxK0IChMLw==
 
 "@types/luxon@2.0.8":
   version "2.0.8"
@@ -5279,22 +5300,22 @@
     tslib "^2.3.1"
     upath2 "^3.1.12"
 
-"@zero-labs/tokenization-api@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.11.2.tgz#50bbfdcca8e0cd35329a6e351d9a7ec6b527f7fc"
-  integrity sha512-Fq+VHl4LTA30zkDObZl+s5oKy7EL6DhzZ47quKNjcuQFDm98gj1K5aqQcHBRSILjwD02TAIbOJjfmOT+OWsWWQ==
+"@zero-labs/tokenization-api@0.13.8":
+  version "0.13.8"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-0.13.8.tgz#4626a99eb273850fda829f6c6abab98900b3d503"
+  integrity sha512-LPswotBKPZfAsn/77wiGd1Yl/4WzTjEB0OAvAT3B9aY/M5lrqRs1CNFCmoDcYaWTmmAfWxy2dc/Thr5uW9N/3w==
   dependencies:
     "@nestjs/apollo" "10.0.9"
     "@nestjs/bull" "0.5.5"
     "@nestjs/common" "8.4.4"
     "@nestjs/config" "2.0.0"
     "@nestjs/core" "8.4.4"
-    "@nestjs/cqrs" "8.0.5"
     "@nestjs/passport" "8.2.1"
     "@nestjs/platform-express" "8.4.4"
+    "@nestjs/schedule" "2.1.0"
     "@nestjs/swagger" "5.2.1"
     "@nestjs/typeorm" "8.0.3"
-    "@zero-labs/tokenization" "0.6.1"
+    "@zero-labs/tokenization" "0.8.0"
     bull "4.8.3"
     class-transformer "0.5.1"
     class-validator "0.13.2"
@@ -5311,19 +5332,10 @@
     swagger-ui-express "4.3.0"
     typeorm "0.3.6"
 
-"@zero-labs/tokenization@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.6.0.tgz#892a4503705fb01f6e7e645df1cfc134eed5c180"
-  integrity sha512-zwHF53T1bZGLDj/VhXg77Eh1ErpIPlIMFYuTG6+7etyHckzJZDRbk8GruK4EfHm08xooFMmY+aJOhqOYjPHyOA==
-  dependencies:
-    "@openzeppelin/contracts" "4.6.0"
-    "@openzeppelin/contracts-upgradeable" "4.5.2"
-    luxon "2.3.2"
-
-"@zero-labs/tokenization@0.6.1":
-  version "0.6.1"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.6.1.tgz#500f4a04f47ac3e171ddf928f8ac88325ed35e28"
-  integrity sha512-RJ1PgYd+yehRE9HTrHZ+GODoXMnT9+iQsmulymjnP8EinNtdfP2Xw56KCIYcGkSjnUriUx1I6Y/YPcSF7lB9oA==
+"@zero-labs/tokenization@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-0.8.0.tgz#922cc4cb8a8c3cfd538d9ecf8a0b5871ecf17851"
+  integrity sha512-4hr8wVuhF3rirCxxbxGIL/48O4so6z1Cb8zWY98qNZ1+0+2FJj7+8F5xwGKGg929j6L+Gq8RS3r9K4fmjgVRjA==
   dependencies:
     "@openzeppelin/contracts" "4.6.0"
     "@openzeppelin/contracts-upgradeable" "4.5.2"
@@ -7379,6 +7391,13 @@ cron-parser@^4.2.1:
   integrity sha512-TrE5Un4rtJaKgmzPewh67yrER5uKM0qI9hGLDBfWb8GGRe9pn/SDkhVrdHa4z7h0SeyeNxnQnogws/H+AQANQA==
   dependencies:
     luxon "^1.28.0"
+
+cron@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/cron/-/cron-2.0.0.tgz#15c6bf37c1cebf6da1d7a688b9ba1c68338bfe6b"
+  integrity sha512-RPeRunBCFr/WEo7WLp8Jnm45F/ziGJiHVvVQEBSDTSGu6uHW49b2FOP2O14DcXlGJRLhwE7TIoDzHHK4KmlL6g==
+  dependencies:
+    luxon "^1.23.x"
 
 cross-spawn@^6.0.5:
   version "6.0.5"
@@ -12774,7 +12793,7 @@ luxon@2.3.2:
   resolved "https://registry.npmjs.org/luxon/-/luxon-2.3.2.tgz#5f2f3002b8c39b60a7b7ad24b2a85d90dc5db49c"
   integrity sha512-MlAQQVMFhGk4WUA6gpfsy0QycnKP0+NlCBJRVRNPxxSIbjrCbQ65nrpJD3FVyJNZLuJ0uoqL57ye6BmDYgHaSw==
 
-luxon@^1.28.0:
+luxon@^1.23.x, luxon@^1.28.0:
   version "1.28.0"
   resolved "https://registry.npmjs.org/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"
   integrity sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==

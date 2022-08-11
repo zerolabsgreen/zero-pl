@@ -381,6 +381,78 @@ paths:
                 $ref: "#/components/schemas/AgreementDTO"
       tags:
         - "agreement"
+  /agreement/{address}/invalidate:
+    put:
+      operationId: "AgreementController_invalidate"
+      parameters:
+        - name: "address"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvalidateAgreementDTO"
+      responses:
+        201:
+          description: "Invalidation transaction hash"
+          content:
+            application/json:
+              schema:
+                type: "string"
+      tags:
+        - "agreement"
+  /agreement/{address}/amount:
+    put:
+      operationId: "AgreementController_updateAmount"
+      parameters:
+        - name: "address"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAgreementAmountDTO"
+      responses:
+        201:
+          description: "Amount update transaction hash"
+          content:
+            application/json:
+              schema:
+                type: "string"
+      tags:
+        - "agreement"
+  /agreement/{address}/metadata:
+    put:
+      operationId: "AgreementController_updateMetadata"
+      parameters:
+        - name: "address"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAgreementMetadataDTO"
+      responses:
+        201:
+          description: "Amount update transaction hash"
+          content:
+            application/json:
+              schema:
+                type: "string"
+      tags:
+        - "agreement"
 info:
   title: "Zero - Tokenization Module API"
   description: ""
@@ -608,7 +680,7 @@ components:
       properties:
         from:
           type: "string"
-          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
           description: "Public blockchain address"
         to:
           type: "string"
@@ -642,7 +714,7 @@ components:
       properties:
         from:
           type: "string"
-          example: "0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8"
+          example: "0xD173313A51f8fc37BcF67569b463abd89d81844f"
           description: "Public blockchain address"
         to:
           type: "string"
@@ -786,6 +858,10 @@ components:
           type: "string"
           description: "Total deliverable amount agreed in the agreement"
           example: "10000000"
+        metadata:
+          type: "string"
+          description: "Custom-defined metadata (bytes)"
+          example: "0x319d34c20fb978548151f445a140312c9ce95af6cd952f288eb81dfda73865e264fa93a32ad56981d27d0940166983f88f67254a8abba2dcf4bab5f255940a84adeda1fb6cfbf1fdd2199b3d4e5aa925abae29ebdd1b28259f66116d87b7529f348024d429f92cd497a32a5d927168af1d7a80d69b8e321c02ac52fc53541766"
         energySources:
           type: "array"
           example:
@@ -796,6 +872,7 @@ components:
         - "buyer"
         - "seller"
         - "amount"
+        - "metadata"
         - "energySources"
     AgreementDTO:
       type: "object"
@@ -816,6 +893,10 @@ components:
           type: "string"
           description: "Total deliverable amount agreed in the agreement"
           example: "10000000"
+        metadata:
+          type: "string"
+          description: "Custom-defined metadata (bytes)"
+          example: "0x319d34c20fb978548151f445a140312c9ce95af6cd952f288eb81dfda73865e264fa93a32ad56981d27d0940166983f88f67254a8abba2dcf4bab5f255940a84adeda1fb6cfbf1fdd2199b3d4e5aa925abae29ebdd1b28259f66116d87b7529f348024d429f92cd497a32a5d927168af1d7a80d69b8e321c02ac52fc53541766"
         filledAmount:
           type: "string"
           description: "Delivered amount"
@@ -839,6 +920,7 @@ components:
         - "buyer"
         - "seller"
         - "amount"
+        - "metadata"
         - "filledAmount"
         - "energySources"
         - "txHash"
@@ -862,3 +944,55 @@ components:
         - "agreementAddress"
         - "sellerSignature"
         - "buyerSignature"
+    InvalidateAgreementDTO:
+      type: "object"
+      properties:
+        sellerSignature:
+          type: "string"
+          description: "Seller's signature"
+          example: "0xfff4db04e6fe6cf6b5c6327d240c3c430a5ec2e3a4d8dd1aa7c35b04398bd99017ab60163e49965b1d1602348fb9974e900c096c79ced6b118ec1218be1a5b461c"
+        buyerSignature:
+          type: "string"
+          description: "Buyer's signature"
+          example: "0xb55b2521eda6d5f332e5b909bc610e2264dccf3f5d6d31b6096d6dbb11b3d728113efcd97fba6f2faa11b58aa767bb5f7b04121b82b7baa608fd5e4314202e351c"
+      required:
+        - "sellerSignature"
+        - "buyerSignature"
+    UpdateAgreementAmountDTO:
+      type: "object"
+      properties:
+        sellerSignature:
+          type: "string"
+          description: "Seller's signature"
+          example: "0xfff4db04e6fe6cf6b5c6327d240c3c430a5ec2e3a4d8dd1aa7c35b04398bd99017ab60163e49965b1d1602348fb9974e900c096c79ced6b118ec1218be1a5b461c"
+        buyerSignature:
+          type: "string"
+          description: "Buyer's signature"
+          example: "0xb55b2521eda6d5f332e5b909bc610e2264dccf3f5d6d31b6096d6dbb11b3d728113efcd97fba6f2faa11b58aa767bb5f7b04121b82b7baa608fd5e4314202e351c"
+        newAmount:
+          type: "string"
+          description: "Updated deliverable amount to be changed to"
+          example: "5000000"
+      required:
+        - "sellerSignature"
+        - "buyerSignature"
+        - "newAmount"
+    UpdateAgreementMetadataDTO:
+      type: "object"
+      properties:
+        sellerSignature:
+          type: "string"
+          description: "Seller's signature"
+          example: "0xfff4db04e6fe6cf6b5c6327d240c3c430a5ec2e3a4d8dd1aa7c35b04398bd99017ab60163e49965b1d1602348fb9974e900c096c79ced6b118ec1218be1a5b461c"
+        buyerSignature:
+          type: "string"
+          description: "Buyer's signature"
+          example: "0xb55b2521eda6d5f332e5b909bc610e2264dccf3f5d6d31b6096d6dbb11b3d728113efcd97fba6f2faa11b58aa767bb5f7b04121b82b7baa608fd5e4314202e351c"
+        newMetadata:
+          type: "string"
+          description: "Custom-defined metadata (bytes)"
+          example: "0x319d34c20fb978548151f445a140312c9ce95af6cd952f288eb81dfda73865e264fa93a32ad56981d27d0940166983f88f67254a8abba2dcf4bab5f255940a84adeda1fb6cfbf1fdd2199b3d4e5aa925abae29ebdd1b28259f66116d87b7529f348024d429f92cd497a32a5d927168af1d7a80d69b8e321c02ac52fc53541766"
+      required:
+        - "sellerSignature"
+        - "buyerSignature"
+        - "newMetadata"

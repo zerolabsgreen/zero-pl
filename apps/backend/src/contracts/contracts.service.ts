@@ -241,6 +241,7 @@ export class ContractsService {
       }
 
       dtos.push({
+        salt: contract.id,
         seller: contract.seller.blockchainAddress,
         buyer: contract.buyer.blockchainAddress,
         amount: contract.volume.toString(),

@@ -81,7 +81,7 @@ export class PurchasesService {
         if (availableCertificateVolume.lte(0) || BigNumber.from(purchase.recsSoldWh).gt(availableCertificateVolume)) {
           throw new BadRequestException(`Not enough available certificate volume for cert ${certData.id}. Available: ${availableCertificateVolume.toString()}`);
         }
-        
+
         if (certData.initialSellerId !== createPurchaseDto.sellerId) {
           throw new BadRequestException(`certificate has to be owned by transaction seller`);
         }
@@ -150,6 +150,15 @@ export class PurchasesService {
             purchaseId: newPurchase.id,
             previousTx: transferTxHash
           });
+          await this.prisma.purchase.update({
+            where: {
+              id: newPurchase.id
+            },
+            data: { txHash: transferTxHash }
+          }).catch(err => {
+            this.logger.error(`error updating the purchase with txHash: ${err}`);
+            throw err;
+          });
         } else {
           const txHash = await this.issuerService.claimCertificate({
             id: Number(certData.onchainId),
@@ -162,7 +171,7 @@ export class PurchasesService {
           await prisma.purchase.update({
             where: {
               id: purchase.id
-            }, 
+            },
             data: { txHash }
           }).catch(err => {
             this.logger.error(`error updating the purchase with txHash: ${err}`);
@@ -300,11 +309,11 @@ export class PurchasesService {
             filecoinNode: true,
           }
         });
-  
+
         if (savedPurchase.attestationId) {
           throw new ConflictException(`Attestation already exists for purchase ${savedPurchase.id}`);
         }
-        
+
         const pdfGenerationData = {
           locals: {
             minerId: savedPurchase.filecoinNodeId,
@@ -325,18 +334,18 @@ export class PurchasesService {
           },
         };
 
-        const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', pdfGenerationData));  
+        const fileBuffer = await firstValueFrom(this.pdfService.toBuffer('attestation', pdfGenerationData));
         const fileDto = await this.filesService.create(`Zero_EAC-Attestation_${id}.pdf`, fileBuffer);
 
         await prisma.purchase.update({
           where: {
             id: savedPurchase.id
-          }, 
+          },
           data: {
             attestationId: fileDto.id
           }
         });
-  
+
         fileDtos.push(fileDto);
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
