@@ -14,6 +14,7 @@ import { toDateTimeWithOffset } from '../utils/date';
 import { PaginatedDto } from '../utils/paginated.dto';
 import { BigNumber, utils } from 'ethers';
 import { TxHash } from '../utils/types';
+import axios from 'axios';
 
 @Injectable()
 export class BatchService {
@@ -30,7 +31,7 @@ export class BatchService {
 
   async create(onchainBatchId: number): Promise<BatchDto> {
     this.logger.log(`received a request to create a batch ${onchainBatchId}...`);
-  
+
     let newBatch: Batch;
 
     try {
@@ -92,11 +93,11 @@ export class BatchService {
 
   async setRedemptionStatement(
     batchId: string,
-    redemptionStatementFileId: string,
+    redemptionStatementId: string,
     totalVolume: string
   ): Promise<TxHash> {
-    if (!redemptionStatementFileId) {
-      throw new NotFoundException(`Please provide a valid redemption statement ID. Got: ${redemptionStatementFileId}`);
+    if (!redemptionStatementId) {
+      throw new NotFoundException(`Please provide a valid redemption statement ID. Got: ${redemptionStatementId}`);
     }
 
     const batch = await this.findOne(batchId);
@@ -105,23 +106,21 @@ export class BatchService {
       throw new ConflictException(`Batch ${batchId} already has a redemption statement set.`);
     }
 
-    const alreadySetToSomeBatch = await this.prisma.batch.findMany({ 
+    const alreadySetToSomeBatch = await this.prisma.batch.findMany({
       where: {
-        redemptionStatementId: redemptionStatementFileId
+        redemptionStatementId: redemptionStatementId
       }
     });
 
     if (alreadySetToSomeBatch.length > 0) {
-      throw new ConflictException(`Redemption statement ${redemptionStatementFileId} already set for a batch.`);
+      throw new ConflictException(`Redemption statement ${redemptionStatementId} already set for a batch.`);
     }
 
-    const redemptionStatement = await this.filesService.findOne(redemptionStatementFileId);
-
-    const txHash = await this.setRedemptionStatementOnChain(batch.id, redemptionStatement.id);
+    const txHash = await this.setRedemptionStatementOnChain(batch.id, redemptionStatementId);
 
     await this.prisma.batch.update({
       data: {
-        redemptionStatementId: redemptionStatement.id,
+        redemptionStatementId: redemptionStatementId,
         totalVolume: BigInt(totalVolume)
       },
       where: { id: BigInt(batch.id) }
@@ -131,13 +130,16 @@ export class BatchService {
   }
 
   private async setRedemptionStatementOnChain(onChainBatchId: string, redemptionStatementId: string): Promise<string> {
-    const redemptionStatement = await this.filesService.findOneRaw(redemptionStatementId);
+    const redemptionStatement = await axios.get(
+      `https://ipfs.io/ipfs/${redemptionStatementId}`,
+      { responseType: 'blob' }
+    )
 
     const hashSum = crypto.createHash('sha256');
-    hashSum.update(redemptionStatement.content);
+    hashSum.update(redemptionStatement.data);
 
     const hex = hashSum.digest('hex');
-    
+
     return await this.issuerService.setRedemptionStatement(Number(onChainBatchId), {
       value: `0x${hex}`,
       storagePointer: `/api/files/${redemptionStatementId}`,
@@ -151,7 +153,7 @@ export class BatchService {
     const batch = await this.findOne(batchId);
 
     const certificates = await this.certificatesService.find(certificateIds);
-    
+
     if (certificates.length !== certificateIds.length) {
       throw new BadRequestException(`Non-existing Certificate ID in array`);
     }
@@ -208,10 +210,10 @@ export class BatchService {
       Number(batch.id),
       mintingData
     );
-    
+
     await this.prisma.$transaction(async (prisma) => {
       await prisma.batch.update({
-        data: { 
+        data: {
           certificates: {
             connect: certificateIds.map(id => ({ id}))
           }
