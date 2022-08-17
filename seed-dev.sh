@@ -119,11 +119,6 @@ curl -w "\n" -s -X 'POST' "$SEED_URL/api/partners/filecoin/batch/$BATCH_ID" -H "
 echo "created off-chain batch: $BATCH_ID"
 
 echo
-echo "storing the redemption statement file"
-FILE_ID=$(curl -w "\n" -s -X 'POST' "http://localhost:3333/api/files" -H "X-API-KEY: $X_API_KEY" -F 'file=@examples/redemption-statement.pdf;type=application/pdf' | jq -r '.id')
-echo "created file $FILE_ID"
-
-echo
 echo "setting the redemption statement"
 curl -w "\n" -s -X 'POST' \
   "$SEED_URL/api/partners/filecoin/batch/$BATCH_ID/redemption-statement" \
@@ -131,7 +126,7 @@ curl -w "\n" -s -X 'POST' \
   -H 'Content-Type: application/json' \
   -d @- <<END;
 {
-    "redemptionStatementId": "$FILE_ID",
+    "redemptionStatementId": "bafkreigxldrh3lo2spyg424ga4r7srss4f4umm3v7njljod7qvyjtvlg7e",
     "totalVolume": "3000000"
 }
 END

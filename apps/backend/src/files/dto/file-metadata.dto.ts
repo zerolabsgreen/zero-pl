@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from "class-transformer";
 import { File } from '@prisma/client'
-
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+import { PartialBy } from '../../utils/types';
 
 @Exclude()
 export class FileMetadataDto implements Omit<File, 'content'> {
