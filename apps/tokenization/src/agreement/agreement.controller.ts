@@ -5,6 +5,7 @@ import {
   Logger,
   Param,
   Post,
+  Put,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -12,7 +13,9 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
+  ApiParam,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,6 +24,9 @@ import { providers, Wallet } from 'ethers';
 import { signAgreement } from '@zero-labs/tokenization';
 import { AccountService } from '../account/account.service';
 import { IssuerGuard } from '../auth/issuer.guard';
+import { InvalidateAgreementDTO } from '@zero-labs/tokenization-api/dist/src/pods/agreement/dto/invalidate-agreement.dto';
+import { UpdateAgreementAmountDTO } from '@zero-labs/tokenization-api/dist/src/pods/agreement/dto/update-amount.dto';
+import { UpdateAgreementMetadataDTO } from '@zero-labs/tokenization-api/dist/src/pods/agreement/dto/update-metadata.dto';
 
 @ApiTags('agreement')
 @Controller('agreement')
@@ -93,6 +99,20 @@ export class AgreementController {
     return await this.agreementService.sign(signatures);
   }
 
+  @Get('deployed/:salt')
+  @ApiParam({ name: 'salt', type: String })
+  @ApiOkResponse({
+    type: String,
+    description:
+      'Check whether an agreement with a specific salt was already deployed. If deployed, will return the agreement address',
+  })
+  @ApiNotFoundResponse({
+    description: `The agreement with that salt has not been deployed yet`,
+  })
+  public async isDeployed(@Param('salt') salt: string): Promise<string> {
+    return await this.agreementService.getDeployedContractBySalt(salt);
+  }
+
   @Get('/:address')
   @ApiOkResponse({
     type: AgreementDTO,
@@ -122,4 +142,44 @@ export class AgreementController {
       }),
     );
   }
+
+  @Put('/:address/invalidate')
+  @ApiBody({ type: InvalidateAgreementDTO })
+  @ApiCreatedResponse({
+    type: String,
+    description: 'Invalidation transaction hash',
+  })
+  public async invalidate(
+    @Param('address') address: string,
+    @Body() dto: InvalidateAgreementDTO,
+  ): Promise<TransactionHash> {
+    return await this.agreementService.invalidate(address, dto);
+  }
+
+  @Put('/:address/amount')
+  @ApiBody({ type: UpdateAgreementAmountDTO })
+  @ApiCreatedResponse({
+    type: String,
+    description: 'Amount update transaction hash',
+  })
+  public async updateAmount(
+    @Param('address') address: string,
+    @Body() dto: UpdateAgreementAmountDTO,
+  ): Promise<TransactionHash> {
+    return await this.agreementService.updateAmount(address, dto);
+  }
+
+  @Put('/:address/metadata')
+  @ApiBody({ type: UpdateAgreementMetadataDTO })
+  @ApiCreatedResponse({
+    type: String,
+    description: 'Amount update transaction hash',
+  })
+  public async updateMetadata(
+    @Param('address') address: string,
+    @Body() dto: UpdateAgreementMetadataDTO,
+  ): Promise<TransactionHash> {
+    return await this.agreementService.updateMetadata(address, dto);
+  }
+
 }

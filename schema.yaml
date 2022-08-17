@@ -363,6 +363,26 @@ paths:
                 type: "string"
       tags:
         - "agreement"
+  /agreement/deployed/{salt}:
+    get:
+      operationId: "AgreementController_isDeployed"
+      parameters:
+        - name: "salt"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Check whether an agreement with a specific salt was already deployed. If deployed, will return the agreement address"
+          content:
+            application/json:
+              schema:
+                type: "string"
+        404:
+          description: "The agreement with that salt has not been deployed yet"
+      tags:
+        - "agreement"
   /agreement/{address}:
     get:
       operationId: "AgreementController_get"
@@ -868,12 +888,17 @@ components:
             - "SOLAR"
           items:
             $ref: "#/components/schemas/EnergySource"
+        salt:
+          type: "string"
+          description: "Custom-defined salt (only a single agreement with this salt can be deployed) - should be a bytes hex string"
+          example: "0x2e73e22e58ef036125404e06c8d84a68244a127892129cfbe12c77478436e8af"
       required:
         - "buyer"
         - "seller"
         - "amount"
         - "metadata"
         - "energySources"
+        - "salt"
     AgreementDTO:
       type: "object"
       properties:
@@ -915,6 +940,10 @@ components:
           type: "boolean"
           description: "Flag to show whether the agreement has been signed"
           example: true
+        salt:
+          type: "string"
+          description: "Salt that was used to create the agreement"
+          example: "0x2e73e22e58ef036125404e06c8d84a68244a127892129cfbe12c77478436e8af"
       required:
         - "address"
         - "buyer"
@@ -925,6 +954,7 @@ components:
         - "energySources"
         - "txHash"
         - "signed"
+        - "salt"
     SignAgreementDTO:
       type: "object"
       properties:

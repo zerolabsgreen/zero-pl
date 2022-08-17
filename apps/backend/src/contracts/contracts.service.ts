@@ -1,11 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 import { ConflictException, Injectable, Logger, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { Buyer, Contract, Seller } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { hashMessage } from 'ethers/lib/utils';
 
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { ConfigService } from '@nestjs/config';
 import { BuyersService } from '../buyers/buyers.service';
 import { SellersService } from '../sellers/sellers.service';
 import { FilecoinNodesService } from '../filecoin-nodes/filecoin-nodes.service';
@@ -235,13 +236,15 @@ export class ContractsService {
 
     const dtos = [];
 
+    await this.setOnChainIdIfDeployed(contracts);
+
     for (const contract of contracts) {
       if (contract.onchainId) {
         throw new ConflictException(`Contract ${contract.id} already has an onchainId: ${contract.onchainId}`);
       }
 
       dtos.push({
-        salt: contract.id,
+        salt: hashMessage(contract.id),
         seller: contract.seller.blockchainAddress,
         buyer: contract.buyer.blockchainAddress,
         amount: contract.volume.toString(),
@@ -320,6 +323,35 @@ export class ContractsService {
     );
 
     return signatureTxHash;
+  }
+
+  private async setOnChainIdIfDeployed(contracts: Contract[]): Promise<void> {
+    for (const contract of contracts) {
+      if (contract.onchainId) {
+        this.logger.debug(`Contract ${contract.id} already has an onchainId.`);
+        continue;
+      }
+
+      this.logger.debug(`Checking if contract ${contract.id} has already been deployed on-chain...`);
+  
+      try {
+        const { data: agreementAddress } = await this.axiosInstance.get(
+          `/agreement/deployed/${hashMessage(contract.id)}`
+        );
+        this.logger.debug(`Contract ${contract.id} has already been deployed on-chain, but on-chain ID has not been set. Setting...`);
+
+        await this.prisma.contract.update({
+          where: { id: contract.id },
+          data: { onchainId: agreementAddress },
+        });
+      } catch (e) {
+        if (e.response?.status === 404) {
+          this.logger.debug(`Contract ${contract.id} has not been deployed on-chain yet. Proceeding...`);
+        } else {
+          throw e;
+        }
+      }
+    }
   }
 
 }
