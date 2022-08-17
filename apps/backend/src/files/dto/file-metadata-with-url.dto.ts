@@ -11,11 +11,7 @@ export class FileMetadataWithUrlDto extends FileMetadataDto {
 
   static toDto(dbEntity: PartialBy<File, 'content'> & { url: string }): FileMetadataWithUrlDto {
     return {
-      id: dbEntity.id,
-      fileName: dbEntity.fileName,
-      mimeType: dbEntity.mimeType,
-      createdAt: dbEntity.createdAt,
-      updatedAt: dbEntity.updatedAt,
+      ...FileMetadataDto.toDto(dbEntity),
       url: dbEntity.url
     };
   }
