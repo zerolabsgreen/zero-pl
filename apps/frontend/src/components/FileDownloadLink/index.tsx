@@ -7,15 +7,17 @@ import axios from 'axios';
 export interface FileDownloadLinkProps {
   filename: string;
   downloadUrl: string;
+  newTab?: boolean;
 }
 
 export const FileDownloadLink = ({
   downloadUrl,
   filename,
+  newTab
 }: FileDownloadLinkProps) => {
   const theme = useTheme();
 
-  // This is a hacky way of downloading file, but it alows to use headers (API-KEY)
+  // This is a hacky way of downloading file, but it allows to use headers (API-KEY)
   // Previously downloading through Link from mui prevented from using custom headers
   const handleDownload = async (url: string | undefined) => {
     if (url) {
@@ -35,6 +37,10 @@ export const FileDownloadLink = ({
     return;
   }
 
+  const openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   if (!downloadUrl) {
     return (
       <Box
@@ -51,7 +57,7 @@ export const FileDownloadLink = ({
   } else {
     return (
         <Box
-          onClick={() => handleDownload(downloadUrl)}
+          onClick={() => newTab ? openInNewTab(downloadUrl) : handleDownload(downloadUrl)}
           component={'span'}
           color={theme.palette.background.paper}
           fontSize={'16px'}

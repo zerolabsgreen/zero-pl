@@ -40,7 +40,7 @@ export class CertificatesService {
             nameplateCapacityW,
             onchainId: onchainId ? BigInt(onchainId) : undefined,
             seller: { connect: { id: initialSellerId } },
-            batch: batchId ? { connect: { id: Number(batchId) }} : undefined
+            batch: batchId ? { connect: { id: batchId }} : undefined
           }});
           this.logger.debug(`created a new certificate: ${JSON.stringify(newCertificate, (k, v) => typeof v === 'bigint' ? v.toString() : v)}`);
         } catch (err) {

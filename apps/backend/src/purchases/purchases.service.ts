@@ -23,6 +23,7 @@ import { PurchaseEventDTO } from './dto/purchase-event.dto';
 import { ContractsService } from '../contracts/contracts.service';
 import { getClaimData } from './utils';
 import { ClaimPurchaseData } from './purchase.processor';
+import { Purchase } from '@prisma/client';
 
 @Injectable()
 export class PurchasesService {
@@ -47,7 +48,7 @@ export class PurchasesService {
   async create(createPurchaseDtos: CreatePurchaseDto[]): Promise<FullPurchaseDto[]> {
     this.logger.log(`received request to create purchases: ${JSON.stringify(createPurchaseDtos)}`);
 
-    const purchases: FullPurchaseDto[] = [];
+    const purchaseIds: Purchase['id'][] = [];
 
     await this.prisma.$transaction(async (prisma) => {
       for (const createPurchaseDto of createPurchaseDtos) {
@@ -179,7 +180,7 @@ export class PurchasesService {
           });
         }
 
-        purchases.push(await this.findOne(newPurchase.id));
+        purchaseIds.push(newPurchase.id);
       }
     }, { timeout: this.configService.get('PG_TRANSACTION_TIMEOUT') }).catch((err) => {
       this.logger.error('rolling back transaction');
@@ -187,13 +188,13 @@ export class PurchasesService {
     });
 
     try {
-      await this.createAttestationForPurchases(purchases.map(p => p.id));
+      await this.createAttestationForPurchases(purchaseIds);
     } catch (e) {
-      this.logger.error(`Unable to generate an attestation for purchases ${purchases.map(p => p.id)}`);
+      this.logger.error(`Unable to generate an attestation for purchases ${purchaseIds}`);
       this.logger.error(e);
     }
 
-    return purchases;
+    return await Promise.all(purchaseIds.map(async (purchaseId) => await this.findOne(purchaseId)));
   }
 
   async findAll(query?: {
@@ -242,23 +243,18 @@ export class PurchasesService {
       return null;
     }
 
-    const redemptionStatement = await this.getRedemptionStatement(purchase.certificate.batchId.toString());
+    const { redemptionStatementId } = await this.batchService.findOne(purchase.certificate.batchId.toString())
     const attestation = purchase.attestationId ? await this.filesService.findOne(purchase.attestationId) : undefined;
 
     return FullPurchaseDto.toDto({
       ...purchase,
-      files: {
-        redemptionStatement: {
-          ...redemptionStatement,
-          url: `${process.env.FILES_BASE_URL}/${redemptionStatement.id}`
-        },
-        attestation: purchase.attestationId
-          ? {
-            ...attestation,
-            url: `${process.env.FILES_BASE_URL}/${attestation.id}`
-          }
-          : undefined
-      }
+      attestation: attestation
+        ? {
+          ...attestation,
+          url: `${process.env.FILES_BASE_URL}/${attestation.id}`
+        }
+      : undefined,
+      redemptionStatement: `${process.env.IPFS_BASE_URL}/${redemptionStatementId}`
     });
   }
 
@@ -354,11 +350,6 @@ export class PurchasesService {
     });
 
     return fileDtos;
-  }
-
-  private async getRedemptionStatement(batchId: string): Promise<FileMetadataDto> {
-    const batch = await this.batchService.findOne(batchId.toString());
-    return await this.filesService.findOne(batch.redemptionStatementId);
   }
 
   async getChainEvents(id: string): Promise<PurchaseEventDTO[]> {

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { CountryEnumType, FilecoinNode } from "@prisma/client"
 
-export class FilecoinNodeDto implements FilecoinNode {
+export class FilecoinNodeDto implements Omit<FilecoinNode, 'createdAt' | 'updatedAt'> {
   @ApiProperty({ example: "f0112027" })
   id: string;
 
@@ -16,12 +16,6 @@ export class FilecoinNodeDto implements FilecoinNode {
   
   @ApiPropertyOptional({ example: CountryEnumType.DE })
   country: CountryEnumType;
-
-  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
-  createdAt: Date;
-
-  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
-  updatedAt: Date;
 
   constructor(partial: Partial<FilecoinNodeDto>) {
     Object.assign(this, partial);

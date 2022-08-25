@@ -4,10 +4,10 @@ import { BigNumber } from 'ethers';
 import { CertificateDto } from '../../certificates/dto/certificate.dto';
 
 export class BatchDto {
-  @ApiProperty({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
+  @ApiProperty({ example: '0xb79c048b1d44e146925cf55705aa8f84422d7d5e3d858993467c241cad0caf4b' })
   id: string;
 
-  @ApiProperty({ example: '863d48bb-15da-4eaf-8040-b6cb66e22023' })
+  @ApiProperty({ example: 'bafkreigxldrh3lo2spyg424ga4r7srss4f4umm3v7njljod7qvyjtvlg7e' })
   redemptionStatementId: string;
 
   @ApiProperty({ example: 100e6.toString() })

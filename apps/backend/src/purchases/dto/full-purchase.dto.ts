@@ -4,14 +4,15 @@ import { SellerDto } from '../../sellers/dto/seller.dto';
 import { CertificateDto } from '../../certificates/dto/certificate.dto';
 import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
 import { Buyer, Certificate, FilecoinNode, Purchase, Seller } from '@prisma/client';
-import { PurchaseFilesDto } from './purchase-files.dto';
+import { FileMetadataWithUrlDto } from '../../files/dto/file-metadata-with-url.dto';
 
-export type FullPurchaseEntity = Purchase & {
+export type FullPurchaseEntity = Omit<Purchase, 'createdAt' | 'updatedAt'> & {
   seller: Seller,
   buyer: Buyer,
   filecoinNode: FilecoinNode,
   certificate: Certificate,
-  files: PurchaseFilesDto
+  redemptionStatement: string,
+  attestation: FileMetadataWithUrlDto;
 };
 
 export class FullPurchaseDto {
@@ -57,8 +58,11 @@ export class FullPurchaseDto {
   @ApiProperty({ type: FilecoinNodeDto })
   filecoinNode: FilecoinNodeDto;
 
-  @ApiProperty({ type: PurchaseFilesDto })
-  files: PurchaseFilesDto;
+  @ApiProperty({ type: String })
+  redemptionStatement: string;
+
+  @ApiProperty({ type: FileMetadataWithUrlDto })
+  attestation: FileMetadataWithUrlDto;
 
   @ApiPropertyOptional({ type: String, example: '29e25d61-103a-4710-b03d-ee12df765066' })
   contractId: string;
@@ -76,6 +80,7 @@ export class FullPurchaseDto {
       certificate: CertificateDto.toDto(purchase.certificate),
       pageUrl: `${process.env.UI_BASE_URL}/partners/filecoin/purchases/${purchase.id}`,
       filecoinNode: purchase.filecoinNode,
+      attestation: FileMetadataWithUrlDto.toDto(purchase.attestation),
       contractId: purchase.contractId,
     };
   }

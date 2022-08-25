@@ -97,7 +97,7 @@ export class IssuerService {
   }
 
   async setRedemptionStatement(
-    batchId: number,
+    batchId: string,
     dto: ISetRedemptionStatementDTO
   ): Promise<TxHash> {
     this.logger.debug(`[Batch ${batchId}] Setting redemption statement to: ${JSON.stringify(dto)}`);
@@ -117,7 +117,7 @@ export class IssuerService {
   }
 
   async mint(
-    batchId: number,
+    batchId: string,
     dto: MintDTO[]
   ): Promise<TxHash> {
     const response = (

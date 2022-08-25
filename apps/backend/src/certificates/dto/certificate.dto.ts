@@ -60,12 +60,6 @@ export class CertificateDto {
   @ApiPropertyOptional({ example: LabelEnumType.EUROPEAN_GREEN })
   label?: LabelEnumType;
 
-  @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
-  createdAt: Date;
-
-  @ApiProperty({ example: "2021-08-26T18:20:30.633Z" })
-  updatedAt: Date;
-
   @ApiPropertyOptional({ example: 'Certificate_CID' })
   certificateCid?: string;
 
@@ -85,7 +79,7 @@ export class CertificateDto {
     return {
       ...stripped,
       energyWh: energyWh ? BigNumber.from(energyWh).toBigInt() : undefined,
-      batchId: batchId ? BigNumber.from(batchId).toBigInt() : undefined,
+      batchId,
       onchainId: onchainId ? BigNumber.from(onchainId).toBigInt() : undefined
     };
   }
@@ -96,7 +90,7 @@ export class CertificateDto {
     return {
       ...stripped,
       energyWh: energyWh ? BigNumber.from(energyWh).toString() : undefined,
-      batchId: batchId ? BigNumber.from(batchId).toString() : undefined,
+      batchId,
       onchainId: onchainId ? BigNumber.from(onchainId).toString() : undefined
     };
   }

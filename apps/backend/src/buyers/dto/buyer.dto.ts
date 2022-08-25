@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Buyer, FilecoinNode } from "@prisma/client";
 import { FilecoinNodeDto } from "../../filecoin-nodes/dto/filecoin-node.dto";
 
-export class BuyerDto implements Buyer {
+export class BuyerDto implements Omit<Buyer, 'createdAt' | 'updatedAt'> {
   @ApiProperty({ example: '29e25d61-103a-4710-b03d-ee12df765066' })
   id: string;
 
@@ -14,12 +14,6 @@ export class BuyerDto implements Buyer {
 
   @ApiPropertyOptional({ type: [FilecoinNodeDto] })
   filecoinNodes?: FilecoinNodeDto[];
-
-  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
-  createdAt: Date;
-
-  @ApiProperty( { example: "2021-08-26T18:20:30.633Z" })
-  updatedAt: Date;
 
   constructor(partial: Partial<BuyerDto>) {
     Object.assign(this, partial);
