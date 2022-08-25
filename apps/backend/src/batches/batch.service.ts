@@ -29,7 +29,7 @@ export class BatchService {
     private readonly configService: ConfigService
   ) {}
 
-  async create(onchainBatchId: number): Promise<BatchDto> {
+  async create(onchainBatchId: string): Promise<BatchDto> {
     this.logger.log(`received a request to create a batch ${onchainBatchId}...`);
 
     let newBatch: Batch;
@@ -81,7 +81,7 @@ export class BatchService {
 
   async findOne(id: string): Promise<BatchDto | null> {
     const dbRecord = await this.prisma.batch.findUnique({
-      where: { id: BigInt(id) },
+      where: { id },
       include: {
         certificates: true
       },
@@ -123,7 +123,7 @@ export class BatchService {
         redemptionStatementId: redemptionStatementId,
         totalVolume: BigInt(totalVolume)
       },
-      where: { id: BigInt(batch.id) }
+      where: { id: batch.id }
     });
 
     return txHash;
@@ -140,9 +140,9 @@ export class BatchService {
 
     const hex = hashSum.digest('hex');
 
-    return await this.issuerService.setRedemptionStatement(Number(onChainBatchId), {
+    return await this.issuerService.setRedemptionStatement(onChainBatchId, {
       value: `0x${hex}`,
-      storagePointer: `/api/files/${redemptionStatementId}`,
+      storagePointer: `ipfs://${redemptionStatementId}`,
     });
   }
 
@@ -151,6 +151,11 @@ export class BatchService {
     certificateIds: string[]
   ): Promise<TxHash> {
     const batch = await this.findOne(batchId);
+
+    console.log({
+      batchId,
+      batch
+    })
 
     const certificates = await this.certificatesService.find(certificateIds);
 
@@ -207,7 +212,7 @@ export class BatchService {
     }));
 
     const txHash = await this.issuerService.mint(
-      Number(batch.id),
+      batch.id,
       mintingData
     );
 
@@ -218,13 +223,13 @@ export class BatchService {
             connect: certificateIds.map(id => ({ id}))
           }
         },
-        where: { id: BigInt(batch.id) }
+        where: { id: batch.id }
       });
 
       for (let i = 0; i < certificateIds.length; i++) {
         await prisma.certificate.update({
           data: {
-            batchId: BigInt(batch.id),
+            batchId: batch.id,
             txHash
           },
           where: {

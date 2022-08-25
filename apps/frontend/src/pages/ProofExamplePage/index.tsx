@@ -69,13 +69,16 @@ const ProofExamplePage = () => {
                   <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
                     <DownloadSection
                       title="Download Official Attestation"
-                      fileList={[exampleData.files?.attestation]}
+                      fileList={[exampleData.attestation]}
                     />
                   </Grid>
                   <Grid item md={6} xs={12} sx={{ pt: '16px' }}>
                     <DownloadSection
                       title="Download Redemption Statement"
-                      fileList={[exampleData.files?.redemptionStatement]}
+                      fileList={[{
+                        fileName: exampleData.redemptionStatement,
+                        url: exampleData.redemptionStatement
+                      }]}
                     />
                   </Grid>
                 </Grid>

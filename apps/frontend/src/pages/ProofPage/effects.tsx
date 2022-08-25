@@ -50,8 +50,11 @@ export const useProductPageEffects = () => {
   return {
     certificateInfoTableData,
     data,
-    redemptionFile: data?.files?.redemptionStatement,
-    attestationFile: data?.files?.attestation,
+    redemptionFile: data?.redemptionStatement ? {
+      fileName: data.redemptionStatement,
+      url: data.redemptionStatement
+    } : undefined,
+    attestationFile: data?.attestation,
     isLoading,
     isFetched,
     purchaseId

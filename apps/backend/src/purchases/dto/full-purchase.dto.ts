@@ -6,7 +6,7 @@ import { FilecoinNodeDto } from '../../filecoin-nodes/dto/filecoin-node.dto';
 import { Buyer, Certificate, FilecoinNode, Purchase, Seller } from '@prisma/client';
 import { FileMetadataWithUrlDto } from '../../files/dto/file-metadata-with-url.dto';
 
-export type FullPurchaseEntity = Purchase & {
+export type FullPurchaseEntity = Omit<Purchase, 'createdAt' | 'updatedAt'> & {
   seller: Seller,
   buyer: Buyer,
   filecoinNode: FilecoinNode,

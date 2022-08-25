@@ -42,7 +42,7 @@ export class BatchController {
       description: 'Creates the off-chain batch entry'
   })
   create(@Param('id') id: string) {
-    return this.batchService.create(Number(id));
+    return this.batchService.create(id);
   }
 
   @Get()

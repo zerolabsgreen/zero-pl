@@ -7,7 +7,8 @@ import PaperBox from '../PaperBox';
 
 export interface DownloadSectionProps {
   title: string;
-  fileList: (FileMetadataDto & { url?: string })[];
+  fileList: (Pick<FileMetadataDto, 'fileName'> & { url?: string })[];
+  newTab?: boolean;
 }
 
 const shortifyFileName = (fileName: string) => {
@@ -15,7 +16,7 @@ const shortifyFileName = (fileName: string) => {
   return `${fileName.substr(0, 24)}... ${fileName.substr(fileName.length - 4, fileName.length - 1)}`
 }
 
-export const DownloadSection = ({ title, fileList = [] }: DownloadSectionProps) => {
+export const DownloadSection = ({ title, fileList = [], newTab }: DownloadSectionProps) => {
   const theme = useTheme();
 
   return (
@@ -29,6 +30,7 @@ export const DownloadSection = ({ title, fileList = [] }: DownloadSectionProps) 
             key={file.fileName + file.url}
             downloadUrl={file.url as string}
             filename={file.fileName ? shortifyFileName(file.fileName) : title}
+            newTab={newTab}
           />
         ))}
       </ResponsiveBox>

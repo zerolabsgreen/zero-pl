@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from "class-transformer";
 import { File } from '@prisma/client'
-import { PartialBy } from '../../utils/types';
 import { FileMetadataDto } from './file-metadata.dto';
 
 export class FileMetadataWithUrlDto extends FileMetadataDto {
@@ -9,7 +8,7 @@ export class FileMetadataWithUrlDto extends FileMetadataDto {
   @Expose()
   url: string;
 
-  static toDto(dbEntity: PartialBy<File, 'content'> & { url: string }): FileMetadataWithUrlDto {
+  static toDto(dbEntity: Omit<File, 'content' | 'createdAt' | 'updatedAt'> & { url: string }): FileMetadataWithUrlDto {
     return {
       ...FileMetadataDto.toDto(dbEntity),
       url: dbEntity.url

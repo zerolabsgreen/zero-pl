@@ -14,7 +14,7 @@ import {
 import { IsDatetimePrismaCompatible } from '../../validators'
 import { CountryEnumType, EnergySourceEnumType, LabelEnumType, ProductEnumType } from '@prisma/client';
 
-export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash', 'createdAt', 'updatedAt']) {
+export class CreateCertificateDto extends OmitType(CertificateDto, ['txHash']) {
   @ApiPropertyOptional({ example: '973d48bb-15da-4eaf-8040-b6cb66e22023' })
   @IsUUID()
   @IsOptional()

@@ -84,6 +84,7 @@ export const ProofPage = () => {
                     <DownloadSection
                       title="Download Redemption Statement"
                       fileList={redemptionFile ? [redemptionFile] : []}
+                      newTab={true}
                     />
                   </Grid>
                 </Grid>

@@ -36,7 +36,7 @@ async function bootstrap() {
     },
   });
 
-  const port = process.env.PORT;
+  const port = process.env.TOKENIZATION_PORT || 3334;
   await app.listen(port, () => {
     Logger.log('Listening at http://localhost:' + port + '/' + globalPrefix);
   });

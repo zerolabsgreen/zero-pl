@@ -100,17 +100,8 @@ curl -w "\n" -s -X 'POST' \
 }]'
 
 echo
-echo "creating an empty batch on-chain"
-BATCH_TX_HASH=$(curl -w "\n" -s -X 'POST' "http://localhost:$TOKENIZATION_PORT/api/batch" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' |  jq -r '.txHash')
-echo "triggered batch creation: $BATCH_TX_HASH"
-
-echo
-echo "waiting $TX_WAIT_TIME seconds for $BATCH_TX_HASH to be mined..."
-sleep $TX_WAIT_TIME
-
-echo
-echo "getting the batch ID"
-BATCH_ID=$(curl -w "\n" -s -X 'GET' "http://localhost:$TOKENIZATION_PORT/api/batch/id/$BATCH_TX_HASH" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' | jq -r first )
+echo "generating a batch ID"
+BATCH_ID=$(curl -w "\n" -s -X 'GET' "http://localhost:$TOKENIZATION_PORT/api/batch/id/generate" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json')
 echo "batch ID: $BATCH_ID"
 
 echo
@@ -178,7 +169,7 @@ curl -w "\n" -s -X 'POST' \
   "reportingStart": "2020-11-01T00:00:00.000Z",
   "reportingEnd": "2021-06-01T23:59:59.999Z",
   "timezoneOffset": 180,
-  "volume": "4000000000000",
+  "volume": "4000000",
   "buyerId": "00000000-0000-0000-0000-000000000002",
   "sellerId": "00000000-0000-0000-0000-000000000001",
   "filecoinNodeId": "f00001",
