@@ -4,6 +4,6 @@
     "migrate": "typeorm migration:run --dataSource node_modules/@zero-labs/tokenization-api/dist/ormconfig.js && yarn typeorm migration:run --dataSource ormconfig.ts"
   },
   "dependencies": {
-    "passport": "0.5.0"
+    "passport": "0.6.0"
   }
 }
