@@ -1346,21 +1346,21 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@energyweb/origin-backend-core@8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-core/-/origin-backend-core-8.2.1.tgz#797d8c2746bba6ba2c7e2ce384af69de8502959c"
-  integrity sha512-ALwGHeergdY4AJaDF8jhZh+I9VFrdI9haIhiXqk8JDGAV2hgR/+Bcm2bZRo0xykWn9uZKgfz3cfvO3u9iiDXcw==
+"@energyweb/origin-backend-core@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-core/-/origin-backend-core-8.2.3.tgz#857477a6765adc94b715a8982097f99f1e1c6ee7"
+  integrity sha512-12brWQtS+VQtXFlHAepnzUTirdQ902WLYEJhgo1LMDDmqCowlUqNkNV/N7MkWq6iJaSHTimRaodJbyBYidWmjQ==
   dependencies:
     class-transformer "0.3.1"
     class-validator "0.13.2"
     ethers "5.3.1"
 
-"@energyweb/origin-backend-utils@1.8.1":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-utils/-/origin-backend-utils-1.8.1.tgz#097e6f9bb051581788f017863006724d99f04ff2"
-  integrity sha512-XJ0dUqiYiDA187SXrev3vEC+OaKNhUtG2m8aw2XuNbN9CC5l9RRrD2V/ZxR4q/peUNLk9xQ/edcqo3+WgLXYwQ==
+"@energyweb/origin-backend-utils@1.8.3":
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/@energyweb/origin-backend-utils/-/origin-backend-utils-1.8.3.tgz#7b785209fbee84cb3424d8ec142a94f9884faf3a"
+  integrity sha512-+/8T+jNf0/u2QuKdKplCgUEGf0vWw66n44nyHzOeDznm3wsZ0VIm8+1Cy4mEc+biFfNM8cMh47bYHVdRgqdtoQ==
   dependencies:
-    "@energyweb/origin-backend-core" "8.2.1"
+    "@energyweb/origin-backend-core" "8.2.3"
     "@nestjs/config" "1.0.2"
     "@nestjs/swagger" "5.1.4"
     bn.js "5.2.0"
