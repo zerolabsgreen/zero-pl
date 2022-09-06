@@ -72,7 +72,7 @@
     "@nestjs/platform-express": "8.4.7",
     "@nestjs/schedule": "2.1.0",
     "@nestjs/swagger": "5.1.4",
-    "@nestjs/typeorm": "8.0.3",
+    "@nestjs/typeorm": "8.1.4",
     "@prisma/client": "3.6.0",
     "@t00nday/nestjs-pdf": "2.0.6",
     "@zero-labs/tokenization": "1.0.0",
