@@ -3047,6 +3047,13 @@
   dependencies:
     tslib "2.3.1"
 
+"@nestjs/bull-shared@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/bull-shared/-/bull-shared-0.1.1.tgz#af59527a40170d8355a575f83b92d0d75334c50c"
+  integrity sha512-As/h1u300l7oE6DOhWdCk6bqhae698rMWshQjKeaDcwOhfDB70IKn09IMBF6yqhTQFZHuAF1IxELrmDsaffACw==
+  dependencies:
+    tslib "2.4.0"
+
 "@nestjs/bull@0.5.5":
   version "0.5.5"
   resolved "https://registry.npmjs.org/@nestjs/bull/-/bull-0.5.5.tgz#1ee9b7d8b78a52af58c4654de8d765a2a2b16862"
@@ -3054,6 +3061,14 @@
   dependencies:
     "@nestjs/bull-shared" "^0.0.5"
     tslib "2.3.1"
+
+"@nestjs/bull@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/bull/-/bull-0.6.1.tgz#be825215b2958a9131c6534eb174ee96a5093966"
+  integrity sha512-UnPQLWzns6egWa6Satbg6R+G+x+aYbVzg/s1t9Bl6uehxjE1FfzwVBEii2xBmwzMB1YYg7nIDOUP4/gjhr2Xrg==
+  dependencies:
+    "@nestjs/bull-shared" "^0.1.1"
+    tslib "2.4.0"
 
 "@nestjs/common@8.4.4":
   version "8.4.4"
