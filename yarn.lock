@@ -6493,6 +6493,21 @@ bull@4.8.3:
     semver "^7.3.2"
     uuid "^8.3.0"
 
+bull@4.9.0:
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/bull/-/bull-4.9.0.tgz#522a955fa045141ce2c063ab24c2c78e4ee3782e"
+  integrity sha512-yiaSb41dywjIhJ3i1mczjQGDmM6pLIoM1Ea0Gcf5HKDxOoEzL5i9XEEKW7fbsj7u083UEOnQ4gSWfbWIUDO6JQ==
+  dependencies:
+    cron-parser "^4.2.1"
+    debuglog "^1.0.0"
+    get-port "^5.1.1"
+    ioredis "^4.28.5"
+    lodash "^4.17.21"
+    msgpackr "^1.5.2"
+    p-timeout "^3.2.0"
+    semver "^7.3.2"
+    uuid "^8.3.0"
+
 busboy@^0.2.11:
   version "0.2.14"
   resolved "https://registry.yarnpkg.com/busboy/-/busboy-0.2.14.tgz#6c2a622efcf47c57bbbe1e2a9c37ad36c7925453"

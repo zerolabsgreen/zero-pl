@@ -80,7 +80,7 @@
     "assert": "2.0.0",
     "axios": "0.24.0",
     "buffer": "6.0.3",
-    "bull": "4.8.3",
+    "bull": "4.9.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
     "core-js": "3.19.1",
