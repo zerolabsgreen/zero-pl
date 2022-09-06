@@ -55,7 +55,7 @@
     "@emotion/server": "11.4.0",
     "@emotion/styled": "11.6.0",
     "@energyweb/origin-backend-utils": "1.8.1",
-    "@energyweb/utils-general": "11.2.1",
+    "@energyweb/utils-general": "11.2.3",
     "@ethersproject/bignumber": "5.3.0",
     "@ethersproject/constants": "5.3.0",
     "@mui/icons-material": "5.2.5",

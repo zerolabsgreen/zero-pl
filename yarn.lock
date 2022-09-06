@@ -1370,10 +1370,10 @@
     rxjs "7.4.0"
     typeorm "0.2.41"
 
-"@energyweb/utils-general@11.2.1":
-  version "11.2.1"
-  resolved "https://registry.yarnpkg.com/@energyweb/utils-general/-/utils-general-11.2.1.tgz#84936d34ad8e87069dbb2a9a7302a81d36ad071b"
-  integrity sha512-OvK7M/Sid29/hMS57+sScz8MHRv11/C9/RxrSTJPV97eZR2FrPjolT62SqcoItRgUwPUcEUoTwaqVr8Yciujuw==
+"@energyweb/utils-general@11.2.3":
+  version "11.2.3"
+  resolved "https://registry.yarnpkg.com/@energyweb/utils-general/-/utils-general-11.2.3.tgz#4317ffb5d4257192c1af13569361bde2546ba8c5"
+  integrity sha512-A+eA8c2/C4GuNTAWP9Kkv2Choifu5nXf2xD9sgNSF/x0nJWOwxlubS9v/r7pn8ZIoOq9vqhqMCZCncNCacC4tQ==
   dependencies:
     chai "4.3.4"
     eth-sig-util "2.5.4"
