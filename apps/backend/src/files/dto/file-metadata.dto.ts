@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from "class-transformer";
 import { File } from '@prisma/client'
-import { PartialBy } from '../../utils/types';
 
 @Exclude()
 export class FileMetadataDto implements Omit<File, 'content' | 'createdAt' | 'updatedAt'> {

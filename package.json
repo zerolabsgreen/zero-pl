@@ -10,7 +10,7 @@
     "build:next-ui": "yarn swagger:schema:generate && yarn build:api-client && yarn nx run frontend-next:build",
     "start-with-next-ui": "concurrently --names 'FRONTEND-NEXT,BACKEND,TOKENIZATION' -c 'yellow,cyan'  'yarn serve:frontend-next' 'yarn serve:backend' 'yarn serve:tokenization'",
     "serve:backend": "nx serve backend",
-    "serve:tokenization": "TOKENIZATION_PORT=$(grep TOKENIZATION_PORT .env | cut -d \"=\" -f2 | tr -d '\"') DATABASE_URL=$(grep TOKENIZATION_DATABASE_URL .env | cut -d \"=\" -f2 | tr -d '\"')  REDIS_URL=$(grep REDIS_URL .env | cut -d \"=\" -f2 | tr -d '\"') nx serve tokenization",
+    "serve:tokenization": "PORT=$(grep TOKENIZATION_PORT .env | cut -d \"=\" -f2 | tr -d '\"') DATABASE_URL=$(grep TOKENIZATION_DATABASE_URL .env | cut -d \"=\" -f2 | tr -d '\"')  REDIS_URL=$(grep REDIS_URL .env | cut -d \"=\" -f2 | tr -d '\"') nx serve tokenization",
     "serve:frontend-next": "nx serve frontend-next --port=3000",
     "serve:frontend": "chmod +x ./dev-env.sh && ./dev-env.sh && nx serve frontend --port=3000",
     "start:docker": "yarn build:docker && docker-compose --env-file .env -f docker-compose.yaml down && docker-compose --env-file .env -f docker-compose.yaml up -d",
