@@ -108,7 +108,7 @@
     "react-router-dom": "6.0.0",
     "reflect-metadata": "0.1.13",
     "regenerator-runtime": "0.13.9",
-    "rxjs": "7.4.0",
+    "rxjs": "7.5.6",
     "stream-browserify": "3.0.0",
     "swagger-ui-express": "4.1.6",
     "tslib": "2.3.1",
