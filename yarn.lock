@@ -4254,16 +4254,16 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@t00nday/nestjs-pdf@2.0.6":
-  version "2.0.6"
-  resolved "https://registry.npmjs.org/@t00nday/nestjs-pdf/-/nestjs-pdf-2.0.6.tgz#38e6c4cbef19928f1849ff499f8ad6c6aec99d3e"
-  integrity sha512-1pcy5TEMwhV+lI0pSPAm7U1dZc+JKCXyP1W9GSmeGNjTa1A4iWU6ZRKQr97yc9UUNSXg7SnW+kxDRiLHxthnYA==
+"@t00nday/nestjs-pdf@3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@t00nday/nestjs-pdf/-/nestjs-pdf-3.0.5.tgz#7c0f513086eb05c9fb80a0f10b1119b37f2f3a5c"
+  integrity sha512-UBtZtyvj07bVecqov6mboQjHCP7PO4T6EKvSieD3JBXEgEXADkJgcZzakN/A8rnu/AKM+9T85ZKEYBAcB+F5ug==
   dependencies:
-    consolidate "^0.16.0"
-    html-pdf "^2.2.0"
-    juice "^7.0.0"
-    lodash.merge "^4.6.2"
-    lodash.omit "^4.5.0"
+    consolidate "0.16.0"
+    html-pdf "3.0.1"
+    juice "8.0.0"
+    lodash.merge "4.6.2"
+    lodash.omit "4.5.0"
 
 "@testing-library/dom@^8.0.0":
   version "8.11.3"
@@ -7105,6 +7105,11 @@ commander@^5.1.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
 
+commander@^6.1.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
+  integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+
 common-path-prefix@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/common-path-prefix/-/common-path-prefix-3.0.0.tgz#7d007a7e07c58c4b4d5f433131a19141b29f11e0"
@@ -7222,9 +7227,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
-consolidate@^0.16.0:
+consolidate@0.16.0:
   version "0.16.0"
-  resolved "https://registry.npmjs.org/consolidate/-/consolidate-0.16.0.tgz#a11864768930f2f19431660a65906668f5fbdc16"
+  resolved "https://registry.yarnpkg.com/consolidate/-/consolidate-0.16.0.tgz#a11864768930f2f19431660a65906668f5fbdc16"
   integrity sha512-Nhl1wzCslqXYTJVDyJCu3ODohy9OfBMB5uD2BiBTzd7w+QY0lBzafkR8y8755yMYHAaMD4NuzbAw03/xzfw+eQ==
   dependencies:
     bluebird "^3.7.2"
@@ -10604,12 +10609,12 @@ html-minifier@~1.2.0:
     relateurl "0.2.x"
     uglify-js "2.6.x"
 
-html-pdf@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/html-pdf/-/html-pdf-2.2.0.tgz#4bcf91c24cb560e47aa3facfd033e0e1bf241b91"
-  integrity sha512-k4F0znJNVx5ViGEq2HlQIcI8eosSOxFQBbwj8zBqYPT7xx508IDamIhmXiJNha7xuJqRIxn70beDn1qMgYlEdw==
+html-pdf@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/html-pdf/-/html-pdf-3.0.1.tgz#5a8f7b6bd49d624345938952f24b47e4a08f14db"
+  integrity sha512-CKNSacmQn+CKJ2GNfT4UYKaPy/T3Ndj82yJ2aju/UPmnvWNjIpyumqRqkFU0mwT6BTHBFhFGTnXN8dBn4Bdj0Q==
   optionalDependencies:
-    phantomjs-prebuilt "^2.1.4"
+    phantomjs-prebuilt "^2.1.16"
 
 html-to-text@8.0.0:
   version "8.0.0"
@@ -12346,13 +12351,13 @@ jstransformer@1.0.0:
     array-includes "^3.1.3"
     object.assign "^4.1.2"
 
-juice@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.npmjs.org/juice/-/juice-7.0.0.tgz#509bed6adbb6e4bbaa7fbfadac4e2e83e8c89ba3"
-  integrity sha512-AjKQX31KKN+uJs+zaf+GW8mBO/f/0NqSh2moTMyvwBY+4/lXIYTU8D8I2h6BAV3Xnz6GGsbalUyFqbYMe+Vh+Q==
+juice@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/juice/-/juice-8.0.0.tgz#ac77d3372373409b06a875aee425b9d381f645fe"
+  integrity sha512-LRCfXBOqI1wt+zYR/5xwDnf+ZyiJiDt44DGZaBSAVwZWyWv3BliaiGTLS6KCvadv3uw6XGiPPFcTfY7CdF7Z/Q==
   dependencies:
     cheerio "^1.0.0-rc.3"
-    commander "^5.1.0"
+    commander "^6.1.0"
     mensch "^0.3.4"
     slick "^1.12.2"
     web-resource-inliner "^5.0.0"
@@ -12708,7 +12713,7 @@ lodash.memoize@4.x, lodash.memoize@^4.1.2:
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
 
-lodash.merge@^4.4.0, lodash.merge@^4.6.2:
+lodash.merge@4.6.2, lodash.merge@^4.4.0, lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
@@ -14398,10 +14403,10 @@ pgpass@1.x:
   dependencies:
     split2 "^4.1.0"
 
-phantomjs-prebuilt@^2.1.4:
+phantomjs-prebuilt@^2.1.16:
   version "2.1.16"
-  resolved "https://registry.npmjs.org/phantomjs-prebuilt/-/phantomjs-prebuilt-2.1.16.tgz#efd212a4a3966d3647684ea8ba788549be2aefef"
-  integrity sha1-79ISpKOWbTZHaE6ouniFSb4q7+8=
+  resolved "https://registry.yarnpkg.com/phantomjs-prebuilt/-/phantomjs-prebuilt-2.1.16.tgz#efd212a4a3966d3647684ea8ba788549be2aefef"
+  integrity sha512-PIiRzBhW85xco2fuj41FmsyuYHKjKuXWmhjy3A/Y+CMpN/63TV+s9uzfVhsUwFe0G77xWtHBG8xmXf5BqEUEuQ==
   dependencies:
     es6-promise "^4.0.3"
     extract-zip "^1.6.5"

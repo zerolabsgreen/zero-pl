@@ -74,7 +74,7 @@
     "@nestjs/swagger": "5.1.4",
     "@nestjs/typeorm": "8.0.3",
     "@prisma/client": "3.6.0",
-    "@t00nday/nestjs-pdf": "2.0.6",
+    "@t00nday/nestjs-pdf": "3.0.5",
     "@zero-labs/tokenization": "1.0.0",
     "@zero-labs/tokenization-api": "1.0.0",
     "assert": "2.0.0",
