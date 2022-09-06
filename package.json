@@ -56,7 +56,7 @@
     "@emotion/styled": "11.6.0",
     "@energyweb/origin-backend-utils": "1.8.3",
     "@energyweb/utils-general": "11.2.3",
-    "@ethersproject/bignumber": "5.3.0",
+    "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/constants": "5.7.0",
     "@mui/icons-material": "5.2.5",
     "@mui/lab": "5.0.0-alpha.62",
