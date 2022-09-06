@@ -154,7 +154,7 @@
     "@typescript-eslint/eslint-plugin": "5.3.1",
     "@typescript-eslint/parser": "5.3.1",
     "babel-jest": "27.4.4",
-    "barrelsby": "2.3.0",
+    "barrelsby": "2.4.0",
     "concurrently": "6.5.1",
     "cypress": "9.1.1",
     "dotenv": "10.0.0",
