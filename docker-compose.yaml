@@ -94,7 +94,7 @@ services:
       zero-pl:
 
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
     restart: unless-stopped
     ports:
       - '127.0.0.1:6379:6379'
