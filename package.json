@@ -94,7 +94,7 @@
     "htmling": "0.0.8",
     "joi": "17.6.0",
     "luxon": "3.0.3",
-    "next": "12.0.7",
+    "next": "12.1.0",
     "os-browserify": "0.3.0",
     "passport": "0.6.0",
     "passport-headerapikey": "1.2.2",
