@@ -166,7 +166,7 @@
     "eslint-plugin-jsx-a11y": "6.6.1",
     "eslint-plugin-react": "7.26.1",
     "eslint-plugin-react-hooks": "4.6.0",
-    "husky": "7.0.4",
+    "husky": "8.0.1",
     "jest": "27.5.1",
     "nock": "13.2.9",
     "orval": "6.5.1",
