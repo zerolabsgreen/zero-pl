@@ -21,9 +21,9 @@ module.exports = (config) => {
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
       }),
-      new webpack.ProvidePlugin({
-        process: 'process/browser',
-      }),
+      // new webpack.ProvidePlugin({
+      //   process: 'process/browser',
+      // }),
     ],
   };
 };

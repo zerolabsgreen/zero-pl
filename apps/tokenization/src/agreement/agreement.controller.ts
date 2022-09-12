@@ -19,14 +19,11 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { AgreementDTO, AgreementService, BlockchainPropertiesService, CreateAgreementDTO, SignAgreementDTO, TransactionHash } from '@zero-labs/tokenization-api';
+import { AgreementDTO, AgreementService, BlockchainPropertiesService, CreateAgreementDTO, SignAgreementDTO, TransactionHash, InvalidateAgreementDTO, UpdateAgreementAmountDTO, UpdateAgreementMetadataDTO } from '@zero-labs/tokenization-api';
 import { providers, Wallet } from 'ethers';
 import { signAgreement } from '@zero-labs/tokenization';
 import { AccountService } from '../account/account.service';
 import { IssuerGuard } from '../auth/issuer.guard';
-import { InvalidateAgreementDTO } from '@zero-labs/tokenization-api/dist/src/pods/agreement/dto/invalidate-agreement.dto';
-import { UpdateAgreementAmountDTO } from '@zero-labs/tokenization-api/dist/src/pods/agreement/dto/update-amount.dto';
-import { UpdateAgreementMetadataDTO } from '@zero-labs/tokenization-api/dist/src/pods/agreement/dto/update-metadata.dto';
 
 @ApiTags('agreement')
 @Controller('agreement')

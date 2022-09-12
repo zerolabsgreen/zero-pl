@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Wallet } from 'ethers';
-import { BlockchainPropertiesService, decrypt, getProviderWithFallback } from '@zero-labs/tokenization-api';
+import { providers, Wallet } from 'ethers';
+import { BlockchainPropertiesService, decrypt } from '@zero-labs/tokenization-api';
 
 @Injectable()
 export class SignerService {
@@ -12,7 +12,7 @@ export class SignerService {
 
     public async get(): Promise<Wallet> {
         const { rpcNode } = await this.blockchainPropertiesService.get();
-        const provider = getProviderWithFallback(rpcNode);
+        const provider = new providers.JsonRpcProvider(rpcNode);
 
         const queryRunner = this.connection.createQueryRunner();
 

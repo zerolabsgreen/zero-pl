@@ -1,4 +1,5 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { BlockchainPropertiesService, IStorageAdapter } from '@zero-labs/tokenization-api';
 import { BlockchainPropertiesController } from './blockchain-properties.controller';
 
@@ -8,6 +9,7 @@ export class BlockchainPropertiesModule {
     return {
       module: BlockchainPropertiesModule,
       controllers: [BlockchainPropertiesController],
+      imports: [ScheduleModule.forRoot()],
       providers: [
         {
           provide: 'STORAGE_ADAPTER',

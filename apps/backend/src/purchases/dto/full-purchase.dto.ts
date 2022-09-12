@@ -41,13 +41,13 @@ export class FullPurchaseDto {
   reportingStart: Date;
 
   @ApiPropertyOptional({ example: 180 })
-  reportingStartTimezoneOffset;
+  reportingStartTimezoneOffset: number;
 
   @ApiPropertyOptional({ example: '2020-12-31T23:59:59.999Z' })
   reportingEnd: Date;
 
   @ApiPropertyOptional({ example: 180 })
-  reportingEndTimezoneOffset;
+  reportingEndTimezoneOffset: number;
 
   @ApiProperty({ example: 'Decarbonizing Filecoin Mining Operation' })
   purpose: string;

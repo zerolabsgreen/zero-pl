@@ -1,6 +1,5 @@
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Theme } from "@mui/system/createTheme/createTheme";
-import { styled } from "@mui/material/styles"
+import { styled, Theme } from "@mui/material/styles"
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
 import Typography from "@mui/material/Typography"

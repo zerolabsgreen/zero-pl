@@ -151,7 +151,7 @@ export class PurchasesService {
             purchaseId: newPurchase.id,
             previousTx: transferTxHash
           });
-          await this.prisma.purchase.update({
+          await prisma.purchase.update({
             where: {
               id: newPurchase.id
             },

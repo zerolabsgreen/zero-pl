@@ -2,9 +2,9 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ScheduleModule } from '@nestjs/schedule';
+import { IStorageAdapter, OnChainEventProcessor, OnChainEventWatcher } from '@zero-labs/tokenization-api';
 
 import { AgreementModule } from '../agreement';
-import { IStorageAdapter, OnChainEventWatcher, OnChainEventProcessor } from '@zero-labs/tokenization-api';
 import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
 import { CertificateModule } from '../certificate/certificate.module';
 import { BatchModule } from '../batch/batch.module';

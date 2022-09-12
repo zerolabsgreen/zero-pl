@@ -71,7 +71,7 @@ export const FormDatePicker: FC<FormDatePickerProps> = ({
         value={value ?? null}
         inputFormat={'MMM DD, YYYY'}
         components={{ OpenPickerIcon: CalendarIcon }}
-        renderInput={(props) => (
+        renderInput={(props: any) => (
           <TextField
             {...props}
             name={name}
