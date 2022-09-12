@@ -152,11 +152,6 @@ export class BatchService {
   ): Promise<TxHash> {
     const batch = await this.findOne(batchId);
 
-    console.log({
-      batchId,
-      batch
-    })
-
     const certificates = await this.certificatesService.find(certificateIds);
 
     if (certificates.length !== certificateIds.length) {
