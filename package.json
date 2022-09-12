@@ -61,7 +61,6 @@
     "@mui/icons-material": "5.10.3",
     "@mui/lab": "5.0.0-alpha.98",
     "@mui/material": "5.10.4",
-    "@mui/system": "5.10.4",
     "@mui/styles": "5.10.3",
     "@nestjs-modules/mailer": "1.8.1",
     "@nestjs/bull": "0.6.1",
