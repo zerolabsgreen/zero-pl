@@ -33,7 +33,7 @@
       "projectType": "application",
       "targets": {
         "build": {
-          "executor": "@nrwl/node:webpack",
+          "executor": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/backend",
@@ -68,7 +68,7 @@
           }
         },
         "serve": {
-          "executor": "@nrwl/node:node",
+          "executor": "@nrwl/node:execute",
           "options": {
             "buildTarget": "backend:build"
           }
@@ -182,7 +182,7 @@
       "projectType": "application",
       "targets": {
         "build": {
-          "executor": "@nrwl/node:webpack",
+          "executor": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/tokenization",
@@ -220,7 +220,7 @@
           }
         },
         "serve": {
-          "executor": "@nrwl/node:node",
+          "executor": "@nrwl/node:execute",
           "options": {
             "buildTarget": "tokenization:build"
           }
