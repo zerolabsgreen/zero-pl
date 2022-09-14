@@ -42,6 +42,7 @@ services:
     ports:
       - '127.0.0.1:3334:3334'
     environment:
+      PORT: "3334"
       TOKENIZATION_DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       REDIS_URL: "redis://:@redis:6379"

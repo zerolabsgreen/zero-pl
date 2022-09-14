@@ -36,7 +36,7 @@ async function bootstrap() {
     },
   });
 
-  const port = process.env.TOKENIZATION_PORT || 3334;
+  const port = process.env.PORT || 3334; // We are using PORT here instead of TOKENIZATION_PORT because Heroku only binds on PORT
   await app.listen(port, () => {
     Logger.log('Listening at http://localhost:' + port + '/' + globalPrefix);
   });
