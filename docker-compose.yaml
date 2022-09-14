@@ -25,7 +25,7 @@ services:
     command: "/bin/sh -c \"prisma migrate deploy && node main.js\""
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/zero-protocol-labs"
-      TOKENIZATION_BASE_URL: http://tokenization:3333
+      TOKENIZATION_BASE_URL: http://tokenization:3334
     volumes:
       - 'zero-pl-backend-tmp:/tmp'
     networks:
@@ -40,7 +40,7 @@ services:
       - db-tokenization
       - ganache
     ports:
-      - '127.0.0.1:3334:3333'
+      - '127.0.0.1:3334:3334'
     environment:
       TOKENIZATION_DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
       DATABASE_URL: "postgresql://postgres:postgres@db-tokenization:5432/tokenization"
