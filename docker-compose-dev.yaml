@@ -10,7 +10,7 @@ services:
       - dev-redis-data:/data
 
   db:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     restart: unless-stopped
     ports:
       - '5432:5432'
@@ -22,7 +22,7 @@ services:
       POSTGRES_DB: zero-protocol-labs
 
   db-tokenization:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     restart: unless-stopped
     ports:
       - '5433:5432'
