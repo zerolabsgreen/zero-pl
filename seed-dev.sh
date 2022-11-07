@@ -100,17 +100,8 @@ curl -w "\n" -s -X 'POST' \
 }]'
 
 echo
-echo "creating an empty batch on-chain"
-BATCH_TX_HASH=$(curl -w "\n" -s -X 'POST' "http://localhost:$TOKENIZATION_PORT/api/batch" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' |  jq -r '.txHash')
-echo "triggered batch creation: $BATCH_TX_HASH"
-
-echo
-echo "waiting $TX_WAIT_TIME seconds for $BATCH_TX_HASH to be mined..."
-sleep $TX_WAIT_TIME
-
-echo
-echo "getting the batch ID"
-BATCH_ID=$(curl -w "\n" -s -X 'GET' "http://localhost:$TOKENIZATION_PORT/api/batch/id/$BATCH_TX_HASH" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json' | jq -r first )
+echo "generating a batch ID"
+BATCH_ID=$(curl -w "\n" -s -X 'GET' "http://localhost:$TOKENIZATION_PORT/api/batch/id/generate" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json')
 echo "batch ID: $BATCH_ID"
 
 echo
