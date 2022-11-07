@@ -44,12 +44,11 @@ export class BatchService {
       throw err;
     };
 
-    const dbRecord = await this.prisma.batch.findUnique({
+    const dbRecord = await this.prisma.batch.findUniqueOrThrow({
       where: { id: newBatch.id },
       include: {
         certificates: true
-      },
-      rejectOnNotFound: () => new NotFoundException(`batchId=${newBatch.id} not found`)
+      }
     });
 
     return BatchDto.toDto(dbRecord);
@@ -80,12 +79,11 @@ export class BatchService {
   }
 
   async findOne(id: string): Promise<BatchDto | null> {
-    const dbRecord = await this.prisma.batch.findUnique({
+    const dbRecord = await this.prisma.batch.findUniqueOrThrow({
       where: { id },
       include: {
         certificates: true
-      },
-      rejectOnNotFound: () => new NotFoundException(`batchId=${id} not found`)
+      }
     });
 
     return BatchDto.toDto(dbRecord);

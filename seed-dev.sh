@@ -1,13 +1,18 @@
 X_API_KEY=$(grep SUPERADMIN_API_KEY .env | cut -d "=" -f2 | tr -d '"');
 PORT=$(grep -e "^PORT=" .env | cut -d "=" -f2 | tr -d '"');
 TOKENIZATION_PORT=$(grep -e "^TOKENIZATION_PORT=" .env | cut -d "=" -f2 | tr -d '"');
-TX_WAIT_TIME=5
-SEED_URL=http://localhost:$PORT
+TX_WAIT_TIME=30
+
+URL=http://localhost:$PORT
+TOKENIZATION_URL=http://localhost:$TOKENIZATION_PORT
+
+# URL=https://zero-api-staging.herokuapp.com
+# TOKENIZATION_URL=https://zero-tokenization-staging.herokuapp.com
 
 echo
 echo "creating sellerId=00000000-0000-0000-0000-000000000001"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/sellers" \
+  "$URL/api/partners/filecoin/sellers" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -21,7 +26,7 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "creating buyerId=00000000-0000-0000-0000-000000000002"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/buyers" \
+  "$URL/api/partners/filecoin/buyers" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -32,7 +37,7 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "creating buyerId=00000000-0000-0000-0000-000000000003"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/buyers" \
+  "$URL/api/partners/filecoin/buyers" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -43,7 +48,7 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "creating nodeId=f00001 for buyerId=00000000-0000-0000-0000-000000000002"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/nodes" \
+  "$URL/api/partners/filecoin/nodes" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -56,7 +61,7 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "creating nodeId=f00002 for buyerId=00000000-0000-0000-0000-000000000003"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/nodes" \
+  "$URL/api/partners/filecoin/nodes" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -67,7 +72,7 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "creating certificates"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/certificates" \
+  "$URL/api/partners/filecoin/certificates" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '[{
@@ -101,18 +106,18 @@ curl -w "\n" -s -X 'POST' \
 
 echo
 echo "generating a batch ID"
-BATCH_ID=$(curl -w "\n" -s -X 'GET' "http://localhost:$TOKENIZATION_PORT/api/batch/id/generate" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json')
+BATCH_ID=$(curl -w "\n" -s -X 'GET' "$TOKENIZATION_URL/api/batch/id/generate" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json')
 echo "batch ID: $BATCH_ID"
 
 echo
 echo "creating a batch off-chain"
-curl -w "\n" -s -X 'POST' "$SEED_URL/api/partners/filecoin/batch/$BATCH_ID" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json'
+curl -w "\n" -s -X 'POST' "$URL/api/partners/filecoin/batch/$BATCH_ID" -H "X-API-KEY: $X_API_KEY" -H 'Content-Type: application/json'
 echo "created off-chain batch: $BATCH_ID"
 
 echo
 echo "setting the redemption statement"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/batch/$BATCH_ID/redemption-statement" \
+  "$URL/api/partners/filecoin/batch/$BATCH_ID/redemption-statement" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d @- <<END;
@@ -129,7 +134,7 @@ sleep $TX_WAIT_TIME
 echo
 echo "minting certificates on-chain"
 MINT_TX_HASH=$(curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/batch/$BATCH_ID/mint" \
+  "$URL/api/partners/filecoin/batch/$BATCH_ID/mint" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -144,7 +149,7 @@ sleep $TX_WAIT_TIME
 echo
 echo "detecting and attaching minted certificates"
 curl -w "\n" -s -X 'PATCH' \
-  "$SEED_URL/api/partners/filecoin/batch/attach/$MINT_TX_HASH" \
+  "$URL/api/partners/filecoin/batch/attach/$MINT_TX_HASH" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json'
 echo "Successfully attached certificates for $MINT_TX_HASH"
@@ -152,7 +157,7 @@ echo "Successfully attached certificates for $MINT_TX_HASH"
 echo
 echo "creating a contract"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/contracts" \
+  "$URL/api/partners/filecoin/contracts" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '[{
@@ -179,7 +184,7 @@ curl -w "\n" -s -X 'POST' \
 echo
 echo "deploying the contract on-chain"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/contracts/on-chain/deploy" \
+  "$URL/api/partners/filecoin/contracts/on-chain/deploy" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '["00000000-0000-0000-0000-000000666666"]'
@@ -191,7 +196,7 @@ sleep $TX_WAIT_TIME
 echo
 echo "signing the on-chain contract"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/contracts/on-chain/sign" \
+  "$URL/api/partners/filecoin/contracts/on-chain/sign" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '["00000000-0000-0000-0000-000000666666"]'
@@ -203,7 +208,7 @@ sleep $TX_WAIT_TIME
 echo
 echo "creating purchases"
 curl -w "\n" -s -X 'POST' \
-  "$SEED_URL/api/partners/filecoin/purchases" \
+  "$URL/api/partners/filecoin/purchases" \
   -H "X-API-KEY: $X_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '[{
