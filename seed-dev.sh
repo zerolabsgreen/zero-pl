@@ -3,11 +3,11 @@ PORT=$(grep -e "^PORT=" .env | cut -d "=" -f2 | tr -d '"');
 TOKENIZATION_PORT=$(grep -e "^TOKENIZATION_PORT=" .env | cut -d "=" -f2 | tr -d '"');
 TX_WAIT_TIME=30
 
-URL=http://localhost:$PORT
-TOKENIZATION_URL=http://localhost:$TOKENIZATION_PORT
+# URL=http://localhost:$PORT
+# TOKENIZATION_URL=http://localhost:$TOKENIZATION_PORT
 
-# URL=https://zero-api-staging.herokuapp.com
-# TOKENIZATION_URL=https://zero-tokenization-staging.herokuapp.com
+URL=https://zero-api-staging.herokuapp.com
+TOKENIZATION_URL=https://zero-tokenization-staging.herokuapp.com
 
 echo
 echo "creating sellerId=00000000-0000-0000-0000-000000000001"

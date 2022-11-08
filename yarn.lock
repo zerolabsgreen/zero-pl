@@ -5386,10 +5386,17 @@
     tslib "^2"
     upath2 "^3.1.13"
 
+<<<<<<< HEAD
 "@zero-labs/tokenization-api@1.0.8":
   version "1.0.8"
   resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-1.0.8.tgz#2455fa40d0a5557498d6c1e2ab69b919f678abfe"
   integrity sha512-T5y72P3IO4I3hVug5ASIcZzpxP213mD8Uy5q4abiYwP1VPwpzDRkCA59vw5mG7+/5HiD7Nvml0IG+ob0QF/+aQ==
+=======
+"@zero-labs/tokenization-api@1.0.7":
+  version "1.0.7"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-1.0.7.tgz#4bf203e5a56312ff7ce48754dbdd38cbba192ec1"
+  integrity sha512-t/qALmUT98aq1hop5a675BGN8ZvL7xJsjRyfZR73dttCUosl9rN6D3jMLYhaui4GHPM3IevGiNiCm6C1ByB57Q==
+>>>>>>> chore: Upgrade checklist
   dependencies:
     "@nestjs/apollo" "10.1.4"
     "@nestjs/bull" "0.6.1"
