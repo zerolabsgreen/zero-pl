@@ -345,9 +345,6 @@ export class ContractsService {
           data: { onchainId: agreementAddress },
         });
       } catch (e) {
-        console.log({
-          e
-        })
         if (e.response?.status === 404) {
           this.logger.debug(`Contract ${contract.id} has not been deployed on-chain yet. Proceeding...`);
         } else {

@@ -1,11 +1,12 @@
 X_API_KEY=$(grep SUPERADMIN_API_KEY .env | cut -d "=" -f2 | tr -d '"');
 PORT=$(grep -e "^PORT=" .env | cut -d "=" -f2 | tr -d '"');
 TOKENIZATION_PORT=$(grep -e "^TOKENIZATION_PORT=" .env | cut -d "=" -f2 | tr -d '"');
-TX_WAIT_TIME=30
 
+TX_WAIT_TIME=5
 URL=http://localhost:$PORT
 TOKENIZATION_URL=http://localhost:$TOKENIZATION_PORT
 
+# TX_WAIT_TIME=30
 # URL=https://zero-api-staging.herokuapp.com
 # TOKENIZATION_URL=https://zero-tokenization-staging.herokuapp.com
 
