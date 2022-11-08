@@ -3024,7 +3024,7 @@
     react-is "^17.0.2"
     react-transition-group "^4.4.2"
 
-"@mui/private-theming@^5.10.3", "@mui/private-theming@^5.10.9", "@mui/private-theming@^5.2.3":
+"@mui/private-theming@^5.10.3", "@mui/private-theming@^5.2.3":
   version "5.10.9"
   resolved "https://registry.npmjs.org/@mui/private-theming/-/private-theming-5.10.9.tgz#c427bfa736455703975cdb108dbde6a174ba7971"
   integrity sha512-BN7/CnsVPVyBaQpDTij4uV2xGYHHHhOgpdxeYLlIu+TqnsVM7wUeF+37kXvHovxM6xmL5qoaVUD98gDC0IZnHg==
@@ -3033,7 +3033,7 @@
     "@mui/utils" "^5.10.9"
     prop-types "^15.8.1"
 
-"@mui/styled-engine@^5.10.5", "@mui/styled-engine@^5.10.8":
+"@mui/styled-engine@^5.10.5":
   version "5.10.8"
   resolved "https://registry.npmjs.org/@mui/styled-engine/-/styled-engine-5.10.8.tgz#2db411e4278f06f70ccb6b5cd56ace67109513f6"
   integrity sha512-w+y8WI18EJV6zM/q41ug19cE70JTeO6sWFsQ7tgePQFpy6ToCVPh0YLrtqxUZXSoMStW5FMw0t9fHTFAqPbngw==
@@ -3066,7 +3066,7 @@
     jss-plugin-vendor-prefixer "^10.8.2"
     prop-types "^15.7.2"
 
-"@mui/system@5.10.5":
+"@mui/system@5.10.5", "@mui/system@^5.2.6":
   version "5.10.5"
   resolved "https://registry.npmjs.org/@mui/system/-/system-5.10.5.tgz#b0c8494aa9230fb3b8e33c4aee05207925519569"
   integrity sha512-GUPiDVZTKp9yH3FVeLSIw3Bqsyl7qLxtAK1ZiZmC8e+zdH7bcnZZXvWK3vPIbx35ZyhQpvAOWQFpiF9TjdA77w==
@@ -3078,20 +3078,6 @@
     "@mui/utils" "^5.10.3"
     clsx "^1.2.1"
     csstype "^3.1.0"
-    prop-types "^15.8.1"
-
-"@mui/system@^5.2.6":
-  version "5.10.13"
-  resolved "https://registry.npmjs.org/@mui/system/-/system-5.10.13.tgz#b32a4441f9dd0760724cdbccf0a09728e63e3674"
-  integrity sha512-Xzx26Asu5fVlm0ucm+gnJmeX4Y1isrpVDvqxX4yJaOT7Fzmd8Lfq9ih3QMfZajns5LMtUiOuCQlVFRtUG5IY7A==
-  dependencies:
-    "@babel/runtime" "^7.19.0"
-    "@mui/private-theming" "^5.10.9"
-    "@mui/styled-engine" "^5.10.8"
-    "@mui/types" "^7.2.0"
-    "@mui/utils" "^5.10.9"
-    clsx "^1.2.1"
-    csstype "^3.1.1"
     prop-types "^15.8.1"
 
 "@mui/types@^7.1.0", "@mui/types@^7.2.0":
@@ -5386,10 +5372,10 @@
     tslib "^2"
     upath2 "^3.1.13"
 
-"@zero-labs/tokenization-api@1.0.9-old-batch-id.2":
-  version "1.0.9-old-batch-id.2"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-1.0.9-old-batch-id.2.tgz#efe33de3f16ac1c0c55de00ab91371dae66e098c"
-  integrity sha512-gEkDbbeHHwoLn8spGqpEn5LExl/LyE3CIeqjQIuGQs2GHUyq8dN+7OTHJxG4b8qjLff0Sb9fedZGFkwnaWtdTQ==
+"@zero-labs/tokenization-api@1.0.8":
+  version "1.0.8"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization-api/-/tokenization-api-1.0.8.tgz#2455fa40d0a5557498d6c1e2ab69b919f678abfe"
+  integrity sha512-T5y72P3IO4I3hVug5ASIcZzpxP213mD8Uy5q4abiYwP1VPwpzDRkCA59vw5mG7+/5HiD7Nvml0IG+ob0QF/+aQ==
   dependencies:
     "@nestjs/apollo" "10.1.4"
     "@nestjs/bull" "0.6.1"
@@ -5401,7 +5387,7 @@
     "@nestjs/schedule" "2.1.0"
     "@nestjs/swagger" "6.1.3"
     "@nestjs/typeorm" "9.0.1"
-    "@zero-labs/tokenization" "1.0.5-old-batch-id.2"
+    "@zero-labs/tokenization" "1.0.4"
     bull "4.10.1"
     class-transformer "0.5.1"
     class-validator "0.13.2"
@@ -5418,10 +5404,10 @@
     swagger-ui-express "4.5.0"
     typeorm "0.3.10"
 
-"@zero-labs/tokenization@1.0.5-old-batch-id.2":
-  version "1.0.5-old-batch-id.2"
-  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-1.0.5-old-batch-id.2.tgz#00a1cc9e60d162bb76fbc59542d9b19d18e112e6"
-  integrity sha512-xsJJuna1B6lj5Wb02aSSMgRsunTdrtPKyZCaGaNFrn9kX4fSb0kyebm3LsyXVeGxrTzyz7pA7hFGWIY3Q9H2gg==
+"@zero-labs/tokenization@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@zero-labs/tokenization/-/tokenization-1.0.4.tgz#ed475d20e3c1fdce1fd8d71376d0e2d7efaf46e3"
+  integrity sha512-inGS2OezvjMO8ycH3qQXY1ZuXfRD1RprwwRbMLKrDiZj/tzyovnCseN6zaDq7l+yLESsK4ZNVZIpncIliIAWyQ==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "4.7.3"
     luxon "3.1.0"

@@ -60,9 +60,8 @@ export class OrdersService {
   }
 
   async confirm(id, confirmOrderDto: ConfirmOrderDto) {
-    const existingOrder = await this.prisma.order.findUnique({
-      where: { id },
-      rejectOnNotFound: () => new NotFoundException(`orderId=${id} not found`)
+    const existingOrder = await this.prisma.order.findUniqueOrThrow({
+      where: { id }
     });
 
     if (existingOrder.confirmationToken !== confirmOrderDto.token) {

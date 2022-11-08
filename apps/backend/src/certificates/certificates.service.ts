@@ -90,21 +90,19 @@ export class CertificatesService {
   }
 
   async findOne(id: string): Promise<CertificateDto | null> {
-    const dbRecord = await this.prisma.certificate.findUnique({
-      where: { id },
-      rejectOnNotFound: () => new NotFoundException(`certificateId=${id} not found`)
+    const dbRecord = await this.prisma.certificate.findUniqueOrThrow({
+      where: { id }
     });
 
     return CertificateDto.toDto(dbRecord);
   }
 
   async findOneWithPurchases(id: string): Promise<CertificateWithPurchasesDto> {
-    const dbRecord = await this.prisma.certificate.findUnique({
+    const dbRecord = await this.prisma.certificate.findUniqueOrThrow({
       where: { id },
       include: {
         purchase: true
-      },
-      rejectOnNotFound: () => new NotFoundException(`certificateId=${id} not found`)
+      }
     });
 
     return CertificateWithPurchasesDto.toDto(dbRecord);
