@@ -5,3 +5,4 @@
 2. (prod only) Start maintenance mode on Heroku for the API, Tokenization and UI
 3. Upgrade the smart contracts (from the tokenization repo)
 4. Deploy the upgraded Heroku codebase to Heroku
+5. Run the `fix_batch_id.ts` script to fix the old batch IDs on the API
