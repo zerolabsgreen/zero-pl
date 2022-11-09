@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BatchDto } from './dto/batch.dto';
 import { CertificateIds, IssuerService } from '../issuer/issuer.service';
@@ -128,13 +128,29 @@ export class BatchService {
   }
 
   private async setRedemptionStatementOnChain(onChainBatchId: string, redemptionStatementId: string): Promise<string> {
-    const redemptionStatement = await axios.get(
-      `https://ipfs.io/ipfs/${redemptionStatementId}`,
-      { responseType: 'blob' }
-    )
+    let redemptionStatement: any;
+
+    try {
+      redemptionStatement = (await axios.get(
+        `https://ipfs.io/ipfs/${redemptionStatementId}`,
+        { responseType: 'blob' }
+      )).data;
+
+      console.log({
+        onChainBatchId,
+        redemptionStatementId,
+        redemptionStatement
+      })
+    } catch (e) {
+      if (e.response?.status === 404) {
+        throw new NotFoundException(`Redemption statement ${redemptionStatementId} does not exist on IPFS.`);
+      }
+
+      throw new PreconditionFailedException(e.message);
+    }
 
     const hashSum = crypto.createHash('sha256');
-    hashSum.update(redemptionStatement.data);
+    hashSum.update(redemptionStatement);
 
     const hex = hashSum.digest('hex');
 

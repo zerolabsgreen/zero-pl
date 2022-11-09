@@ -190,8 +190,7 @@ export class PurchasesService {
     try {
       await this.createAttestationForPurchases(purchaseIds);
     } catch (e) {
-      this.logger.error(`Unable to generate an attestation for purchases ${purchaseIds}`);
-      this.logger.error(e);
+      throw new PreconditionFailedException(`Unable to generate an attestation for purchases ${purchaseIds}: ${e.message}`);
     }
 
     return await Promise.all(purchaseIds.map(async (purchaseId) => await this.findOne(purchaseId)));
