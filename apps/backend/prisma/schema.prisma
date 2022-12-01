@@ -237,6 +237,8 @@ enum ProductEnumType {
   LGC
   REGO
   NFC
+  EUGO
+  JCREDIT
 }
 
 enum EnergySourceEnumType {
