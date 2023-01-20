@@ -1,20 +1,21 @@
-import { BlockchainPropertiesService } from '@zero-labs/tokenization-api';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Wallet, utils, providers } from 'ethers';
+import { NotFoundException } from '@nestjs/common';
+
+import { InventoryService } from '@zero-labs/tokenization-api';
 import { CertificateRegistryExtended__factory } from '@zero-labs/tokenization';
 
 import { Repository } from 'typeorm';
 import { AccountDTO } from './account.dto';
 import { Account } from './account.entity';
 import { SignerService } from './get-signer.service';
-import { NotFoundException } from '@nestjs/common';
 
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly repository: Repository<Account>,
-    private readonly blockchainPropertiesService: BlockchainPropertiesService,
+    private readonly inventoryService: InventoryService,
     private readonly signerService: SignerService,
     private readonly configService: ConfigService
   ) {}
@@ -22,7 +23,7 @@ export class AccountService {
   public async create(): Promise<AccountDTO> {
     const totalAccounts = await this.repository.count();
 
-    const { registry, rpcNode } = await this.blockchainPropertiesService.get();
+    const [{ registry, rpcNode }] = await this.inventoryService.getAll();
     const provider = new providers.JsonRpcProvider(rpcNode);
     const issuerAccount = await this.signerService.get();
 

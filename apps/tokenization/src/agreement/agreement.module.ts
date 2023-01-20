@@ -2,7 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { AgreementService, IStorageAdapter } from '@zero-labs/tokenization-api';
 import { AccountModule } from '../account/account.module';
-import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
+import { InventoryModule } from '../inventory/inventory.module';
 
 import { AgreementController } from './agreement.controller';
 
@@ -14,7 +14,7 @@ export class AgreementModule {
       imports: [
         CqrsModule,
         AccountModule.register(storageAdapter),
-        BlockchainPropertiesModule.register(storageAdapter)
+        InventoryModule.register(storageAdapter)
       ],
       controllers: [AgreementController],
       providers: [
