@@ -5,7 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { IStorageAdapter, OnChainEventProcessor, OnChainEventWatcher } from '@zero-labs/tokenization-api';
 
 import { AgreementModule } from '../agreement';
-import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
+import { InventoryModule } from '../inventory/inventory.module';
 import { CertificateModule } from '../certificate/certificate.module';
 import { BatchModule } from '../batch/batch.module';
 
@@ -17,7 +17,7 @@ export class WatcherModule {
       imports: [
         CqrsModule,
         ScheduleModule.forRoot(),
-        BlockchainPropertiesModule.register(storageAdapter),
+        InventoryModule.register(storageAdapter),
         CertificateModule.register(storageAdapter),
         BatchModule.register(storageAdapter),
         AgreementModule.register(storageAdapter),

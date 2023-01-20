@@ -1,17 +1,17 @@
 import { Connection } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { providers, Wallet } from 'ethers';
-import { BlockchainPropertiesService, decrypt } from '@zero-labs/tokenization-api';
+import { InventoryService, decrypt } from '@zero-labs/tokenization-api';
 
 @Injectable()
 export class SignerService {
     constructor(
         private connection: Connection,
-        private readonly blockchainPropertiesService: BlockchainPropertiesService,
+        private readonly inventoryService: InventoryService,
     ) {}
 
     public async get(): Promise<Wallet> {
-        const { rpcNode } = await this.blockchainPropertiesService.get();
+        const [{ rpcNode }] = await this.inventoryService.getAll();
         const provider = new providers.JsonRpcProvider(rpcNode);
 
         const queryRunner = this.connection.createQueryRunner();

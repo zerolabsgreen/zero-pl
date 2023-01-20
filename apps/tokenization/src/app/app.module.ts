@@ -3,7 +3,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import {
-  BlockchainProperties,
+  Inventory,
   Certificate,
   Batch,
   Generator,
@@ -14,7 +14,8 @@ import {
   AgreementFilled,
   TransferBatchMultipleTx,
   TransferBatchMultiple,
-  redisUrlToConfig
+  redisUrlToConfig,
+  getDBConnectionOptions
 } from '@zero-labs/tokenization-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
@@ -25,44 +26,36 @@ import { HttpLoggerMiddleware } from '../middlewares/http-logger.middleware';
 import { AgreementModule } from '../agreement';
 import { WatcherModule } from '../watcher/watcher.module';
 import { BatchModule } from '../batch/batch.module';
-import { BlockchainPropertiesModule } from '../blockchain/blockchain-properties.module';
+import { InventoryModule } from '../inventory/inventory.module';
 import { CertificateModule } from '../certificate/certificate.module';
+import { AppDataSource } from '../../ormconfig';
 
-const OriginAppTypeOrmModule = () => {
-  if (!process.env.TOKENIZATION_DATABASE_URL) {
-    throw new Error('TOKENIZATION_DATABASE_URL undefined');
-  } 
+const entities = [
+  Inventory,
+  Account,
+  Batch,
+  Certificate,
+  Generator,
+  TransferSingle,
+  TransferBatchMultiple,
+  TransferBatchMultipleTx,
+  ClaimSingle,
+  Agreement,
+  AgreementFilled
+];
 
-  const entities = [
-    Account,
-    BlockchainProperties,
-    Batch,
-    Certificate,
-    Generator,
-    TransferSingle,
-    TransferBatchMultiple,
-    TransferBatchMultipleTx,
-    ClaimSingle,
-    Agreement,
-    AgreementFilled
-  ];
-
-  return TypeOrmModule.forRoot({
-    type: 'postgres',
-    url: process.env.TOKENIZATION_DATABASE_URL,
-    entities,
-    logging: ['info'],
-    ssl: process.env.DB_SSL_OFF
-      ? false
-      : { rejectUnauthorized: false },
-  });
-};
-
-const storageAdapter = new PostgresTypeORMAdapter();
+const storageAdapter = new PostgresTypeORMAdapter(AppDataSource);
 
 @Module({
   imports: [
-    OriginAppTypeOrmModule(),
+    TypeOrmModule.forRoot({
+        ...getDBConnectionOptions(
+            process.env.TOKENIZATION_DATABASE_URL,
+            Boolean(process.env.DB_SSL_OFF)
+        ),
+        logging: ['info'],
+        entities: entities,
+    }),
     ConfigModule.forRoot({
       envFilePath: ['.env'],
       isGlobal: true,
@@ -81,13 +74,13 @@ const storageAdapter = new PostgresTypeORMAdapter();
         USER_MNEMONIC: Joi.string().required(),
       }),
     }),
+    CertificateModule.register(storageAdapter),
     AccountModule.register(storageAdapter),
     BullModule.forRoot({
       redis: redisUrlToConfig(process.env.REDIS_URL),
     }),
-    BlockchainPropertiesModule.register(storageAdapter),
+    InventoryModule.register(storageAdapter),
     BatchModule.register(storageAdapter),
-    CertificateModule.register(storageAdapter),
     WatcherModule.register(storageAdapter),
     AgreementModule.register(storageAdapter),
   ],
