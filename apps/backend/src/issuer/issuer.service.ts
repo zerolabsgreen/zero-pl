@@ -214,9 +214,9 @@ export class IssuerService {
 
   public async getTransaction(txHash: string): Promise<TxReceiptDTO> {
     const res = await this.axiosInstance.get<any, AxiosResponse<TxReceiptDTO>, TxReceiptDTO>(
-      `/blockchain/${txHash}`
+      `/inventory/${txHash}`
     ).catch((err) => {
-      this.logger.error(`GET /blockchain/${txHash} error response: ${err}`);
+      this.logger.error(`GET /inventory/${txHash} error response: ${err}`);
       this.logger.error(`error response body: ${JSON.stringify(err.response.data)}`);
       throw err;
     });

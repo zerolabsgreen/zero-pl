@@ -1,24 +1,21 @@
-import { Body, Controller, Get, OnModuleInit, Param, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CertificateService, CertificateWithOwnersDTO, ClaimDTO, EventsRequestDTO, EventsResponseDTO, ICertificate, InventoryService, TransactionPendingDTO, TransferBatchDTO, TransferDTO } from '@zero-labs/tokenization-api';
 import { IssuerGuard } from '../auth/issuer.guard';
+import { InventoryIdController } from '../inventory/InventoryIdController';
 
 @ApiSecurity('api-key')
 @ApiTags('certificates')
 @Controller('certificate')
 @UsePipes(ValidationPipe)
 @UseGuards(IssuerGuard)
-export class CertificateController implements OnModuleInit {
-    private inventoryId: string;
+export class CertificateController extends InventoryIdController {
 
     constructor(
-        private readonly inventory: InventoryService,
-        private readonly certificateService: CertificateService
-    ) {}
-
-    async onModuleInit() {
-        const [{ netId, topic }] = await this.inventory.getAll();
-        this.inventoryId = netId + '_' + topic;
+        private readonly certificateService: CertificateService,
+        inventory: InventoryService,
+    ) {
+        super(inventory);
     }
 
     @Get('/:id')
@@ -27,7 +24,7 @@ export class CertificateController implements OnModuleInit {
         description: 'Returns a Certificate',
     })
     public async get(@Param('id') id: string): Promise<CertificateWithOwnersDTO> {
-        return this.certificateService.get(this.inventoryId, id);
+        return this.certificateService.get(this.getInventoryId(), id);
     }
 
     @Get()
@@ -36,7 +33,7 @@ export class CertificateController implements OnModuleInit {
         description: 'Returns all Certificates',
     })
     public async getAll(): Promise<CertificateWithOwnersDTO[]> {
-        return this.certificateService.getAll(this.inventoryId);
+        return this.certificateService.getAll(this.getInventoryId());
     }
 
     @Post('/transfer/batch')
@@ -48,7 +45,7 @@ export class CertificateController implements OnModuleInit {
     public async transferBatch(
         @Body() transfers: TransferBatchDTO,
     ): Promise<TransactionPendingDTO> {
-        return this.certificateService.transferBatch(this.inventoryId, transfers);
+        return this.certificateService.transferBatch(this.getInventoryId(), transfers);
     }
 
     @Post('/transfer/:id')
@@ -61,7 +58,7 @@ export class CertificateController implements OnModuleInit {
         @Param('id') id: string,
         @Body() { from, to, amount }: TransferDTO,
     ): Promise<TransactionPendingDTO> {
-        return this.certificateService.transfer(this.inventoryId, id, from, to, amount);
+        return this.certificateService.transfer(this.getInventoryId(), id, from, to, amount);
     }
 
     @Post('/claim/:id')
@@ -74,7 +71,7 @@ export class CertificateController implements OnModuleInit {
         @Param('id') id: string,
         @Body() { from, claimData, to, amount }: ClaimDTO,
     ): Promise<TransactionPendingDTO> {
-        return this.certificateService.claim(this.inventoryId, id, from, claimData, to, amount);
+        return this.certificateService.claim(this.getInventoryId(), id, from, claimData, to, amount);
     }
 
     @Get('/id/:txHash')
@@ -85,7 +82,7 @@ export class CertificateController implements OnModuleInit {
     public async getCertificatesCreatedIn(
         @Param('txHash') txHash: string,
     ): Promise<ICertificate['id'][]> {
-        return this.certificateService.getCertificatesMintedIn(this.inventoryId, txHash);
+        return this.certificateService.getCertificatesMintedIn(this.getInventoryId(), txHash);
     }
 
     @Get(':id/events')
@@ -114,7 +111,7 @@ export class CertificateController implements OnModuleInit {
         @Query() { currentPage, pageSize, eventType }: EventsRequestDTO,
     ): Promise<EventsResponseDTO> {
         return this.certificateService.getEventsForCertificate(
-            this.inventoryId,
+            this.getInventoryId(),
             id,
             currentPage,
             pageSize,
