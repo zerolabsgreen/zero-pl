@@ -10,11 +10,17 @@ import { intersection } from 'lodash';
 
 import { TokenizationModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { PostgresTypeORMAdapter } from "@zero-labs/tokenization-api";
+import { AppDataSource } from "../ormconfig";
 
 dotenv.config({ path: ".env" });
 
 async function bootstrap() {
-  const app = await NestFactory.create(TokenizationModule, {
+  const storageAdapter = new PostgresTypeORMAdapter(AppDataSource);
+  await storageAdapter.init();
+
+  const app = await NestFactory.create(
+    TokenizationModule.register(storageAdapter),{
     logger: getLogLevelsFromEnv()
   });
 

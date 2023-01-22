@@ -1,26 +1,22 @@
-import { Body, Controller, Get, OnModuleInit, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { BatchDTO, BatchService, IBatch, InventoryService, MintCertificateDTO, SetRedemptionStatementDTO, TransactionPendingDTO } from '@zero-labs/tokenization-api';
 import { IssuerGuard } from '../auth/issuer.guard';
+import { InventoryIdController } from '../inventory/InventoryIdController';
 
 @ApiTags('batch')
 @Controller('batch')
 @UsePipes(ValidationPipe)
 @ApiSecurity('api-key')
 @UseGuards(IssuerGuard)
-export class BatchController implements OnModuleInit {
-    private inventoryId: string;
-
+export class BatchController extends InventoryIdController {
     constructor(
-        private readonly inventory: InventoryService,
-        public readonly batchService: BatchService,
-    ) {}
-
-    async onModuleInit() {
-        const [{ netId, topic }] = await this.inventory.getAll();
-        this.inventoryId = netId + '_' + topic;
+      public readonly batchService: BatchService,
+      inventory: InventoryService,
+    ) {
+      super(inventory);
     }
-  
+
     @Get('/id/generate')
     @ApiOkResponse({
       type: String,
@@ -38,7 +34,7 @@ export class BatchController implements OnModuleInit {
     public async getBatchesCreatedIn(
       @Param('txHash') txHash: string,
     ): Promise<IBatch['id'][]> {
-      return this.batchService.getBatchesCreatedIn(this.inventoryId, txHash);
+      return this.batchService.getBatchesCreatedIn(this.getInventoryId(), txHash);
     }
   
     @Get('/:id')
@@ -47,7 +43,7 @@ export class BatchController implements OnModuleInit {
       description: 'Returns the batch',
     })
     public async get(@Param('id') id: string): Promise<BatchDTO> {
-      return this.batchService.get(this.inventoryId, id);
+      return this.batchService.get(this.getInventoryId(), id);
     }
   
     @Get()
@@ -56,7 +52,7 @@ export class BatchController implements OnModuleInit {
       description: 'Returns all batches',
     })
     public async getAll(): Promise<BatchDTO[]> {
-      return this.batchService.getAll(this.inventoryId);
+      return this.batchService.getAll(this.getInventoryId());
     }
   
     @Post('/redemption-statement/:batchId')
@@ -71,7 +67,7 @@ export class BatchController implements OnModuleInit {
       @Body() { value, storagePointer }: SetRedemptionStatementDTO,
     ): Promise<TransactionPendingDTO> {
       return this.batchService.setRedemptionStatement(
-        this.inventoryId,
+        this.getInventoryId(),
         batchId,
         value,
         storagePointer,
@@ -88,6 +84,6 @@ export class BatchController implements OnModuleInit {
       @Param('batchId') batchId: string,
       @Body() dtos: MintCertificateDTO[],
     ): Promise<TransactionPendingDTO> {
-      return this.batchService.mint(this.inventoryId, batchId, dtos);
+      return this.batchService.mint(this.getInventoryId(), batchId, dtos);
     }
 }

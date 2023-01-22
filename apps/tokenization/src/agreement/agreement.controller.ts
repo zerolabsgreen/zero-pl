@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Logger,
-  OnModuleInit,
   Param,
   Post,
   Put,
@@ -20,33 +18,25 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { AgreementDTO, AgreementService, InventoryService, CreateAgreementDTO, TransactionHash, InvalidateAgreementDTO, UpdateAgreementAmountDTO, UpdateAgreementMetadataDTO } from '@zero-labs/tokenization-api';
+import { AgreementDTO, AgreementService, InventoryService, CreateAgreementDTO, TransactionHash, InvalidateAgreementDTO, UpdateAgreementAmountDTO, UpdateAgreementMetadataDTO, SignAgreementDTO } from '@zero-labs/tokenization-api';
 import { providers, Wallet } from 'ethers';
 import { signAgreement } from '@zero-labs/tokenization';
 import { AccountService } from '../account/account.service';
 import { IssuerGuard } from '../auth/issuer.guard';
+import { InventoryIdController } from '../inventory/InventoryIdController';
 
 @ApiTags('agreement')
 @Controller('agreement')
 @UsePipes(ValidationPipe)
 @ApiSecurity('api-key')
 @UseGuards(IssuerGuard)
-export class AgreementController implements OnModuleInit {
-  private readonly logger = new Logger(AgreementController.name, {
-    timestamp: true,
-  });
-
-  private inventoryId: string;
-
+export class AgreementController extends InventoryIdController {
   constructor(
-    private readonly inventory: InventoryService,
     private readonly agreementService: AgreementService,
-    private readonly accountService: AccountService
-  ) {}
-
-  async onModuleInit() {
-    const [{ netId, topic }] = await this.inventory.getAll();
-    this.inventoryId = netId + '_' + topic;
+    private readonly accountService: AccountService,
+    inventory: InventoryService
+  ) {
+    super(inventory);
   }
 
   @Post()
@@ -58,43 +48,49 @@ export class AgreementController implements OnModuleInit {
   public async create(
     @Body() dtos: CreateAgreementDTO[],
   ): Promise<AgreementDTO[]> {
-    const agreements = await this.agreementService.create(this.inventoryId, dtos);
+    const agreements = await this.agreementService.create(this.getInventoryId(), dtos);
     
     return await Promise.all(
       agreements.map(async (agreement) => {
         return await AgreementDTO.toDto(
           agreement,
-          await this.agreementService.getFilledEvents(this.inventoryId, agreement.address),
+          await this.agreementService.getFilledEvents(this.getInventoryId(), agreement.address),
         );
       }),
     );
   }
 
-  @Post('/sign/:address')
+  @Post('/sign')
+  @ApiBody({ type: [String] })
   @ApiCreatedResponse({
     type: String,
     description: 'Signing ceremony transaction hash',
   })
   public async sign(
-    @Param('address') address: string,
+    @Body() addresses: string[],
   ): Promise<TransactionHash> {
-    const agreement = await this.agreementService.get(this.inventoryId, address);
+    const agreements = await this.agreementService.getMultiple(this.getInventoryId(), addresses);
 
-    const { rpcNode } = await this.inventory.get(this.inventoryId);
+    const { rpcNode } = await this.inventory.get(this.getInventoryId());
     const provider = new providers.JsonRpcProvider(rpcNode);
 
-    const seller = await this.accountService.get(agreement.seller);
-    const buyer = await this.accountService.get(agreement.buyer);
+    const signatures: SignAgreementDTO[] = [];
 
-    const buyerWallet = new Wallet(buyer.privateKey, provider);
-    const sellerWallet = new Wallet(seller.privateKey, provider);
+    for (const agreement of agreements) {
+      const seller = await this.accountService.get(agreement.seller);
+      const buyer = await this.accountService.get(agreement.buyer);
+  
+      const buyerWallet = new Wallet(buyer.privateKey, provider);
+      const sellerWallet = new Wallet(seller.privateKey, provider);
 
+      signatures.push({
+        agreementAddress: agreement.address,
+        sellerSignature: await signAgreement(sellerWallet, agreement.address),
+        buyerSignature: await signAgreement(buyerWallet, agreement.address),
+      })
+    }
 
-    return await this.agreementService.sign(this.inventoryId, {
-      agreementAddress: agreement.address,
-      sellerSignature: await signAgreement(sellerWallet, agreement.address),
-      buyerSignature: await signAgreement(buyerWallet, agreement.address),
-    });
+    return await this.agreementService.sign(this.getInventoryId(), signatures);
   }
 
   @Get('deployed/:salt')
@@ -108,7 +104,7 @@ export class AgreementController implements OnModuleInit {
     description: `The agreement with that salt has not been deployed yet`,
   })
   public async isDeployed(@Param('salt') salt: string): Promise<string> {
-    return await this.agreementService.getDeployedContractBySalt(this.inventoryId, salt);
+    return await this.agreementService.getDeployedContractBySalt(this.getInventoryId(), salt);
   }
 
   @Get('/:address')
@@ -117,8 +113,8 @@ export class AgreementController implements OnModuleInit {
     description: 'Returns the agreement',
   })
   public async get(@Param('address') address: string): Promise<AgreementDTO> {
-    const agreement = await this.agreementService.get(this.inventoryId, address);
-    const filledEvents = await this.agreementService.getFilledEvents(this.inventoryId, address);
+    const agreement = await this.agreementService.get(this.getInventoryId(), address);
+    const filledEvents = await this.agreementService.getFilledEvents(this.getInventoryId(), address);
 
     return AgreementDTO.toDto(agreement, filledEvents);
   }
@@ -129,13 +125,13 @@ export class AgreementController implements OnModuleInit {
     description: 'Returns all agreements',
   })
   public async getAll(): Promise<AgreementDTO[]> {
-    const allAgreements = await this.agreementService.getAll(this.inventoryId);
+    const allAgreements = await this.agreementService.getAll(this.getInventoryId());
 
     return await Promise.all(
       allAgreements.map(async (agreement) => {
         return await AgreementDTO.toDto(
           agreement,
-          await this.agreementService.getFilledEvents(this.inventoryId, agreement.address),
+          await this.agreementService.getFilledEvents(this.getInventoryId(), agreement.address),
         );
       }),
     );
@@ -151,7 +147,7 @@ export class AgreementController implements OnModuleInit {
     @Param('address') address: string,
     @Body() dto: InvalidateAgreementDTO,
   ): Promise<TransactionHash> {
-    return await this.agreementService.invalidate(this.inventoryId, address, dto);
+    return await this.agreementService.invalidate(this.getInventoryId(), address, dto);
   }
 
   @Put('/:address/amount')
@@ -164,7 +160,7 @@ export class AgreementController implements OnModuleInit {
     @Param('address') address: string,
     @Body() dto: UpdateAgreementAmountDTO,
   ): Promise<TransactionHash> {
-    return await this.agreementService.updateAmount(this.inventoryId, address, dto);
+    return await this.agreementService.updateAmount(this.getInventoryId(), address, dto);
   }
 
   @Put('/:address/metadata')
@@ -177,7 +173,7 @@ export class AgreementController implements OnModuleInit {
     @Param('address') address: string,
     @Body() dto: UpdateAgreementMetadataDTO,
   ): Promise<TransactionHash> {
-    return await this.agreementService.updateMetadata(this.inventoryId, address, dto);
+    return await this.agreementService.updateMetadata(this.getInventoryId(), address, dto);
   }
 
 }

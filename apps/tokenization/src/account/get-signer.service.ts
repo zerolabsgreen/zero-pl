@@ -19,7 +19,7 @@ export class SignerService {
         await queryRunner.connect();
 
         const encryptedPrivateKey = (await queryRunner.query(
-            `SELECT "platformOperatorPrivateKey" FROM public.blockchain_properties;;`
+            `SELECT "platformOperatorPrivateKey" FROM public.inventory;`
         )).pop()?.platformOperatorPrivateKey;
 
         if (!encryptedPrivateKey) {
