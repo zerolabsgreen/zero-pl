@@ -135,12 +135,6 @@ export class BatchService {
         `https://ipfs.io/ipfs/${redemptionStatementId}`,
         { responseType: 'blob' }
       )).data;
-
-      console.log({
-        onChainBatchId,
-        redemptionStatementId,
-        redemptionStatement
-      })
     } catch (e) {
       if (e.response?.status === 404) {
         throw new NotFoundException(`Redemption statement ${redemptionStatementId} does not exist on IPFS.`);
