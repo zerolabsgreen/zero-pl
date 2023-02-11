@@ -149,7 +149,7 @@
     "@types/passport": "1.0.11",
     "@types/passport-http": "0.3.9",
     "@types/passport-strategy": "0.2.35",
-    "@types/react": "17.0.30",
+    "@types/react": "18.0.28",
     "@types/react-dom": "17.0.9",
     "@types/react-helmet-async": "1.0.3",
     "@typescript-eslint/eslint-plugin": "5.3.1",
@@ -183,7 +183,7 @@
     "schema": "apps/backend/prisma/schema.prisma"
   },
   "resolutions": {
-    "@types/react": "17.0.30",
+    "@types/react": "18.0.28",
     "@types/react-dom": "17.0.9",
     "@mui/system": "5.10.5"
   }
