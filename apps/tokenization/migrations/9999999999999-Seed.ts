@@ -87,7 +87,7 @@ export class Seed9999999999999 implements MigrationInterface {
     const topic = await batchFactory.topic();
 
     await queryRunner.query(
-      `INSERT INTO public.blockchain_properties (
+      `INSERT INTO public.inventory (
                 "netId", "registry", "batchFactory", "agreementFactory", "topic", "rpcNode", "rpcNodeFallback", "platformOperatorPrivateKey", "registryDeployTransaction", "batchFactoryDeployTransaction"
             ) VALUES (${provider.network.chainId}, '${
         envVariables['SMART_CONTRACT_REGISTRY']

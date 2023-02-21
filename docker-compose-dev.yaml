@@ -2,7 +2,7 @@ version: '3'
 
 services:
   redis:
-    image: redis:7-alpine
+    image: redis
     restart: unless-stopped
     ports:
       - '127.0.0.1:6379:6379'
@@ -34,21 +34,28 @@ services:
       POSTGRES_DB: tokenization
 
   ganache-cli:
-    image: trufflesuite/ganache-cli
-    command: |
-      ganache-cli \
-        --db /data
-        -m "chalk park staff buzz chair purchase wise oak receive avoid avoid home" \
-        -l 8000000 \
-        -e 1000000 \
-        -a 40 \
-        -h 0.0.0.0
+    image: trufflesuite/ganache
+    entrypoint:
+      - node
+      - /app/dist/node/cli.js
+      - --db=/data
+      - --mnemonic
+      - 'chalk park staff buzz chair purchase wise oak receive avoid avoid home'
+      - -l
+      - '8000000'
+      - -e
+      - '1000000'
+      - -a
+      - '40'
+      - -h
+      - '0.0.0.0'
     volumes:
       - dev-ganache-data:/data
     ports:
       - '127.0.0.1:8545:8545'
 
   mailhog:
+    platform: linux/amd64
     image: mailhog/mailhog:latest
     restart: unless-stopped
     ports:
