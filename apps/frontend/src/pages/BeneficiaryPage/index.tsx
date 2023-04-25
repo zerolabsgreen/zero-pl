@@ -27,6 +27,7 @@ import { ReactComponent as ContractsSVG } from '../../assets/svg/certificate_tim
 import { formatPower, Unit } from '../../utils';
 import SankeyView from '../../components/BeneficiaryPage/SankeyView';
 import SecondaryButton from '../../components/SecondaryButton';
+import { useBeneficiaryNewUIRedirect } from '../../hooks/useBeneficiaryNewUIRedirect';
 
 dayjs.extend(utc);
 
@@ -39,6 +40,8 @@ const yearsToUse: CertificatePerYear[] = [
 ]
 
 const BeneficiaryPage: FC = () => {
+  useBeneficiaryNewUIRedirect()
+  
   const { minerId } = useParams();
 
   const [seeFullSankey, setSeeFullSankey] = useState(false)
