@@ -28,6 +28,7 @@ import { formatPower, Unit } from '../../utils';
 import SankeyView from '../../components/BeneficiaryPage/SankeyView';
 import SecondaryButton from '../../components/SecondaryButton';
 import { useBeneficiaryNewUIRedirect } from '../../hooks/useBeneficiaryNewUIRedirect';
+import Redirect from '../../components/Redirect';
 
 dayjs.extend(utc);
 
@@ -40,8 +41,8 @@ const yearsToUse: CertificatePerYear[] = [
 ]
 
 const BeneficiaryPage: FC = () => {
-  useBeneficiaryNewUIRedirect()
-  
+  const isRedirect = useBeneficiaryNewUIRedirect()
+
   const { minerId } = useParams();
 
   const [seeFullSankey, setSeeFullSankey] = useState(false)
@@ -121,6 +122,12 @@ const BeneficiaryPage: FC = () => {
   }), [filecoinNodeContracts]);
 
   const isLoading = isFilecoinNodeLoading || isBuyerLoading || areTransactionsLoading || areContractsLoading;
+
+  if (isRedirect) {
+    return (
+      <Redirect />
+    )
+  }
 
   return !isLoading && buyer && filecoinNode && filecoinNodeContracts && filecoinNodeTransactions ? (
     <Container maxWidth={'xl'} sx={{ paddingBottom: '40px' }}>

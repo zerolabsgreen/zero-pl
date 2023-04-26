@@ -8,5 +8,8 @@ export const useBeneficiaryNewUIRedirect = () => {
 
   if (new_ui_url) {
     window.location.href = new_ui_url
+    return true
   }
+
+  return false
 }
