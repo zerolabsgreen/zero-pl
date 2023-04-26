@@ -21,7 +21,7 @@ export const LoadingBlock = () => {
         {`body * { background-color: ${theme.palette.primary.main} ; }
         .opacitor { animation: showHide 2s infinite; }
         @keyframes showHide { from { opacity:1 } to { opacity:0.3 } alternate;  }
-`}
+        `}
       </style>
     </Helmet>
 
