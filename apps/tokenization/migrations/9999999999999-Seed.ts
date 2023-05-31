@@ -20,7 +20,7 @@ export class Seed9999999999999 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<any> {}
 
   private async seedBlockchain(queryRunner: QueryRunner) {
-    const loadVariables = [
+    const loadVariables: string[] = [
       'ENVIRONMENT',
       'WEB3',
       'DEPLOY_PRIVATE_KEY',
@@ -30,7 +30,7 @@ export class Seed9999999999999 implements MigrationInterface {
       'ENCRYPTION_KEY',
     ];
 
-    const envVariables = loadVariables.reduce(
+    const envVariables: { [key: string]: string } = loadVariables.reduce(
       (a, v) => ({ ...a, [v]: process.env[v] }),
       {},
     );
