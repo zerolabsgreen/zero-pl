@@ -20,7 +20,7 @@ export const AppDataSource = new DataSource({
     resolve(`${__dirname}/../../../node_modules/@zero-labs/tokenization-api/dist/src/adapters/postgres/entities/**/*.entity.js`)
   ],
   migrations: [
-    join(__dirname, 'migrations', '*.ts'),
+    join(__dirname, 'migrations', '*.js'),
     resolve(
       `${__dirname}/../../node_modules/@zero-labs/tokenization-api/dist/migrations/*.js`
     ),
