@@ -1,6 +1,6 @@
 #!/bin/bash
-# rm -Rf dist
-# yarn build:docker
+rm -Rf dist
+yarn build:docker
 
 heroku container:login
 

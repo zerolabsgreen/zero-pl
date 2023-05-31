@@ -64,7 +64,7 @@ export class Seed9999999999999 implements MigrationInterface {
           certificateContracts.agreementFactory.address
         }', '${certificateContracts.topic}', '${primaryRpc}', '${
           fallbackRpc ?? ''
-        }', '${encrypt(deployer.privateKey, process.env.ENCRYPTION_KEY)}', '${
+        }', '${encrypt(deployer.privateKey, process.env.ENCRYPTION_KEY as string)}', '${
           certificateContracts.registryDeployTransaction ?? ''
         }', '${certificateContracts.batchFactoryDeployTransaction ?? ''}')`,
       );
