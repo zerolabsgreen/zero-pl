@@ -95,7 +95,7 @@
     "htmling": "0.0.8",
     "joi": "17.6.0",
     "lodash": "4.17.21",
-    "luxon": "3.1.0",
+    "luxon": "3.2.1",
     "next": "12.2.5",
     "os-browserify": "0.3.0",
     "passport": "0.6.0",
